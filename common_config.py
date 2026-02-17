@@ -6,11 +6,10 @@ plt.rcParams["font.sans-serif"] = ["Arial", "Helvetica"]
 plt.rcParams["font.size"] = 6 
 plt.rcParams["svg.fonttype"] = "none"
 
-rsc_lightgreen = "#a7c957"
-rsc_darkgreen = "#386641"
-rsc_blue = "#3f88c5"
+rsc_lightgreen = "#6EC207"
+rsc_lightblue = "#56B4E9"
+rsc_orange = "#D55E00"
 rsc_grey = "#959595"
-rsc_turquise = "#2EC4B6"
 
 
 def figure_journal_basic():
