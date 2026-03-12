@@ -1,18 +1,20 @@
 import scanpy as sc
+import matplotlib.pyplot as plt
 
-# plt.rcParams["font.family"] = "sans-serif"
-# plt.rcParams["font.sans-serif"] = ["Arial", "Helvetica"]
+plt.rcParams["font.family"] = "sans-serif"
+plt.rcParams["font.sans-serif"] = ["Arial", "Helvetica"]
+plt.rcParams["font.size"] = 6 
+plt.rcParams["svg.fonttype"] = "none"
 
-rsc_lightgreen = "#a7c957"
-rsc_darkgreen = "#386641"
-rsc_blue = "#3f88c5"
+rsc_lightgreen = "#6EC207"
+rsc_lightblue = "#56B4E9"
+rsc_orange = "#D55E00"
 rsc_grey = "#959595"
-rsc_turquise = "#2EC4B6"
 
 
 def figure_journal_basic():
     sc.set_figure_params(
-        dpi=300,
+        dpi=100,
         dpi_save=300,
         figsize=(4, 4),
         frameon=False,
