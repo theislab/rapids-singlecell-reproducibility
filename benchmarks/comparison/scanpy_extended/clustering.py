@@ -13,7 +13,14 @@ adata = pbmc68k()
 metrics = []
 
 reference, candidate = adata.copy(), adata.copy()
-sc.tl.louvain(reference, resolution=1.0, random_state=0, key_added="cpu_louvain")
+sc.tl.louvain(
+    reference,
+    resolution=1.0,
+    random_state=0,
+    key_added="cpu_louvain",
+    flavor="igraph",
+    directed=False,
+)
 rsc.tl.louvain(candidate, resolution=1.0, key_added="gpu_louvain")
 metrics.extend([
     lower("louvain.adjusted_rand_index", adjusted_rand_score(reference.obs["cpu_louvain"], candidate.obs["gpu_louvain"]), 0.90),
@@ -29,4 +36,3 @@ metrics.extend([
 ])
 
 write_report("clustering_extended", "scanpy.datasets.pbmc68k_reduced", "stochastic", metrics)
-

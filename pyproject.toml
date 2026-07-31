@@ -8,7 +8,6 @@ dependencies = [
     "fa2-modified",
     "igraph",
     "leidenalg",
-    "louvain",
     "pertpy",
     "pooch",
     "rapids-singlecell[rapids-cu12]; sys_platform == 'linux'",
