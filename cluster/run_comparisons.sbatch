@@ -38,6 +38,11 @@ export TMPDIR="$CACHE_ROOT/tmp/$SLURM_JOB_ID"
 export JOBLIB_TEMP_FOLDER="$CACHE_ROOT/joblib/$SLURM_JOB_ID"
 export EQUIVALENCE_OUTPUT_DIR="$LOCAL_REPRO/benchmarks/comparison/results"
 export EQUIVALENCE_SUMMARY="$LOCAL_REPRO/benchmarks/comparison/equivalence.json"
+export EQUIVALENCE_EXECUTION="$LOCAL_REPRO/benchmarks/comparison/execution.json"
+export EQUIVALENCE_REPORT_DIR="$LOCAL_REPRO/benchmarks/comparison/report"
+export EQUIVALENCE_ARTIFACT_DIR="$EQUIVALENCE_REPORT_DIR/artifacts"
+export MPLBACKEND=Agg
+export PYTHONUNBUFFERED=1
 
 echo "### host=$(hostname) job=$SLURM_JOB_ID started=$(date --iso-8601=seconds)"
 echo "### source=$REPRO_SOURCE"
@@ -78,10 +83,13 @@ set -e
 
 # Copy only durable, compact evidence back to shared storage.
 rsync -a benchmarks/comparison/results/ "$DURABLE_OUTPUT/results/"
+if [[ -d benchmarks/comparison/report ]]; then
+    rsync -a benchmarks/comparison/report/ "$DURABLE_OUTPUT/report/"
+fi
 if [[ -f benchmarks/comparison/equivalence.json ]]; then
     cp benchmarks/comparison/equivalence.json "$DURABLE_OUTPUT/equivalence.json"
 fi
-cp benchmarks/comparison/execution.json "$DURABLE_OUTPUT/execution.json"
+cp "$EQUIVALENCE_EXECUTION" "$DURABLE_OUTPUT/execution.json"
 "$UV_PROJECT_ENVIRONMENT/bin/python" -m pip freeze > "$DURABLE_OUTPUT/environment.txt" 2>/dev/null || \
     uv pip freeze --python "$UV_PROJECT_ENVIRONMENT/bin/python" > "$DURABLE_OUTPUT/environment.txt"
 nvidia-smi -q > "$DURABLE_OUTPUT/nvidia-smi.txt"

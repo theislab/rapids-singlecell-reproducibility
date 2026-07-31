@@ -15,8 +15,11 @@ Defaults: `gpu_p` / `gpu_priority`, one available GPU, six CPUs, 90 GB RAM, and 
 3. bootstraps a pinned uv into local scratch when it is not already available, then creates
    the Python 3.12 environment there with `uv sync --frozen`;
 4. installs the pinned prebuilt `rapids-singlecell-cu12[rapids]` wheel, avoiding a toolkit-dependent source build;
-5. runs every structured comparison in a separate process; and
-6. copies only JSON evidence and environment/GPU manifests back to shared storage.
+5. runs every structured comparison in a separate process, including the core Scanpy and
+   end-to-end biological workflows;
+6. preserves per-script logs even when thresholds fail;
+7. generates a reviewer-facing Markdown report, CSV table, and figures; and
+8. copies the compact evidence, report, environment, and GPU manifests back to shared storage.
 
 Optional overrides:
 
@@ -29,3 +32,21 @@ sbatch --export=ALL,EQUIVALENCE_DURABLE_OUTPUT=/lustre/groups/ml01/workspace/$US
 
 The default result directory is
 `benchmarks/comparison/cluster-results/$SLURM_JOB_ID` in the shared checkout.
+
+Each result directory contains:
+
+- `equivalence.json`: complete machine-readable metrics and thresholds;
+- `execution.json`: exit status and duration for every isolated comparison;
+- `results/`: one JSON record per method group;
+- `report/summary.md`: the reviewer-facing aggregate report;
+- `report/metrics.csv`: a flat supplementary-table source;
+- `report/artifacts/`: comparison figures and biological-pipeline tables;
+- `report/logs/`: complete logs, including scripts that failed before writing a record; and
+- `environment.txt` and `nvidia-smi.txt`: software and hardware provenance.
+
+The suite intentionally continues after individual failures so every comparison contributes
+evidence. The Slurm job still exits non-zero at the end when a script or threshold fails.
+
+Automatic pull-request reporting requires a GPU-backed CI runner. A manually dispatched
+GitHub Actions workflow is included for a self-hosted runner carrying the `gpu` label; the
+Slurm workflow remains the fallback when the cluster is not connected to GitHub Actions.

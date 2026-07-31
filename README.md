@@ -4,7 +4,10 @@ This repository contains all scripts to reproduce the associated publication.
 
 ## Use cases
 
-TODO
+- [`use_cases/100M-working.ipynb`](use_cases/100M-working.ipynb) contains the Dask-based
+  Tahoe-100M workflow.
+- [`benchmarks/speed/notebooks`](benchmarks/speed/notebooks) contains matching CPU and GPU
+  notebooks for the million-cell mouse-brain workflow.
 
 ## Reproducibility
 
@@ -32,6 +35,19 @@ automatically:
 python benchmarks/comparison/run_structured.py
 ```
 
+The complete suite includes deterministic numerical comparisons, stochastic graph and
+embedding comparisons, the accelerated Squidpy/Decoupler/Pertpy APIs, and an end-to-end
+PBMC3k biological workflow. It always preserves per-script logs and produces:
+
+- `benchmarks/comparison/equivalence.json` with all observed metrics and thresholds;
+- `benchmarks/comparison/execution.json` with script status and duration;
+- `benchmarks/comparison/report/summary.md` for the reviewer response;
+- `benchmarks/comparison/report/metrics.csv` for a supplementary table; and
+- figures and biological marker-overlap tables under `benchmarks/comparison/report/artifacts`.
+
+A failed threshold makes the final command fail but does not stop later comparisons from
+running, so incomplete equivalence still yields a complete diagnostic report.
+
 For the Theislab/HMGU GPU cluster, use the documented
 [SLURM + uv + localscratch workflow](cluster/README.md).
 
@@ -40,4 +56,11 @@ the mapping from public methods to evidence scripts.
 
 ## Run time
 
-TODO
+The benchmark notebooks and source figures are available under
+[`benchmarks/speed`](benchmarks/speed). Their environment and data choices should be kept
+separate from the CPU/GPU equivalence thresholds above: speed measures performance, while
+the comparison suite measures numerical and biological agreement.
+
+Automatic execution requires GPU-backed CI. The manual
+[`gpu-equivalence` workflow](.github/workflows/gpu-equivalence.yml) targets a self-hosted
+Linux runner labeled `gpu`; otherwise submit the documented Slurm job directly.

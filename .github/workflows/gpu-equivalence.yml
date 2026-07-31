@@ -1,0 +1,65 @@
+name: GPU equivalence
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  equivalence:
+    name: CPU/GPU equivalence
+    runs-on: [self-hosted, linux, gpu]
+    timeout-minutes: 240
+    env:
+      EQUIVALENCE_OUTPUT_DIR: benchmarks/comparison/results
+      EQUIVALENCE_SUMMARY: benchmarks/comparison/equivalence.json
+      EQUIVALENCE_EXECUTION: benchmarks/comparison/execution.json
+      EQUIVALENCE_REPORT_DIR: benchmarks/comparison/report
+      EQUIVALENCE_ARTIFACT_DIR: benchmarks/comparison/report/artifacts
+      MPLBACKEND: Agg
+      UV_CACHE_DIR: ${{ runner.temp }}/uv-cache
+      UV_PROJECT_ENVIRONMENT: ${{ runner.temp }}/rsc-equivalence-venv
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: 0.11.25
+          enable-cache: true
+
+      - name: Install locked environment
+        run: uv sync --frozen
+
+      - name: Run equivalence suite
+        id: suite
+        continue-on-error: true
+        run: uv run python benchmarks/comparison/run_structured.py
+
+      - name: Publish job summary
+        if: always()
+        run: |
+          if [[ -f benchmarks/comparison/report/summary.md ]]; then
+            cat benchmarks/comparison/report/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "The comparison suite did not produce a summary." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload equivalence evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gpu-equivalence-${{ github.run_id }}
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            benchmarks/comparison/equivalence.json
+            benchmarks/comparison/execution.json
+            benchmarks/comparison/results
+            benchmarks/comparison/report
+
+      - name: Enforce equivalence result
+        if: steps.suite.outcome == 'failure'
+        run: exit 1

@@ -1,6 +1,9 @@
 # Temporary GPU equivalence results
 
 This directory contains a temporary reference snapshot from Slurm job `38936727`, run on 2026-07-31.
+It covers the initial 15 structured method groups and predates the core Scanpy and
+end-to-end biological additions. It should not be interpreted as a result from the expanded
+reviewer suite.
 
 ## Outcome
 

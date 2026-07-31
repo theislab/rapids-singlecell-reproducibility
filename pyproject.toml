@@ -6,6 +6,7 @@ dependencies = [
     "bbknn",
     "decoupler>=2",
     "fa2-modified",
+    "harmonypy==0.2.0",
     "igraph",
     "leidenalg",
     "pertpy",
