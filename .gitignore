@@ -178,3 +178,10 @@ cache
 *.benchmark.tsv
 *.prof
 .vscode
+benchmarks/comparison/squidpy/results/
+benchmarks/comparison/scanpy_extended/results/
+benchmarks/comparison/decoupler/results/
+benchmarks/comparison/pertpy/results/
+benchmarks/comparison/equivalence.json
+benchmarks/comparison/results/
+benchmarks/comparison/cluster-results/

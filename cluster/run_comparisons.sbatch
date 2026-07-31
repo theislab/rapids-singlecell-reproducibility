@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+#SBATCH --job-name=rsc-equivalence
+#SBATCH --partition=gpu_p
+#SBATCH --qos=gpu_priority
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=90G
+#SBATCH --time=04:00:00
+#SBATCH --nice=10000
+#SBATCH --output=rsc-equivalence-%j.out
+#SBATCH --error=rsc-equivalence-%j.err
+
+set -euo pipefail
+
+# Source repositories live on shared storage. They are copied to node-local scratch
+# before any imports, builds, package installs, or comparisons run.
+REPRO_SOURCE="${REPRO_SOURCE:-$SLURM_SUBMIT_DIR}"
+RSC_SOURCE="${RSC_SOURCE:-$(dirname "$REPRO_SOURCE")/rapids_singlecell}"
+DURABLE_OUTPUT="${EQUIVALENCE_DURABLE_OUTPUT:-$REPRO_SOURCE/benchmarks/comparison/cluster-results/$SLURM_JOB_ID}"
+
+LOCAL_BASE="${SLURM_TMPDIR:-/localscratch/$USER}/rapids-singlecell-equivalence"
+JOB_ROOT="$LOCAL_BASE/jobs/$SLURM_JOB_ID"
+CACHE_ROOT="$LOCAL_BASE/cache"
+LOCAL_REPRO="$JOB_ROOT/rapids-singlecell-reproducibility"
+LOCAL_RSC="$JOB_ROOT/rapids_singlecell"
+
+mkdir -p "$JOB_ROOT" "$CACHE_ROOT" "$DURABLE_OUTPUT"
+mkdir -p "$CACHE_ROOT/uv" "$CACHE_ROOT/xdg" "$CACHE_ROOT/cupy" "$CACHE_ROOT/numba"
+mkdir -p "$CACHE_ROOT/matplotlib" "$CACHE_ROOT/tmp/$SLURM_JOB_ID" "$CACHE_ROOT/joblib/$SLURM_JOB_ID"
+
+export UV_CACHE_DIR="$CACHE_ROOT/uv"
+export UV_PROJECT_ENVIRONMENT="$JOB_ROOT/.venv"
+export UV_COMPILE_BYTECODE=1
+export UV_PYTHON=3.12
+# The source checkout is staged without its large `.git` directory. Give hatch-vcs
+# an explicit build version so editable source installation remains reproducible.
+export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_RAPIDS_SINGLECELL="${RSC_SOURCE_VERSION:-0.0.0}"
+export XDG_CACHE_HOME="$CACHE_ROOT/xdg"
+export CUPY_CACHE_DIR="$CACHE_ROOT/cupy"
+export NUMBA_CACHE_DIR="$CACHE_ROOT/numba"
+export MPLCONFIGDIR="$CACHE_ROOT/matplotlib"
+export TMPDIR="$CACHE_ROOT/tmp/$SLURM_JOB_ID"
+export JOBLIB_TEMP_FOLDER="$CACHE_ROOT/joblib/$SLURM_JOB_ID"
+export EQUIVALENCE_OUTPUT_DIR="$LOCAL_REPRO/benchmarks/comparison/results"
+export EQUIVALENCE_SUMMARY="$LOCAL_REPRO/benchmarks/comparison/equivalence.json"
+
+echo "### host=$(hostname) job=$SLURM_JOB_ID started=$(date --iso-8601=seconds)"
+echo "### source=$REPRO_SOURCE"
+echo "### local_base=$LOCAL_BASE"
+echo "### durable_output=$DURABLE_OUTPUT"
+nvidia-smi
+
+rsync -a --delete --exclude=.git --exclude=.venv --exclude=cluster-results \
+    "$REPRO_SOURCE/" "$LOCAL_REPRO/"
+
+cd "$LOCAL_REPRO"
+if ! command -v uv >/dev/null; then
+    UV_TOOL_ROOT="$LOCAL_BASE/tools/uv-0.11.25"
+    if [[ ! -x "$UV_TOOL_ROOT/bin/uv" ]]; then
+        echo "### bootstrapping uv into localscratch on the compute node"
+        python3 -m venv "$UV_TOOL_ROOT"
+        "$UV_TOOL_ROOT/bin/python" -m pip install --disable-pip-version-check "uv==0.11.25"
+    fi
+    export PATH="$UV_TOOL_ROOT/bin:$PATH"
+fi
+uv --version
+
+# Installation and dependency downloads happen on this compute node. `--frozen`
+# guarantees that the committed lock file, not live dependency resolution, is used.
+uv sync --frozen
+
+# By default, test a sibling rapids_singlecell source checkout when one exists.
+# Set RSC_SOURCE='' at submission time to test the locked PyPI package instead.
+if [[ -n "$RSC_SOURCE" && -d "$RSC_SOURCE" ]]; then
+    rsync -a --delete --exclude=.git --exclude=.venv --exclude=build \
+        "$RSC_SOURCE/" "$LOCAL_RSC/"
+    uv pip install --python "$UV_PROJECT_ENVIRONMENT/bin/python" --reinstall --editable "$LOCAL_RSC[rapids-cu12]"
+else
+    echo "### no source override; using the rapids-singlecell version from uv.lock"
+fi
+
+"$UV_PROJECT_ENVIRONMENT/bin/python" - <<'PY'
+from importlib.metadata import version
+
+for package in ("rapids-singlecell", "scanpy", "squidpy", "decoupler", "pertpy"):
+    print(f"{package}=={version(package)}")
+PY
+
+set +e
+"$UV_PROJECT_ENVIRONMENT/bin/python" benchmarks/comparison/run_structured.py
+comparison_status=$?
+set -e
+
+# Copy only durable, compact evidence back to shared storage.
+rsync -a benchmarks/comparison/results/ "$DURABLE_OUTPUT/results/"
+if [[ -f benchmarks/comparison/equivalence.json ]]; then
+    cp benchmarks/comparison/equivalence.json "$DURABLE_OUTPUT/equivalence.json"
+fi
+"$UV_PROJECT_ENVIRONMENT/bin/python" -m pip freeze > "$DURABLE_OUTPUT/environment.txt" 2>/dev/null || \
+    uv pip freeze --python "$UV_PROJECT_ENVIRONMENT/bin/python" > "$DURABLE_OUTPUT/environment.txt"
+nvidia-smi -q > "$DURABLE_OUTPUT/nvidia-smi.txt"
+
+echo "### comparison_status=$comparison_status finished=$(date --iso-8601=seconds)"
+echo "### evidence=$DURABLE_OUTPUT"
+exit "$comparison_status"
