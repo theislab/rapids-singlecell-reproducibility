@@ -10,7 +10,7 @@ dependencies = [
     "leidenalg",
     "pertpy",
     "pooch",
-    "rapids-singlecell[rapids-cu12]; sys_platform == 'linux'",
+    "rapids-singlecell-cu12[rapids]==0.16.1; sys_platform == 'linux'",
     "scanpy>=1.11,<2",
     "squidpy>=1.8,<2",
 ]

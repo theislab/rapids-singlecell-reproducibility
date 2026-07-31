@@ -12,17 +12,15 @@
 
 set -euo pipefail
 
-# Source repositories live on shared storage. They are copied to node-local scratch
-# before any imports, builds, package installs, or comparisons run.
+# The comparison repository lives on shared storage and is copied to node-local
+# scratch before any imports, package installs, or comparisons run.
 REPRO_SOURCE="${REPRO_SOURCE:-$SLURM_SUBMIT_DIR}"
-RSC_SOURCE="${RSC_SOURCE:-$(dirname "$REPRO_SOURCE")/rapids_singlecell}"
 DURABLE_OUTPUT="${EQUIVALENCE_DURABLE_OUTPUT:-$REPRO_SOURCE/benchmarks/comparison/cluster-results/$SLURM_JOB_ID}"
 
 LOCAL_BASE="${SLURM_TMPDIR:-/localscratch/$USER}/rapids-singlecell-equivalence"
 JOB_ROOT="$LOCAL_BASE/jobs/$SLURM_JOB_ID"
 CACHE_ROOT="$LOCAL_BASE/cache"
 LOCAL_REPRO="$JOB_ROOT/rapids-singlecell-reproducibility"
-LOCAL_RSC="$JOB_ROOT/rapids_singlecell"
 
 mkdir -p "$JOB_ROOT" "$CACHE_ROOT" "$DURABLE_OUTPUT"
 mkdir -p "$CACHE_ROOT/uv" "$CACHE_ROOT/xdg" "$CACHE_ROOT/cupy" "$CACHE_ROOT/numba"
@@ -32,9 +30,6 @@ export UV_CACHE_DIR="$CACHE_ROOT/uv"
 export UV_PROJECT_ENVIRONMENT="$JOB_ROOT/.venv"
 export UV_COMPILE_BYTECODE=1
 export UV_PYTHON=3.12
-# The source checkout is staged without its large `.git` directory. Give hatch-vcs
-# an explicit build version so editable source installation remains reproducible.
-export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_RAPIDS_SINGLECELL="${RSC_SOURCE_VERSION:-0.0.0}"
 export XDG_CACHE_HOME="$CACHE_ROOT/xdg"
 export CUPY_CACHE_DIR="$CACHE_ROOT/cupy"
 export NUMBA_CACHE_DIR="$CACHE_ROOT/numba"
@@ -68,16 +63,6 @@ uv --version
 # Installation and dependency downloads happen on this compute node. `--frozen`
 # guarantees that the committed lock file, not live dependency resolution, is used.
 uv sync --frozen
-
-# By default, test a sibling rapids_singlecell source checkout when one exists.
-# Set RSC_SOURCE='' at submission time to test the locked PyPI package instead.
-if [[ -n "$RSC_SOURCE" && -d "$RSC_SOURCE" ]]; then
-    rsync -a --delete --exclude=.git --exclude=.venv --exclude=build \
-        "$RSC_SOURCE/" "$LOCAL_RSC/"
-    uv pip install --python "$UV_PROJECT_ENVIRONMENT/bin/python" --reinstall --editable "$LOCAL_RSC[rapids-cu12]"
-else
-    echo "### no source override; using the rapids-singlecell version from uv.lock"
-fi
 
 "$UV_PROJECT_ENVIRONMENT/bin/python" - <<'PY'
 from importlib.metadata import version

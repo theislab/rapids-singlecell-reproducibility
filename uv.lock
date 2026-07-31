@@ -3612,7 +3612,7 @@ wheels = [
 ]
 
 [[package]]
-name = "rapids-singlecell"
+name = "rapids-singlecell-cu12"
 version = "0.16.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
@@ -3630,10 +3630,13 @@ dependencies = [
     { name = "statsmodels" },
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3b/16/f01f1bc6d3baaa65dbc44d31f53cec50c391c00e8ac2606477f0e941b742/rapids_singlecell-0.16.1.tar.gz", hash = "sha256:deff4c791bb45c6ea622c199abf335876132d54ba2ef8b83a4b2aac4659b7ec8", size = 2203211, upload-time = "2026-07-27T13:46:17.996Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/79/be/a37d9af30b523fb67de769aee64ad4265de549ee0d6b19577d9762bbb69b/rapids_singlecell_cu12-0.16.1-cp312-abi3-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:f39d88c3ab1a1860c90a8b0954ea8fa4789474ac56a166dcf1bbac84c4c9d404", size = 32844934, upload-time = "2026-07-27T13:58:04.877Z" },
+    { url = "https://files.pythonhosted.org/packages/05/5b/5d5ed50e9e674018ad03a1590defaf2f6cfb6f9db9bc0bf6371e70efe81e/rapids_singlecell_cu12-0.16.1-cp312-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:5f0e6477d2e740a92559928abb8f6c10900be2f448a55c3779fb7e1d9e989dce", size = 33039568, upload-time = "2026-07-27T13:58:07.968Z" },
+]
 
 [package.optional-dependencies]
-rapids-cu12 = [
+rapids = [
     { name = "cudf-cu12" },
     { name = "cugraph-cu12" },
     { name = "cuml-cu12" },
@@ -3654,7 +3657,7 @@ dependencies = [
     { name = "leidenalg" },
     { name = "pertpy" },
     { name = "pooch" },
-    { name = "rapids-singlecell", extra = ["rapids-cu12"], marker = "sys_platform == 'linux'" },
+    { name = "rapids-singlecell-cu12", extra = ["rapids"], marker = "sys_platform == 'linux'" },
     { name = "scanpy" },
     { name = "squidpy" },
 ]
@@ -3668,7 +3671,7 @@ requires-dist = [
     { name = "leidenalg" },
     { name = "pertpy" },
     { name = "pooch" },
-    { name = "rapids-singlecell", extras = ["rapids-cu12"], marker = "sys_platform == 'linux'" },
+    { name = "rapids-singlecell-cu12", extras = ["rapids"], marker = "sys_platform == 'linux'", specifier = "==0.16.1" },
     { name = "scanpy", specifier = ">=1.11,<2" },
     { name = "squidpy", specifier = ">=1.8,<2" },
 ]
