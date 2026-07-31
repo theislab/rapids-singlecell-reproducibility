@@ -81,6 +81,7 @@ rsync -a benchmarks/comparison/results/ "$DURABLE_OUTPUT/results/"
 if [[ -f benchmarks/comparison/equivalence.json ]]; then
     cp benchmarks/comparison/equivalence.json "$DURABLE_OUTPUT/equivalence.json"
 fi
+cp benchmarks/comparison/execution.json "$DURABLE_OUTPUT/execution.json"
 "$UV_PROJECT_ENVIRONMENT/bin/python" -m pip freeze > "$DURABLE_OUTPUT/environment.txt" 2>/dev/null || \
     uv pip freeze --python "$UV_PROJECT_ENVIRONMENT/bin/python" > "$DURABLE_OUTPUT/environment.txt"
 nvidia-smi -q > "$DURABLE_OUTPUT/nvidia-smi.txt"

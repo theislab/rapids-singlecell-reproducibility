@@ -7,10 +7,13 @@ from pathlib import Path
 
 
 def package_version(package):
-    try:
-        return version(package)
-    except PackageNotFoundError:
-        return "unknown"
+    candidates = (package, "rapids-singlecell-cu12") if package == "rapids-singlecell" else (package,)
+    for candidate in candidates:
+        try:
+            return version(candidate)
+        except PackageNotFoundError:
+            pass
+    return "unknown"
 
 
 def upper(name, value, threshold):

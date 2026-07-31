@@ -2,8 +2,14 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
+
+# Avoid this script's filename shadowing the installed ``decoupler`` package.
+script_dir = str(Path(__file__).parent)
+if script_dir in sys.path:
+    sys.path.remove(script_dir)
 
 import decoupler as dc
 import numpy as np
@@ -11,10 +17,13 @@ import rapids_singlecell as rsc
 
 
 def package_version(package):
-    try:
-        return version(package)
-    except PackageNotFoundError:
-        return "unknown"
+    candidates = (package, "rapids-singlecell-cu12") if package == "rapids-singlecell" else (package,)
+    for candidate in candidates:
+        try:
+            return version(candidate)
+        except PackageNotFoundError:
+            pass
+    return "unknown"
 
 
 def metric(name, observed, comparison, tolerance, passed):

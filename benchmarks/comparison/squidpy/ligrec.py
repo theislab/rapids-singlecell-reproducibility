@@ -18,6 +18,9 @@ from _shared import (
 
 
 adata = sc.datasets.paul15()
+clusters = adata.obs["paul15_clusters"].cat.categories[:4].tolist()
+adata = adata[adata.obs["paul15_clusters"].isin(clusters)].copy()
+adata.obs["paul15_clusters"] = adata.obs["paul15_clusters"].cat.remove_unused_categories()
 sc.pp.normalize_total(adata)
 adata.raw = adata.copy()
 
@@ -25,7 +28,6 @@ adata.raw = adata.copy()
 # an external OmniPath query and remains small enough for routine reproduction.
 genes = adata.var_names[:8].tolist()
 interactions = list(combinations(genes, 2))
-clusters = adata.obs["paul15_clusters"].cat.categories[:4].tolist()
 n_perms = 500
 
 reference = sq.gr.ligrec(

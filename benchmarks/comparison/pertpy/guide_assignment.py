@@ -12,7 +12,7 @@ metrics = []
 for method in ("assign_by_threshold", "assign_to_max_guide"):
     cpu, gpu = guide_adata(), guide_adata()
     kwargs = {"assignment_threshold": 5}
-    getattr(pt.tl.GuideAssignment(), method)(cpu, **kwargs)
+    getattr(pt.pp.GuideAssignment(), method)(cpu, **kwargs)
     getattr(rsc.ptg.GuideAssignment(), method)(gpu, **kwargs)
     if method == "assign_by_threshold":
         cpu_assignment = cpu.layers["assigned_guides"]
@@ -27,7 +27,7 @@ for method in ("assign_by_threshold", "assign_to_max_guide"):
     metrics.append(lower(f"{method}.assignment_agreement", agreement, 1.0))
 
 cpu, gpu = guide_adata(), guide_adata()
-pt.tl.GuideAssignment().assign_mixture_model(cpu)
+pt.pp.GuideAssignment().assign_mixture_model(cpu)
 rsc.ptg.GuideAssignment().assign_mixture_model(gpu)
 metrics.append(lower("assign_mixture_model.assignment_agreement", np.mean(cpu.obs["assigned_guide"].to_numpy() == gpu.obs["assigned_guide"].to_numpy()), 0.90))
 

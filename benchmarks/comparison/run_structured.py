@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -32,13 +33,17 @@ for previous_result in RESULTS.glob("*.json"):
 env = os.environ.copy()
 env["EQUIVALENCE_OUTPUT_DIR"] = str(RESULTS)
 failures = []
+executions = []
 
 for relative_path in SCRIPTS:
     script = HERE / relative_path
     print(f"\n=== {relative_path} ===", flush=True)
     completed = subprocess.run([sys.executable, str(script)], env=env, check=False)
+    executions.append({"script": relative_path, "exit_code": completed.returncode, "passed": completed.returncode == 0})
     if completed.returncode:
         failures.append((relative_path, completed.returncode))
+
+(HERE / "execution.json").write_text(json.dumps({"executions": executions}, indent=2) + "\n")
 
 summary = HERE / "equivalence.json"
 env["EQUIVALENCE_SUMMARY"] = str(summary)

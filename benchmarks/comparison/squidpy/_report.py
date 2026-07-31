@@ -8,10 +8,13 @@ from typing import Any
 
 
 def package_version(package: str) -> str:
-    try:
-        return version(package)
-    except PackageNotFoundError:
-        return "unknown"
+    candidates = (package, "rapids-singlecell-cu12") if package == "rapids-singlecell" else (package,)
+    for candidate in candidates:
+        try:
+            return version(candidate)
+        except PackageNotFoundError:
+            pass
+    return "unknown"
 
 
 def upper_bound(metric: str, observed: float, threshold: float) -> dict[str, Any]:
