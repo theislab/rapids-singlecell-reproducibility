@@ -17,11 +17,25 @@ def package_version(package):
 
 
 def upper(name, value, threshold):
-    return {"metric": name, "observed": float(value), "comparison": "<=", "tolerance": float(threshold), "criterion": f"<= {threshold}", "passed": bool(value <= threshold)}
+    return {
+        "metric": name,
+        "observed": float(value),
+        "comparison": "<=",
+        "tolerance": float(threshold),
+        "criterion": f"<= {threshold}",
+        "passed": bool(value <= threshold),
+    }
 
 
 def lower(name, value, threshold):
-    return {"metric": name, "observed": float(value), "comparison": ">=", "tolerance": float(threshold), "criterion": f">= {threshold}", "passed": bool(value >= threshold)}
+    return {
+        "metric": name,
+        "observed": float(value),
+        "comparison": ">=",
+        "tolerance": float(threshold),
+        "criterion": f">= {threshold}",
+        "passed": bool(value >= threshold),
+    }
 
 
 def write_report(method, dataset, tier, metrics):

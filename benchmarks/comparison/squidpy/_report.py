@@ -39,9 +39,7 @@ def lower_bound(metric: str, observed: float, threshold: float) -> dict[str, Any
     }
 
 
-def write_report(
-    *, method: str, dataset: str, tier: str, metrics: list[dict[str, Any]]
-) -> Path:
+def write_report(*, method: str, dataset: str, tier: str, metrics: list[dict[str, Any]]) -> Path:
     report = {
         "method": method,
         "reference_package": "squidpy",
@@ -55,11 +53,7 @@ def write_report(
         "metrics": metrics,
     }
 
-    output_dir = Path(
-        os.environ.get(
-            "EQUIVALENCE_OUTPUT_DIR", Path(__file__).parent / "results"
-        )
-    )
+    output_dir = Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", Path(__file__).parent / "results"))
     output_dir.mkdir(parents=True, exist_ok=True)
     output = output_dir / f"{method}.json"
     output.write_text(json.dumps(report, indent=2) + "\n")
@@ -67,9 +61,6 @@ def write_report(
 
     failures = [metric for metric in metrics if not metric["passed"]]
     if failures:
-        details = ", ".join(
-            f"{item['metric']}={item['observed']} ({item['criterion']})"
-            for item in failures
-        )
+        details = ", ".join(f"{item['metric']}={item['observed']} ({item['criterion']})" for item in failures)
         raise AssertionError(f"Equivalence thresholds failed: {details}")
     return output

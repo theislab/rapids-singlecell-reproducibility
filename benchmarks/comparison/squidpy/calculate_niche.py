@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import rapids_singlecell as rsc
 import squidpy as sq
-from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
-
 from _report import lower_bound, upper_bound, write_report
 from _shared import IMC_CLUSTER_KEY, load_imc
-
+from scipy import sparse
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 
 adata = load_imc()
 metrics = []
@@ -96,8 +95,10 @@ compare_labels(
 
 # CellCharter finishes with independently implemented Gaussian-mixture clustering.
 # The same seed and initialization policy are used on both implementations.
+cellcharter_adata = adata.copy()
+cellcharter_adata.X = sparse.csr_matrix(cellcharter_adata.X)
 reference = sq.gr.calculate_niche(
-    adata,
+    cellcharter_adata,
     flavor="cellcharter",
     distance=3,
     aggregation="mean",
@@ -106,7 +107,7 @@ reference = sq.gr.calculate_niche(
     inplace=False,
 )
 candidate = rsc.gr.calculate_niche(
-    adata,
+    cellcharter_adata,
     flavor="cellcharter",
     distance=3,
     aggregation="mean",

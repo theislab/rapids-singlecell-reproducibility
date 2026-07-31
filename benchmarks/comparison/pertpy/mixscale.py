@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import pertpy as pt
 import rapids_singlecell as rsc
-
 from _report import lower, upper, write_report
 from _shared import max_abs, pearson, screen_adata
 
-
 if not hasattr(pt.tl, "Mixscale"):
-    raise RuntimeError("The installed pertpy version does not expose pt.tl.Mixscale; install a release containing Mixscale before generating equivalence evidence.")
+    raise RuntimeError(
+        "The installed pertpy version does not expose pt.tl.Mixscale; install a release containing Mixscale before generating equivalence evidence."
+    )
 
 cpu, gpu = screen_adata(), screen_adata()
 cpu.layers["X_pert"] = cpu.X.copy()
@@ -22,4 +22,3 @@ metrics = [
     lower("mixscale.score_correlation", pearson(cpu_score, gpu_score), 0.9999),
 ]
 write_report("mixscale", "seeded synthetic perturbation screen", "deterministic", metrics)
-

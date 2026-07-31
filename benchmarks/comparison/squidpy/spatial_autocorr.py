@@ -3,10 +3,8 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import squidpy as sq
-
 from _report import lower_bound, upper_bound, write_report
 from _shared import load_imc, max_abs_error, pearson_correlation
-
 
 adata = load_imc()
 metrics = []

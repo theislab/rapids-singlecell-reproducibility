@@ -17,11 +17,25 @@ def _version(package):
 
 
 def upper(metric, observed, threshold):
-    return {"metric": metric, "observed": float(observed), "comparison": "<=", "tolerance": float(threshold), "criterion": f"<= {threshold}", "passed": bool(observed <= threshold)}
+    return {
+        "metric": metric,
+        "observed": float(observed),
+        "comparison": "<=",
+        "tolerance": float(threshold),
+        "criterion": f"<= {threshold}",
+        "passed": bool(observed <= threshold),
+    }
 
 
 def lower(metric, observed, threshold):
-    return {"metric": metric, "observed": float(observed), "comparison": ">=", "tolerance": float(threshold), "criterion": f">= {threshold}", "passed": bool(observed >= threshold)}
+    return {
+        "metric": metric,
+        "observed": float(observed),
+        "comparison": ">=",
+        "tolerance": float(threshold),
+        "criterion": f">= {threshold}",
+        "passed": bool(observed >= threshold),
+    }
 
 
 def write_report(method, dataset, tier, metrics):
@@ -41,4 +55,7 @@ def write_report(method, dataset, tier, metrics):
     print(json.dumps(report, indent=2))
     failed = [metric for metric in metrics if not metric["passed"]]
     if failed:
-        raise AssertionError("Equivalence thresholds failed: " + ", ".join(f"{m['metric']}={m['observed']} ({m['criterion']})" for m in failed))
+        raise AssertionError(
+            "Equivalence thresholds failed: "
+            + ", ".join(f"{m['metric']}={m['observed']} ({m['criterion']})" for m in failed)
+        )

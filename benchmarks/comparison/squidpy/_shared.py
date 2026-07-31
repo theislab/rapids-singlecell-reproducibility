@@ -3,7 +3,6 @@ from __future__ import annotations
 import numpy as np
 import squidpy as sq
 
-
 IMC_CLUSTER_KEY = "cell type"
 
 

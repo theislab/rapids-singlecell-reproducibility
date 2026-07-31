@@ -25,7 +25,7 @@ def knn_overlap(a, b, n_neighbors=15):
     b = np.asarray(b)
     ka = NearestNeighbors(n_neighbors=n_neighbors + 1).fit(a).kneighbors(return_distance=False)[:, 1:]
     kb = NearestNeighbors(n_neighbors=n_neighbors + 1).fit(b).kneighbors(return_distance=False)[:, 1:]
-    return float(np.mean([len(set(x).intersection(y)) / n_neighbors for x, y in zip(ka, kb)]))
+    return float(np.mean([len(set(x).intersection(y)) / n_neighbors for x, y in zip(ka, kb, strict=True)]))
 
 
 def graph_overlap(a, b):
@@ -36,4 +36,3 @@ def graph_overlap(a, b):
         bi = set(b.indices[b.indptr[i] : b.indptr[i + 1]]) - {i}
         scores.append(len(ai & bi) / max(1, len(ai | bi)))
     return float(np.mean(scores))
-

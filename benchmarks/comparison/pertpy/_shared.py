@@ -22,19 +22,27 @@ def guide_adata():
     for guide in range(8):
         x[:, guide] = np.concatenate([rng.poisson(2, 140), rng.poisson(50, 60)])
         rng.shuffle(x[:, guide])
-    return ad.AnnData(x, obs=pd.DataFrame(index=[f"cell_{i}" for i in range(200)]), var=pd.DataFrame(index=[f"guide_{i}" for i in range(8)]))
+    return ad.AnnData(
+        x,
+        obs=pd.DataFrame(index=[f"cell_{i}" for i in range(200)]),
+        var=pd.DataFrame(index=[f"guide_{i}" for i in range(8)]),
+    )
 
 
 def screen_adata():
     rng = np.random.default_rng(1)
-    x = np.hstack([
-        np.vstack([np.clip(rng.normal(0, 1, (10, 10)), 0, None) for _ in range(3)]),
-        np.vstack([
-            np.clip(rng.normal(4, 0.7, (10, 10)), 0, None),
-            np.clip(rng.normal(4, 0.7, (10, 10)), 0, None),
-            np.clip(rng.normal(7, 0.9, (10, 10)), 0, None),
-        ]),
-    ]).astype(np.float32)
+    x = np.hstack(
+        [
+            np.vstack([np.clip(rng.normal(0, 1, (10, 10)), 0, None) for _ in range(3)]),
+            np.vstack(
+                [
+                    np.clip(rng.normal(4, 0.7, (10, 10)), 0, None),
+                    np.clip(rng.normal(4, 0.7, (10, 10)), 0, None),
+                    np.clip(rng.normal(7, 0.9, (10, 10)), 0, None),
+                ]
+            ),
+        ]
+    ).astype(np.float32)
     obs = pd.DataFrame({"gene_target": ["NT"] * 10 + ["target_gene_a"] * 20}, index=[str(i) for i in range(30)])
     var = pd.DataFrame(index=[f"gene{i}" for i in range(20)])
     return ad.AnnData(sparse.csr_matrix(x), obs=obs, var=var)
@@ -48,4 +56,3 @@ def pearson(a, b):
 
 def max_abs(a, b):
     return float(np.nanmax(np.abs(np.asarray(a, dtype=float) - np.asarray(b, dtype=float))))
-

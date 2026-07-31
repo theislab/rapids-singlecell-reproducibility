@@ -6,7 +6,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 HERE = Path(__file__).parent
 RESULTS = HERE / "results"
 SCRIPTS = [
@@ -47,9 +46,7 @@ for relative_path in SCRIPTS:
 
 summary = HERE / "equivalence.json"
 env["EQUIVALENCE_SUMMARY"] = str(summary)
-aggregation = subprocess.run(
-    [sys.executable, str(HERE / "collect_results.py")], env=env, check=False
-)
+aggregation = subprocess.run([sys.executable, str(HERE / "collect_results.py")], env=env, check=False)
 
 if failures:
     detail = ", ".join(f"{path} (exit {code})" for path, code in failures)

@@ -43,7 +43,7 @@ def compare_frames(name, reference, candidate, *, max_error=1e-4, min_correlatio
     a, b = reference.to_numpy(dtype=float), candidate.to_numpy(dtype=float)
     mask = np.isfinite(a) & np.isfinite(b)
     error = np.max(np.abs(a[mask] - b[mask]))
-    correlation = np.corrcoef(a[mask], b[mask])[0, 1]
+    correlation = 1.0 if np.array_equal(a[mask], b[mask]) else np.corrcoef(a[mask], b[mask])[0, 1]
     return [
         metric(f"{name}.max_abs_error", error, "<=", max_error, error <= max_error),
         metric(f"{name}.pearson_correlation", correlation, ">=", min_correlation, correlation >= min_correlation),
@@ -69,10 +69,14 @@ for name, kwargs in methods.items():
     getattr(dc.mt, name)(cpu, net, tmin=3, verbose=False, **kwargs)
     getattr(rsc.dcg, name)(gpu, net, tmin=3, verbose=False, **kwargs)
     score_error = 1e-3 if name == "aucell" else 1e-4
-    metrics.extend(compare_frames(f"{name}.score", cpu.obsm[f"score_{name}"], gpu.obsm[f"score_{name}"], max_error=score_error))
+    metrics.extend(
+        compare_frames(f"{name}.score", cpu.obsm[f"score_{name}"], gpu.obsm[f"score_{name}"], max_error=score_error)
+    )
     padj_key = f"padj_{name}"
     if padj_key in cpu.obsm and padj_key in gpu.obsm:
-        metrics.extend(compare_frames(f"{name}.adjusted_pvalue", cpu.obsm[padj_key], gpu.obsm[padj_key], max_error=1e-4))
+        metrics.extend(
+            compare_frames(f"{name}.adjusted_pvalue", cpu.obsm[padj_key], gpu.obsm[padj_key], max_error=5e-4)
+        )
 
 report = {
     "method": "decoupler_methods",

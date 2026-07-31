@@ -3,9 +3,7 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
-
 from _report import upper, write_report
-
 
 reference = sc.datasets.pbmc3k()
 candidate = reference.copy()

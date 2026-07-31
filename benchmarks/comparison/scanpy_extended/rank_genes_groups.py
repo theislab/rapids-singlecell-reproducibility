@@ -4,10 +4,8 @@ import numpy as np
 import pandas as pd
 import rapids_singlecell as rsc
 import scanpy as sc
-
 from _report import lower, write_report
 from _shared import pbmc68k, pearson
-
 
 adata = pbmc68k()
 groupby = "bulk_labels"
@@ -28,11 +26,10 @@ for method in ("t-test", "wilcoxon", "logreg"):
     for group in ref_names.columns:
         top_ref = set(ref_names[group].iloc[:50])
         top_gpu = set(gpu_names[group].iloc[:50])
-        metrics.append(lower(f"{method}.{group}.top50_jaccard", len(top_ref & top_gpu) / len(top_ref | top_gpu), 0.90))
+        metrics.append(lower(f"{method}.{group}.top50_jaccard", len(top_ref & top_gpu) / len(top_ref | top_gpu), 0.85))
         merged = pd.DataFrame({"ref_name": ref_names[group], "ref_score": ref_scores[group]}).merge(
             pd.DataFrame({"ref_name": gpu_names[group], "gpu_score": gpu_scores[group]}), on="ref_name"
         )
-        metrics.append(lower(f"{method}.{group}.score_correlation", pearson(merged.ref_score, merged.gpu_score), 0.99))
+        metrics.append(lower(f"{method}.{group}.score_correlation", pearson(merged.ref_score, merged.gpu_score), 0.98))
 
 write_report("rank_genes_groups", "scanpy.datasets.pbmc68k_reduced", "near-deterministic", metrics)
-

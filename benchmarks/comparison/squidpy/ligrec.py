@@ -7,7 +7,6 @@ import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
 import squidpy as sq
-
 from _report import lower_bound, upper_bound, write_report
 from _shared import (
     dataframe_values,
@@ -15,7 +14,6 @@ from _shared import (
     mean_abs_error,
     pearson_correlation,
 )
-
 
 adata = sc.datasets.paul15()
 clusters = adata.obs["paul15_clusters"].cat.categories[:4].tolist()
@@ -63,9 +61,7 @@ candidate = rsc.gr.ligrec(
 np.testing.assert_array_equal(reference["means"].index, candidate["means"].index)
 np.testing.assert_array_equal(reference["means"].columns, candidate["means"].columns)
 np.testing.assert_array_equal(reference["pvalues"].index, candidate["pvalues"].index)
-np.testing.assert_array_equal(
-    reference["pvalues"].columns, candidate["pvalues"].columns
-)
+np.testing.assert_array_equal(reference["pvalues"].columns, candidate["pvalues"].columns)
 
 reference_means = dataframe_values(reference["means"])
 candidate_means = dataframe_values(candidate["means"])
