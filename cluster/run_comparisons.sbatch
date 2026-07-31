@@ -67,7 +67,7 @@ uv sync --frozen
 "$UV_PROJECT_ENVIRONMENT/bin/python" - <<'PY'
 from importlib.metadata import version
 
-for package in ("rapids-singlecell", "scanpy", "squidpy", "decoupler", "pertpy"):
+for package in ("rapids-singlecell-cu12", "scanpy", "squidpy", "decoupler", "pertpy"):
     print(f"{package}=={version(package)}")
 PY
 
