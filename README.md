@@ -21,8 +21,12 @@ previously uncovered Scanpy, Squidpy, Decoupler, and Pertpy APIs:
 - [`pertpy`](benchmarks/comparison/pertpy/README.md)
 
 Each new script writes a JSON record containing the method, reference-package version,
-dataset, metric, tolerance, observed value, tier, and pass/fail status. After running
-the comparisons individually, aggregate the records with:
+dataset, metric, tolerance, observed value, tier, and pass/fail status. Metrics are split
+into criteria that gate the suite and measurements that are recorded as evidence. Thresholds are
+never widened to make a run green; failing criteria are diagnosed and left in place. See
+[`THRESHOLDS.md`](benchmarks/comparison/THRESHOLDS.md) for the record schema and for the
+diagnosis behind each current failure. After running the comparisons individually, aggregate the
+records with:
 
 ```bash
 python benchmarks/comparison/collect_results.py
@@ -33,6 +37,13 @@ automatically:
 
 ```bash
 python benchmarks/comparison/run_structured.py
+```
+
+Pass a subset of the script paths to rerun only those comparisons, which marks the aggregate
+output as partial:
+
+```bash
+python benchmarks/comparison/run_structured.py scanpy_core/preprocessing.py
 ```
 
 The complete suite includes deterministic numerical comparisons, stochastic graph and
@@ -52,7 +63,9 @@ For the Theislab/HMGU GPU cluster, use the documented
 [SLURM + uv + localscratch workflow](cluster/README.md).
 
 See the complete [CPU/GPU coverage inventory](benchmarks/comparison/COVERAGE.md) for
-the mapping from public methods to evidence scripts.
+the mapping from public methods to evidence scripts, and [`OPEN.md`](OPEN.md) for what this
+evidence does **not** establish — scale limits, unreviewed thresholds, upstream issues found,
+GPU portability, and what automated validation would require.
 
 ## Run time
 

@@ -1,0 +1,21 @@
+{
+  "method": "sqrt",
+  "reference_package": "scanpy",
+  "dataset": "scanpy.datasets.pbmc3k",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "X.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 1e-06,
+      "criterion": "<= 1e-06",
+      "passed": true
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # Temporary GPU equivalence results
 
+> Superseded by [`../../snapshots/38938766`](../../snapshots/38938766), the first complete run of
+> the expanded 20-group suite. This directory is kept only as provenance for the earlier
+> 15-group suite; see [`../../snapshots/README.md`](../../snapshots/README.md) for the index.
+
 This directory contains a temporary reference snapshot from Slurm job `38936727`, run on 2026-07-31.
 It covers the initial 15 structured method groups and predates the core Scanpy and
 end-to-end biological additions. It should not be interpreted as a result from the expanded

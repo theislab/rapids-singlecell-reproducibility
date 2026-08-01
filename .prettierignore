@@ -1,0 +1,5 @@
+# Generated equivalence evidence. These files are written by render_results.py on the
+# cluster and kept verbatim as the reviewer-facing record, so reformatting them would
+# silently alter cited evidence.
+benchmarks/comparison/snapshots/**/report/
+benchmarks/comparison/report/

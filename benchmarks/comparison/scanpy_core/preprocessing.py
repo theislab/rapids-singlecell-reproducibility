@@ -3,8 +3,8 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import lower, upper, write_report
-from _shared import max_abs, pearson
+from _report import lower, observed_only, upper, write_report
+from _shared import float32_ulp, max_abs, max_rel, pearson
 
 
 def gpu_copy(adata):
@@ -42,9 +42,23 @@ gpu = gpu_copy(counts)
 sc.pp.normalize_total(cpu, target_sum=10_000)
 rsc.pp.normalize_total(gpu, target_sum=10_000)
 rsc.get.anndata_to_CPU(gpu)
+# This criterion fails, and is left failing on purpose. pbmc3k normalized to
+# target_sum=10000 reaches ~1751, where one float32 ULP is already 1.22e-4, so no
+# float32 implementation can meet a 1e-5 absolute tolerance. That is recorded as
+# evidence next to the criterion rather than used to change it; see ../THRESHOLDS.md.
 metrics.extend(
     [
         upper("normalize_total.max_abs_error", max_abs(cpu.X, gpu.X), 1e-5),
+        observed_only(
+            "normalize_total.float32_ulp_at_max",
+            float32_ulp(cpu.X),
+            basis="Smallest representable float32 difference at the largest normalized count.",
+        ),
+        observed_only(
+            "normalize_total.max_rel_error",
+            max_rel(cpu.X, gpu.X),
+            basis="Absolute error divided by the largest normalized count, for scale context.",
+        ),
         lower("normalize_total.pearson_correlation", pearson(cpu.X, gpu.X), 0.999999),
     ]
 )

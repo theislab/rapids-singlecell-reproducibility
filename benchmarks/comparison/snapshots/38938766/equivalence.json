@@ -1,0 +1,1950 @@
+{
+  "passed": false,
+  "n_methods": 20,
+  "n_passed_methods": 16,
+  "n_metrics": 210,
+  "n_passed_metrics": 200,
+  "invalid_records": [],
+  "records": [
+    {
+      "method": "bbknn_scrublet",
+      "reference_package": "scanpy",
+      "dataset": "pbmc68k_reduced + pbmc3k",
+      "tier": "stochastic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "bbknn.connectivity_jaccard",
+          "observed": 0.8566044601377839,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "scrublet.score_correlation",
+          "observed": 0.9996055612444296,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        },
+        {
+          "metric": "scrublet.call_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        },
+        {
+          "metric": "scrublet_simulate_doublets.mean_library_size_relative_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 0.02,
+          "criterion": "<= 0.02",
+          "passed": true
+        },
+        {
+          "metric": "scrublet_simulate_doublets.std_library_size_relative_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 0.05,
+          "criterion": "<= 0.05",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "biological_pipeline_pbmc3k",
+      "reference_package": "scanpy",
+      "dataset": "pbmc3k_processed raw log-expression with published cell-type labels",
+      "tier": "biological",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": false,
+      "metrics": [
+        {
+          "metric": "highly_variable_genes.selection_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "pca.minimum_component_abs_correlation",
+          "observed": 0.9999997552111949,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        },
+        {
+          "metric": "umap.cpu.trustworthiness",
+          "observed": 0.8698707569082744,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": false
+        },
+        {
+          "metric": "umap.gpu.trustworthiness",
+          "observed": 0.8698257994279808,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": false
+        },
+        {
+          "metric": "umap.cross_embedding_knn_overlap",
+          "observed": 0.4018953752843063,
+          "comparison": ">=",
+          "tolerance": 0.6,
+          "criterion": ">= 0.6",
+          "passed": false
+        },
+        {
+          "metric": "clustering.adjusted_rand_index",
+          "observed": 0.971850766459035,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        },
+        {
+          "metric": "clustering.normalized_mutual_information",
+          "observed": 0.9531958533090836,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        },
+        {
+          "metric": "clustering.cpu_cell_type_nmi",
+          "observed": 0.8281437048932799,
+          "comparison": ">=",
+          "tolerance": 0.6,
+          "criterion": ">= 0.6",
+          "passed": true
+        },
+        {
+          "metric": "clustering.gpu_cell_type_nmi",
+          "observed": 0.8222850908430174,
+          "comparison": ">=",
+          "tolerance": 0.6,
+          "criterion": ">= 0.6",
+          "passed": true
+        },
+        {
+          "metric": "clustering.cell_type_nmi_difference",
+          "observed": 0.005858614050262556,
+          "comparison": "<=",
+          "tolerance": 0.05,
+          "criterion": "<= 0.05",
+          "passed": true
+        },
+        {
+          "metric": "markers.mean_top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "markers.minimum_top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.7,
+          "criterion": ">= 0.7",
+          "passed": true
+        },
+        {
+          "metric": "annotation.cpu_accuracy",
+          "observed": 0.9361471861471862,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "annotation.gpu_accuracy",
+          "observed": 0.9361471861471862,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "annotation.cpu_gpu_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        },
+        {
+          "metric": "annotation.accuracy_difference",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 0.05,
+          "criterion": "<= 0.05",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "calculate_niche",
+      "reference_package": "squidpy",
+      "dataset": "squidpy.datasets.imc",
+      "tier": "stochastic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "squidpy": "1.8.3"
+      },
+      "passed": false,
+      "metrics": [
+        {
+          "metric": "neighborhood.adjusted_rand_index",
+          "observed": 0.8590089825376331,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": false
+        },
+        {
+          "metric": "neighborhood.normalized_mutual_information",
+          "observed": 0.8066738759785339,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": false
+        },
+        {
+          "metric": "neighborhood.cluster_count_difference",
+          "observed": 11.0,
+          "comparison": "<=",
+          "tolerance": 1.0,
+          "criterion": "<= 1",
+          "passed": false
+        },
+        {
+          "metric": "utag.adjusted_rand_index",
+          "observed": 0.5546272189554484,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": false
+        },
+        {
+          "metric": "utag.normalized_mutual_information",
+          "observed": 0.7332727051187748,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": false
+        },
+        {
+          "metric": "utag.cluster_count_difference",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 1.0,
+          "criterion": "<= 1",
+          "passed": true
+        },
+        {
+          "metric": "cellcharter.adjusted_rand_index",
+          "observed": 0.9586100176385757,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        },
+        {
+          "metric": "cellcharter.normalized_mutual_information",
+          "observed": 0.9263038950133271,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        },
+        {
+          "metric": "cellcharter.cluster_count_difference",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 1.0,
+          "criterion": "<= 1",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "clustering_extended",
+      "reference_package": "scanpy",
+      "dataset": "scanpy.datasets.pbmc68k_reduced",
+      "tier": "stochastic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "louvain.adjusted_rand_index",
+          "observed": 0.8346537710416503,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        },
+        {
+          "metric": "louvain.normalized_mutual_information",
+          "observed": 0.8885469597677652,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        },
+        {
+          "metric": "kmeans.adjusted_rand_index",
+          "observed": 0.8175711199107404,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        },
+        {
+          "metric": "kmeans.normalized_mutual_information",
+          "observed": 0.8971594066262218,
+          "comparison": ">=",
+          "tolerance": 0.8,
+          "criterion": ">= 0.8",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "co_occurrence",
+      "reference_package": "squidpy",
+      "dataset": "squidpy.datasets.imc",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "squidpy": "1.8.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "interval.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 1e-06,
+          "criterion": "<= 1e-06",
+          "passed": true
+        },
+        {
+          "metric": "occurrence.max_abs_error",
+          "observed": 1.4481226138229886e-06,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "occurrence.mean_abs_error",
+          "observed": 9.838864661065462e-08,
+          "comparison": "<=",
+          "tolerance": 1e-06,
+          "criterion": "<= 1e-06",
+          "passed": true
+        },
+        {
+          "metric": "occurrence.pearson_correlation",
+          "observed": 0.9999999999999503,
+          "comparison": ">=",
+          "tolerance": 0.99999,
+          "criterion": ">= 0.99999",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "decoupler_methods",
+      "reference_package": "decoupler",
+      "dataset": "decoupler.ds.toy",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "decoupler": "2.2.0"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "mlm.score.max_abs_error",
+          "observed": 4.143194007877327e-06,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "mlm.score.pearson_correlation",
+          "observed": 0.9999999999999153,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "mlm.adjusted_pvalue.max_abs_error",
+          "observed": 1.783945428468492e-05,
+          "comparison": "<=",
+          "tolerance": 0.0005,
+          "criterion": "<= 0.0005",
+          "passed": true
+        },
+        {
+          "metric": "mlm.adjusted_pvalue.pearson_correlation",
+          "observed": 0.9999999999805405,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "ulm.score.max_abs_error",
+          "observed": 3.8806070419283856e-06,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "ulm.score.pearson_correlation",
+          "observed": 0.9999999999999819,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "ulm.adjusted_pvalue.max_abs_error",
+          "observed": 0.00021147727966308594,
+          "comparison": "<=",
+          "tolerance": 0.0005,
+          "criterion": "<= 0.0005",
+          "passed": true
+        },
+        {
+          "metric": "ulm.adjusted_pvalue.pearson_correlation",
+          "observed": 0.9999999988697567,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "aucell.score.max_abs_error",
+          "observed": 1.9868214962137642e-08,
+          "comparison": "<=",
+          "tolerance": 0.001,
+          "criterion": "<= 0.001",
+          "passed": true
+        },
+        {
+          "metric": "aucell.score.pearson_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "zscore.score.max_abs_error",
+          "observed": 1.1061834754855226e-06,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "zscore.score.pearson_correlation",
+          "observed": 0.9999999999999976,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "zscore.adjusted_pvalue.max_abs_error",
+          "observed": 2.384185791015625e-07,
+          "comparison": "<=",
+          "tolerance": 0.0005,
+          "criterion": "<= 0.0005",
+          "passed": true
+        },
+        {
+          "metric": "zscore.adjusted_pvalue.pearson_correlation",
+          "observed": 0.9999999999999483,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "waggr.score.max_abs_error",
+          "observed": 1.2449623305599289e-06,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "waggr.score.pearson_correlation",
+          "observed": 0.9999999999999983,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "waggr.adjusted_pvalue.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 0.0005,
+          "criterion": "<= 0.0005",
+          "passed": true
+        },
+        {
+          "metric": "waggr.adjusted_pvalue.pearson_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "distance",
+      "reference_package": "pertpy",
+      "dataset": "seeded grouped Gaussian data",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "pertpy": "1.1.1"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "edistance.pairwise_max_abs_error",
+          "observed": 3.552713678800501e-15,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "edistance.pairwise_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "euclidean.pairwise_max_abs_error",
+          "observed": 1.1102230246251565e-15,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "euclidean.pairwise_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "root_mean_squared_error.pairwise_max_abs_error",
+          "observed": 2.886579864025407e-15,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "root_mean_squared_error.pairwise_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "mse.pairwise_max_abs_error",
+          "observed": 4.440892098500626e-16,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "mse.pairwise_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "mean_absolute_error.pairwise_max_abs_error",
+          "observed": 2.220446049250313e-16,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "mean_absolute_error.pairwise_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "pearson_distance.pairwise_max_abs_error",
+          "observed": 1.3322676295501878e-15,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "pearson_distance.pairwise_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "cosine_distance.pairwise_max_abs_error",
+          "observed": 3.3306690738754696e-16,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "cosine_distance.pairwise_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "r2_distance.pairwise_max_abs_error",
+          "observed": 2.1316282072803006e-14,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "r2_distance.pairwise_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "wasserstein.pairwise_max_abs_error",
+          "observed": 0.00014964405507811307,
+          "comparison": "<=",
+          "tolerance": 0.0005,
+          "criterion": "<= 0.0005",
+          "passed": true
+        },
+        {
+          "metric": "wasserstein.pairwise_correlation",
+          "observed": 0.999999999989776,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "embeddings_extended",
+      "reference_package": "scanpy",
+      "dataset": "scanpy.datasets.pbmc68k_reduced",
+      "tier": "stochastic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "tsne.cpu.trustworthiness",
+          "observed": 0.9422311317436871,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        },
+        {
+          "metric": "tsne.gpu.trustworthiness",
+          "observed": 0.9223594288527819,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        },
+        {
+          "metric": "tsne.cross_embedding_knn_overlap",
+          "observed": 0.47723809523809524,
+          "comparison": ">=",
+          "tolerance": 0.45,
+          "criterion": ">= 0.45",
+          "passed": true
+        },
+        {
+          "metric": "diffmap.minimum_component_abs_correlation",
+          "observed": 0.9999999999986314,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        },
+        {
+          "metric": "draw_graph.cross_embedding_knn_overlap",
+          "observed": 0.6147619047619048,
+          "comparison": ">=",
+          "tolerance": 0.6,
+          "criterion": ">= 0.6",
+          "passed": true
+        },
+        {
+          "metric": "embedding_density.pearson_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "guide_assignment",
+      "reference_package": "pertpy",
+      "dataset": "seeded Poisson guide-count mixture",
+      "tier": "near-deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "pertpy": "1.1.1"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "assign_by_threshold.assignment_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 1.0,
+          "criterion": ">= 1.0",
+          "passed": true
+        },
+        {
+          "metric": "assign_to_max_guide.assignment_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 1.0,
+          "criterion": ">= 1.0",
+          "passed": true
+        },
+        {
+          "metric": "assign_mixture_model.assignment_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "ingest_cell_cycle",
+      "reference_package": "scanpy",
+      "dataset": "scanpy.datasets.pbmc68k_reduced",
+      "tier": "near-deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "ingest.label_agreement",
+          "observed": 0.9914285714285714,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "ingest.pca_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "ingest.umap_knn_overlap",
+          "observed": 0.5276190476190475,
+          "comparison": ">=",
+          "tolerance": 0.45,
+          "criterion": ">= 0.45",
+          "passed": true
+        },
+        {
+          "metric": "score_genes_cell_cycle.S_score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "score_genes_cell_cycle.G2M_score_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "score_genes_cell_cycle.phase_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.99,
+          "criterion": ">= 0.99",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "ligrec",
+      "reference_package": "squidpy",
+      "dataset": "scanpy.datasets.paul15",
+      "tier": "stochastic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "squidpy": "1.8.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "means.max_abs_error",
+          "observed": 4.866455709517936e-07,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "pvalues.nan_mask_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 1.0,
+          "criterion": ">= 1.0",
+          "passed": true
+        },
+        {
+          "metric": "pvalues.mean_abs_error",
+          "observed": 0.01443877577757444,
+          "comparison": "<=",
+          "tolerance": 0.05,
+          "criterion": "<= 0.05",
+          "passed": true
+        },
+        {
+          "metric": "pvalues.pearson_correlation",
+          "observed": 0.9982074498696519,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "mixscale",
+      "reference_package": "pertpy",
+      "dataset": "seeded synthetic perturbation screen",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "pertpy": "1.1.1"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "mixscale.score_max_abs_error",
+          "observed": 8.917660956342388e-07,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "mixscale.score_correlation",
+          "observed": 0.9999999999999993,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "mixscape",
+      "reference_package": "pertpy",
+      "dataset": "seeded synthetic perturbation screen",
+      "tier": "near-deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "pertpy": "1.1.1"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "perturbation_signature.max_abs_error",
+          "observed": 3.5762786865234375e-07,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "perturbation_signature.pearson_correlation",
+          "observed": 0.9999999999999971,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "mixscape.global_class_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        },
+        {
+          "metric": "mixscape.p_ko_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        },
+        {
+          "metric": "mixscape.lda_abs_correlation",
+          "observed": 0.9999999999999954,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "rank_genes_groups",
+      "reference_package": "scanpy",
+      "dataset": "scanpy.datasets.pbmc68k_reduced",
+      "tier": "near-deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "t-test.CD4+/CD25 T Reg.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD4+/CD25 T Reg.score_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD4+/CD45RA+/CD25- Naive T.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD4+/CD45RA+/CD25- Naive T.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD4+/CD45RO+ Memory.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD4+/CD45RO+ Memory.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD8+ Cytotoxic T.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD8+ Cytotoxic T.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD8+/CD45RA+ Naive Cytotoxic.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD8+/CD45RA+ Naive Cytotoxic.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD14+ Monocyte.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD14+ Monocyte.score_correlation",
+          "observed": 0.9999999999999998,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD19+ B.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD19+ B.score_correlation",
+          "observed": 0.9999999999999998,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD34+.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD34+.score_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD56+ NK.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.CD56+ NK.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "t-test.Dendritic.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "t-test.Dendritic.score_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD4+/CD25 T Reg.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD4+/CD25 T Reg.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD4+/CD45RA+/CD25- Naive T.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD4+/CD45RA+/CD25- Naive T.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD4+/CD45RO+ Memory.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD4+/CD45RO+ Memory.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD8+ Cytotoxic T.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD8+ Cytotoxic T.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD8+/CD45RA+ Naive Cytotoxic.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD8+/CD45RA+ Naive Cytotoxic.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD14+ Monocyte.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD14+ Monocyte.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD19+ B.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD19+ B.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD34+.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD34+.score_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD56+ NK.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.CD56+ NK.score_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.Dendritic.top50_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "wilcoxon.Dendritic.score_correlation",
+          "observed": 0.9999999999999998,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD4+/CD25 T Reg.top50_jaccard",
+          "observed": 0.8867924528301887,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD4+/CD25 T Reg.score_correlation",
+          "observed": 0.9860230529940497,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD4+/CD45RA+/CD25- Naive T.top50_jaccard",
+          "observed": 0.8518518518518519,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD4+/CD45RA+/CD25- Naive T.score_correlation",
+          "observed": 0.993484256013665,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD4+/CD45RO+ Memory.top50_jaccard",
+          "observed": 0.9230769230769231,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD4+/CD45RO+ Memory.score_correlation",
+          "observed": 0.9969525265613522,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD8+ Cytotoxic T.top50_jaccard",
+          "observed": 0.8867924528301887,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD8+ Cytotoxic T.score_correlation",
+          "observed": 0.9957794625144035,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD8+/CD45RA+ Naive Cytotoxic.top50_jaccard",
+          "observed": 0.9230769230769231,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD8+/CD45RA+ Naive Cytotoxic.score_correlation",
+          "observed": 0.9981388774757295,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD14+ Monocyte.top50_jaccard",
+          "observed": 0.9607843137254902,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD14+ Monocyte.score_correlation",
+          "observed": 0.9970309604786647,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD19+ B.top50_jaccard",
+          "observed": 0.9230769230769231,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD19+ B.score_correlation",
+          "observed": 0.9938803792050502,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD34+.top50_jaccard",
+          "observed": 0.9230769230769231,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD34+.score_correlation",
+          "observed": 0.9908138962389982,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD56+ NK.top50_jaccard",
+          "observed": 0.8867924528301887,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.CD56+ NK.score_correlation",
+          "observed": 0.9978468564823862,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "logreg.Dendritic.top50_jaccard",
+          "observed": 0.9230769230769231,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "logreg.Dendritic.score_correlation",
+          "observed": 0.9956977076824058,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "scanpy_core_graphs_embeddings",
+      "reference_package": "scanpy",
+      "dataset": "pbmc68k_reduced",
+      "tier": "stochastic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": false,
+      "metrics": [
+        {
+          "metric": "neighbors.distance_graph_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        },
+        {
+          "metric": "neighbors.connectivity_graph_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.85,
+          "criterion": ">= 0.85",
+          "passed": true
+        },
+        {
+          "metric": "umap.cpu.trustworthiness",
+          "observed": 0.9214399662376028,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        },
+        {
+          "metric": "umap.gpu.trustworthiness",
+          "observed": 0.92346796089189,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        },
+        {
+          "metric": "umap.cross_embedding_knn_overlap",
+          "observed": 0.5884761904761905,
+          "comparison": ">=",
+          "tolerance": 0.65,
+          "criterion": ">= 0.65",
+          "passed": false
+        },
+        {
+          "metric": "leiden.adjusted_rand_index",
+          "observed": 0.9884714771126899,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        },
+        {
+          "metric": "leiden.normalized_mutual_information",
+          "observed": 0.9850950761538652,
+          "comparison": ">=",
+          "tolerance": 0.9,
+          "criterion": ">= 0.9",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "scanpy_core_harmony",
+      "reference_package": "harmonypy",
+      "dataset": "Harmonypy PBMC 3,500-cell donor benchmark",
+      "tier": "iterative",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "harmonypy": "0.2.0"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "harmony.minimum_component_abs_correlation",
+          "observed": 0.9986045398121391,
+          "comparison": ">=",
+          "tolerance": 0.95,
+          "criterion": ">= 0.95",
+          "passed": true
+        },
+        {
+          "metric": "harmony.mean_component_abs_correlation",
+          "observed": 0.9993025578257303,
+          "comparison": ">=",
+          "tolerance": 0.98,
+          "criterion": ">= 0.98",
+          "passed": true
+        },
+        {
+          "metric": "harmony.standard_deviation_max_abs_error",
+          "observed": 0.007670772551091165,
+          "comparison": "<=",
+          "tolerance": 0.1,
+          "criterion": "<= 0.1",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "scanpy_core_hvg_pca",
+      "reference_package": "scanpy",
+      "dataset": "pbmc3k",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "highly_variable_genes.seurat.selection_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.99,
+          "criterion": ">= 0.99",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.seurat.means.max_abs_error",
+          "observed": 1.3194125125792766e-08,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.seurat.dispersions.max_abs_error",
+          "observed": 1.9906220849463807e-07,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.seurat.dispersions_norm.max_abs_error",
+          "observed": 4.76837158203125e-07,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.cell_ranger.selection_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.99,
+          "criterion": ">= 0.99",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.cell_ranger.means.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.cell_ranger.dispersions.max_abs_error",
+          "observed": 8.710320242855119e-08,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.cell_ranger.dispersions_norm.max_abs_error",
+          "observed": 4.76837158203125e-06,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.seurat_v3.selection_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.99,
+          "criterion": ">= 0.99",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.seurat_v3.means.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.seurat_v3.variances.max_abs_error",
+          "observed": 1.1368683772161603e-13,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.seurat_v3.variances_norm.max_abs_error",
+          "observed": 2.6356694604601216e-13,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.pearson_residuals.selection_jaccard",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.99,
+          "criterion": ">= 0.99",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.pearson_residuals.means.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.pearson_residuals.variances.max_abs_error",
+          "observed": 1.1368683772161603e-13,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "highly_variable_genes.pearson_residuals.residual_variances.max_abs_error",
+          "observed": 2.5951500632004354e-05,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "pca.scores.minimum_component_abs_correlation",
+          "observed": 0.9999999999999996,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "pca.loadings.minimum_component_abs_correlation",
+          "observed": 0.9999999999999991,
+          "comparison": ">=",
+          "tolerance": 0.999,
+          "criterion": ">= 0.999",
+          "passed": true
+        },
+        {
+          "metric": "pca.explained_variance_ratio.max_abs_error",
+          "observed": 4.163336342344337e-17,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "scanpy_core_preprocessing",
+      "reference_package": "scanpy",
+      "dataset": "pbmc3k",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": false,
+      "metrics": [
+        {
+          "metric": "filter_cells.obs_name_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 1.0,
+          "criterion": ">= 1.0",
+          "passed": true
+        },
+        {
+          "metric": "filter_genes.var_name_agreement",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 1.0,
+          "criterion": ">= 1.0",
+          "passed": true
+        },
+        {
+          "metric": "calculate_qc_metrics.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "normalize_total.max_abs_error",
+          "observed": 0.0001220703125,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": false
+        },
+        {
+          "metric": "normalize_total.pearson_correlation",
+          "observed": 0.9999999999999994,
+          "comparison": ">=",
+          "tolerance": 0.999999,
+          "criterion": ">= 0.999999",
+          "passed": true
+        },
+        {
+          "metric": "log1p.max_abs_error",
+          "observed": 4.76837158203125e-07,
+          "comparison": "<=",
+          "tolerance": 1e-06,
+          "criterion": "<= 1e-06",
+          "passed": true
+        },
+        {
+          "metric": "log1p.pearson_correlation",
+          "observed": 0.9999999999999369,
+          "comparison": ">=",
+          "tolerance": 0.999999,
+          "criterion": ">= 0.999999",
+          "passed": true
+        },
+        {
+          "metric": "normalize_pearson_residuals.max_abs_error",
+          "observed": 7.62939453125e-06,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "normalize_pearson_residuals.pearson_correlation",
+          "observed": 0.9999999999999971,
+          "comparison": ">=",
+          "tolerance": 0.99999,
+          "criterion": ">= 0.99999",
+          "passed": true
+        },
+        {
+          "metric": "scale.max_abs_error",
+          "observed": 1.3282611934783972e-06,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "scale.pearson_correlation",
+          "observed": 0.9999999999999993,
+          "comparison": ">=",
+          "tolerance": 0.99999,
+          "criterion": ">= 0.99999",
+          "passed": true
+        },
+        {
+          "metric": "regress_out.max_abs_error",
+          "observed": 5.7220458984375e-06,
+          "comparison": "<=",
+          "tolerance": 0.0001,
+          "criterion": "<= 0.0001",
+          "passed": true
+        },
+        {
+          "metric": "regress_out.pearson_correlation",
+          "observed": 0.9999999999999853,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "score_genes.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 1e-05,
+          "criterion": "<= 1e-05",
+          "passed": true
+        },
+        {
+          "metric": "score_genes.pearson_correlation",
+          "observed": 0.9999999999999999,
+          "comparison": ">=",
+          "tolerance": 0.9999,
+          "criterion": ">= 0.9999",
+          "passed": true
+        },
+        {
+          "metric": "sqrt.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 1e-06,
+          "criterion": "<= 1e-06",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "spatial_autocorr",
+      "reference_package": "squidpy",
+      "dataset": "squidpy.datasets.imc",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "squidpy": "1.8.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "moran.I.max_abs_error",
+          "observed": 2.023171963294601e-09,
+          "comparison": "<=",
+          "tolerance": 1e-06,
+          "criterion": "<= 1e-06",
+          "passed": true
+        },
+        {
+          "metric": "moran.I.pearson_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.999999,
+          "criterion": ">= 0.999999",
+          "passed": true
+        },
+        {
+          "metric": "geary.C.max_abs_error",
+          "observed": 1.496274237844375e-08,
+          "comparison": "<=",
+          "tolerance": 1e-06,
+          "criterion": "<= 1e-06",
+          "passed": true
+        },
+        {
+          "metric": "geary.C.pearson_correlation",
+          "observed": 1.0,
+          "comparison": ">=",
+          "tolerance": 0.999999,
+          "criterion": ">= 0.999999",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "method": "sqrt",
+      "reference_package": "scanpy",
+      "dataset": "scanpy.datasets.pbmc3k",
+      "tier": "deterministic",
+      "versions": {
+        "rapids-singlecell": "0.16.1",
+        "scanpy": "1.12.3"
+      },
+      "passed": true,
+      "metrics": [
+        {
+          "metric": "X.max_abs_error",
+          "observed": 0.0,
+          "comparison": "<=",
+          "tolerance": 1e-06,
+          "criterion": "<= 1e-06",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

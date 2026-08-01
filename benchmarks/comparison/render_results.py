@@ -21,6 +21,14 @@ def status(value: bool) -> str:
     return "PASS" if value else "FAIL"
 
 
+def is_gating(metric: dict) -> bool:
+    return bool(metric.get("gating", True))
+
+
+def gating_metrics(record: dict) -> list[dict]:
+    return [metric for metric in record["metrics"] if is_gating(metric)]
+
+
 def render_csv(summary: dict, output: Path) -> None:
     fields = [
         "method",
@@ -31,6 +39,8 @@ def render_csv(summary: dict, output: Path) -> None:
         "observed",
         "comparison",
         "tolerance",
+        "gating",
+        "basis",
         "passed",
         "versions",
     ]
@@ -49,6 +59,8 @@ def render_csv(summary: dict, output: Path) -> None:
                         "observed": metric["observed"],
                         "comparison": metric["comparison"],
                         "tolerance": metric["tolerance"],
+                        "gating": is_gating(metric),
+                        "basis": metric.get("basis", ""),
                         "passed": metric["passed"],
                         "versions": json.dumps(record.get("versions", {}), sort_keys=True),
                     }
@@ -58,7 +70,10 @@ def render_csv(summary: dict, output: Path) -> None:
 def render_plot(summary: dict, output: Path) -> None:
     records = summary["records"]
     labels = [record["method"] for record in records]
-    rates = [sum(metric["passed"] for metric in record["metrics"]) / len(record["metrics"]) for record in records]
+    rates = [
+        sum(metric["passed"] for metric in gating_metrics(record)) / max(1, len(gating_metrics(record)))
+        for record in records
+    ]
     colors = ["#238636" if record["passed"] else "#da3633" for record in records]
     height = max(5, 0.38 * len(records))
     figure, axis = plt.subplots(figsize=(10, height), constrained_layout=True)
@@ -79,7 +94,12 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
     passed_methods = summary.get("n_passed_methods", sum(record["passed"] for record in summary["records"]))
     metrics = summary["n_metrics"]
     passed_metrics = summary.get(
-        "n_passed_metrics", sum(metric["passed"] for record in summary["records"] for metric in record["metrics"])
+        "n_passed_metrics",
+        sum(metric["passed"] for record in summary["records"] for metric in gating_metrics(record)),
+    )
+    informational = summary.get(
+        "n_informational_metrics",
+        sum(1 for record in summary["records"] for metric in record["metrics"] if not is_gating(metric)),
     )
     versions = {}
     for record in summary["records"]:
@@ -92,9 +112,19 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
         "",
         "## Outcome",
         "",
+        *(
+            [
+                f"> Partial run: only {execution.get('n_selected')} of {execution.get('n_available')} comparisons"
+                " were executed. Records for the others, if present, come from an earlier run.",
+                "",
+            ]
+            if execution.get("partial")
+            else []
+        ),
         f"- Overall: **{status(summary['passed'])}**",
         f"- Method groups passing: **{passed_methods}/{methods}**",
-        f"- Metrics passing: **{passed_metrics}/{metrics}**",
+        f"- Gating metrics passing: **{passed_metrics}/{metrics}**",
+        f"- Additional measurements recorded as evidence: **{informational}**",
         f"- Scripts completing successfully: **{sum(item['passed'] for item in execution['executions'])}/{len(execution['executions'])}**",
         "",
         "## Software versions",
@@ -114,16 +144,17 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
         "| --- | --- | --- | --- | --- | ---: |",
     ]
     for record in summary["records"]:
-        record_passed = sum(metric["passed"] for metric in record["metrics"])
+        gated = gating_metrics(record)
+        record_passed = sum(metric["passed"] for metric in gated)
         lines.append(
             f"| `{record['method']}` | {record['reference_package']} | {record['dataset']} | {record['tier']} | "
-            f"{status(record['passed'])} | {record_passed}/{len(record['metrics'])} |"
+            f"{status(record['passed'])} | {record_passed}/{len(gated)} |"
         )
 
     failed_metrics = [
         (record["method"], metric)
         for record in summary["records"]
-        for metric in record["metrics"]
+        for metric in gating_metrics(record)
         if not metric["passed"]
     ]
     lines.extend(["", "## Failed metrics", ""])
@@ -138,6 +169,49 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
             lines.append(f"| `{method}` | `{metric['metric']}` | {metric['observed']:.8g} | {metric['criterion']} |")
     else:
         lines.append("None.")
+
+    recorded = [
+        (record["method"], metric)
+        for record in summary["records"]
+        for metric in record["metrics"]
+        if not is_gating(metric)
+    ]
+    if recorded:
+        lines.extend(
+            [
+                "",
+                "## Recorded measurements (not gating)",
+                "",
+                "These quantify behaviour rather than test CPU/GPU equivalence, so they are"
+                " reported without deciding the outcome.",
+                "",
+                "| Method group | Measurement | Observed | Why it is not a criterion |",
+                "| --- | --- | ---: | --- |",
+            ]
+        )
+        for method, metric in recorded:
+            lines.append(
+                f"| `{method}` | `{metric['metric']}` | {metric['observed']:.8g} | {metric.get('basis', '')} |"
+            )
+
+    justified = [
+        (record["method"], metric)
+        for record in summary["records"]
+        for metric in gating_metrics(record)
+        if metric.get("basis")
+    ]
+    if justified:
+        lines.extend(
+            [
+                "",
+                "## Basis for gating criteria",
+                "",
+                "| Method group | Criterion | Threshold | Basis |",
+                "| --- | --- | --- | --- |",
+            ]
+        )
+        for method, metric in justified:
+            lines.append(f"| `{method}` | `{metric['metric']}` | {metric['criterion']} | {metric['basis']} |")
 
     incomplete = [
         item for item in execution["executions"] if not item["passed"] or not item.get("result_present", True)

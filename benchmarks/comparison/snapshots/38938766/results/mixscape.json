@@ -1,0 +1,53 @@
+{
+  "method": "mixscape",
+  "reference_package": "pertpy",
+  "dataset": "seeded synthetic perturbation screen",
+  "tier": "near-deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "pertpy": "1.1.1"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "perturbation_signature.max_abs_error",
+      "observed": 3.5762786865234375e-07,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "perturbation_signature.pearson_correlation",
+      "observed": 0.9999999999999971,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "mixscape.global_class_agreement",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.95,
+      "criterion": ">= 0.95",
+      "passed": true
+    },
+    {
+      "metric": "mixscape.p_ko_correlation",
+      "observed": 0.9999999999999999,
+      "comparison": ">=",
+      "tolerance": 0.95,
+      "criterion": ">= 0.95",
+      "passed": true
+    },
+    {
+      "metric": "mixscape.lda_abs_correlation",
+      "observed": 0.9999999999999954,
+      "comparison": ">=",
+      "tolerance": 0.95,
+      "criterion": ">= 0.95",
+      "passed": true
+    }
+  ]
+}

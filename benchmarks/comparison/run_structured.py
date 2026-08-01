@@ -39,14 +39,42 @@ SCRIPTS = [
 ]
 
 
+def select_scripts(argv: list[str]) -> tuple[list[str], bool]:
+    """Resolve which comparisons to run, from arguments or EQUIVALENCE_SCRIPTS.
+
+    A subset run is for iterating on one method; it is reported as partial so its
+    aggregate output is never mistaken for a full-suite snapshot.
+    """
+    requested = list(argv) or [
+        item for item in os.environ.get("EQUIVALENCE_SCRIPTS", "").replace(",", " ").split() if item
+    ]
+    if not requested:
+        return SCRIPTS, False
+    unknown = [item for item in requested if item not in SCRIPTS]
+    if unknown:
+        raise SystemExit(f"Unknown comparison script(s): {', '.join(unknown)}\nAvailable:\n  " + "\n  ".join(SCRIPTS))
+    # Keep the curated order regardless of the order given on the command line.
+    return [item for item in SCRIPTS if item in set(requested)], True
+
+
+selected, partial = select_scripts(sys.argv[1:])
+
 RESULTS.mkdir(parents=True, exist_ok=True)
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 log_dir = REPORT_DIR / "logs"
 log_dir.mkdir(parents=True, exist_ok=True)
-for previous_result in RESULTS.glob("*.json"):
-    previous_result.unlink()
-for previous_log in log_dir.glob("*.log"):
-    previous_log.unlink()
+if partial:
+    print(f"### partial run: {len(selected)}/{len(SCRIPTS)} comparisons", flush=True)
+    # Records from comparisons that are not rerun are left in place on purpose, so a
+    # targeted rerun still aggregates against the rest of the suite.
+    for relative_path in selected:
+        stale_log = log_dir / f"{relative_path.replace('/', '__')}.log"
+        stale_log.unlink(missing_ok=True)
+else:
+    for previous_result in RESULTS.glob("*.json"):
+        previous_result.unlink()
+    for previous_log in log_dir.glob("*.log"):
+        previous_log.unlink()
 
 env = os.environ.copy()
 env["EQUIVALENCE_OUTPUT_DIR"] = str(RESULTS)
@@ -54,7 +82,7 @@ env.setdefault("EQUIVALENCE_ARTIFACT_DIR", str(REPORT_DIR / "artifacts"))
 failures = []
 executions = []
 
-for relative_path in SCRIPTS:
+for relative_path in selected:
     script = HERE / relative_path
     log_path = log_dir / f"{relative_path.replace('/', '__')}.log"
     print(f"\n=== {relative_path} ===", flush=True)
@@ -94,7 +122,18 @@ for relative_path in SCRIPTS:
         )
 
 EXECUTION.parent.mkdir(parents=True, exist_ok=True)
-EXECUTION.write_text(json.dumps({"executions": executions}, indent=2) + "\n")
+EXECUTION.write_text(
+    json.dumps(
+        {
+            "partial": partial,
+            "n_selected": len(selected),
+            "n_available": len(SCRIPTS),
+            "executions": executions,
+        },
+        indent=2,
+    )
+    + "\n"
+)
 
 env["EQUIVALENCE_SUMMARY"] = str(SUMMARY)
 aggregation = subprocess.run([sys.executable, str(HERE / "collect_results.py")], env=env, check=False)

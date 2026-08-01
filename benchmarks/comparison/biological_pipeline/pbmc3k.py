@@ -11,8 +11,15 @@ import numpy as np
 import pandas as pd
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import lower, upper, write_report
-from _shared import component_abs_correlations, embedding_knn_overlap, jaccard, ranked_names
+from _report import lower, observed_only, upper, write_report
+from _shared import (
+    BASELINE_SEEDS,
+    component_abs_correlations,
+    embedding_knn_overlap,
+    jaccard,
+    ranked_names,
+    reseeded_umap_overlap,
+)
 from sklearn.manifold import trustworthiness
 from sklearn.metrics import accuracy_score, adjusted_rand_score, normalized_mutual_info_score
 from sklearn.model_selection import StratifiedShuffleSplit
@@ -124,6 +131,18 @@ for group in cpu.obs["cell_type"].cat.categories:
     marker_overlaps.append(overlap)
     marker_rows.append({"cell_type": group, "top50_jaccard": overlap})
 
+cpu_trustworthiness = trustworthiness(cpu.obsm["X_pca"], cpu.obsm["X_umap"], n_neighbors=15)
+gpu_trustworthiness = trustworthiness(gpu.obsm["X_pca"], gpu.obsm["X_umap"], n_neighbors=15)
+cross_overlap = embedding_knn_overlap(cpu.obsm["X_umap"], gpu.obsm["X_umap"])
+
+# Reseeded CPU embeddings, computed from the CPU neighbor graph already in `cpu`,
+# give the null model for the CPU-vs-GPU overlap below.
+baseline_overlap = reseeded_umap_overlap(
+    cpu,
+    cpu.obsm["X_umap"],
+    lambda adata, seed: sc.tl.umap(adata, random_state=seed),
+)
+
 cpu_accuracy = accuracy_score(truth, cpu_prediction)
 gpu_accuracy = accuracy_score(truth, gpu_prediction)
 cpu_label_nmi = normalized_mutual_info_score(cpu.obs["cell_type"], cpu.obs["clusters"])
@@ -137,20 +156,26 @@ metrics = [
         0.98,
     ),
     lower("pca.minimum_component_abs_correlation", pca_correlations.min(), 0.95),
-    lower(
-        "umap.cpu.trustworthiness",
-        trustworthiness(cpu.obsm["X_pca"], cpu.obsm["X_umap"], n_neighbors=15),
-        0.9,
+    # Original criteria unchanged, including the three that fail. The reseeded-CPU
+    # baseline and trustworthiness gap are recorded beside them as evidence for
+    # interpretation, never as replacements; see ../THRESHOLDS.md.
+    lower("umap.cpu.trustworthiness", cpu_trustworthiness, 0.9),
+    lower("umap.gpu.trustworthiness", gpu_trustworthiness, 0.9),
+    lower("umap.cross_embedding_knn_overlap", cross_overlap, 0.6),
+    observed_only(
+        "umap.trustworthiness_difference",
+        abs(cpu_trustworthiness - gpu_trustworthiness),
+        basis="CPU/GPU embedding-quality gap, for comparison against the CPU seed-to-seed spread.",
     ),
-    lower(
-        "umap.gpu.trustworthiness",
-        trustworthiness(gpu.obsm["X_pca"], gpu.obsm["X_umap"], n_neighbors=15),
-        0.9,
+    observed_only(
+        "umap.cpu_reseeded_knn_overlap",
+        baseline_overlap,
+        basis=f"Weakest CPU-vs-CPU overlap over seeds {BASELINE_SEEDS}; how far the reference is from itself.",
     ),
-    lower(
-        "umap.cross_embedding_knn_overlap",
-        embedding_knn_overlap(cpu.obsm["X_umap"], gpu.obsm["X_umap"]),
-        0.6,
+    observed_only(
+        "umap.cross_embedding_overlap_vs_cpu_baseline",
+        cross_overlap - baseline_overlap,
+        basis="CPU-vs-GPU overlap minus the reseeded-CPU baseline; negative means worse than reseeding.",
     ),
     lower(
         "clustering.adjusted_rand_index",

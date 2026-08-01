@@ -17,6 +17,29 @@ def max_abs(left, right) -> float:
     return float(np.nanmax(np.abs(left_array - right_array)))
 
 
+def max_rel(left, right) -> float:
+    """Largest absolute difference expressed relative to the reference scale.
+
+    An absolute tolerance is not a meaningful criterion when the compared values
+    span several orders of magnitude: in float32 the reference itself cannot be
+    represented more precisely than one ULP at its largest value. Normalizing by
+    that largest value gives a criterion that a correct float32 implementation
+    can actually satisfy.
+    """
+    left_array = dense(left).astype(float, copy=False)
+    right_array = dense(right).astype(float, copy=False)
+    scale = float(np.nanmax(np.abs(left_array)))
+    if scale == 0.0:
+        return 0.0
+    return float(np.nanmax(np.abs(left_array - right_array)) / scale)
+
+
+def float32_ulp(left) -> float:
+    """One float32 ULP at the largest magnitude present in the reference."""
+    scale = float(np.nanmax(np.abs(dense(left).astype(float, copy=False))))
+    return float(np.spacing(np.float32(scale)))
+
+
 def pearson(left, right) -> float:
     left_array = dense(left).astype(float, copy=False).ravel()
     right_array = dense(right).astype(float, copy=False).ravel()
@@ -56,6 +79,28 @@ def embedding_knn_overlap(left, right, n_neighbors: int = 15) -> float:
             ]
         )
     )
+
+
+# Seeds used to measure how far the CPU reference is from itself. UMAP is
+# stochastic, so a CPU-vs-GPU overlap is only interpretable next to the overlap
+# between two CPU runs that differ solely in random seed. This is recorded as
+# evidence; it does not gate anything.
+BASELINE_SEEDS = (1, 2)
+
+
+def reseeded_umap_overlap(adata, reference_embedding, umap, *, n_neighbors: int = 15) -> float:
+    """Overlap between the reference embedding and CPU reruns at other seeds.
+
+    `umap` is called as `umap(copy, seed)` and must populate `obsm["X_umap"]`.
+    The minimum over `BASELINE_SEEDS` is returned, giving the weakest
+    self-consistency the reference implementation displays.
+    """
+    overlaps = []
+    for seed in BASELINE_SEEDS:
+        candidate = adata.copy()
+        umap(candidate, seed)
+        overlaps.append(embedding_knn_overlap(reference_embedding, candidate.obsm["X_umap"], n_neighbors=n_neighbors))
+    return float(min(overlaps))
 
 
 def component_abs_correlations(left, right) -> np.ndarray:

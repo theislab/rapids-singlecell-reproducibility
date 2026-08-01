@@ -76,6 +76,22 @@ for package in ("rapids-singlecell-cu12", "scanpy", "squidpy", "decoupler", "per
     print(f"{package}=={version(package)}")
 PY
 
+# A node whose GPU cannot run rapids-singlecell kernels produces no scientific
+# evidence, so it is detected here rather than part-way through the suite. The
+# record is copied back either way; a failure aborts before the comparisons start.
+set +e
+"$UV_PROJECT_ENVIRONMENT/bin/python" cluster/gpu_smoke_check.py --output "$DURABLE_OUTPUT/gpu-smoke.json"
+smoke_status=$?
+set -e
+if [[ $smoke_status -ne 0 ]]; then
+    nvidia-smi -q > "$DURABLE_OUTPUT/nvidia-smi.txt" || true
+    "$UV_PROJECT_ENVIRONMENT/bin/python" -m pip freeze > "$DURABLE_OUTPUT/environment.txt" 2>/dev/null || \
+        uv pip freeze --python "$UV_PROJECT_ENVIRONMENT/bin/python" > "$DURABLE_OUTPUT/environment.txt"
+    echo "### aborting before the suite: this GPU cannot run rapids-singlecell kernels" >&2
+    echo "### evidence=$DURABLE_OUTPUT" >&2
+    exit "$smoke_status"
+fi
+
 set +e
 "$UV_PROJECT_ENVIRONMENT/bin/python" benchmarks/comparison/run_structured.py
 comparison_status=$?
