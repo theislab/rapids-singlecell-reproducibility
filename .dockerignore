@@ -1,0 +1,10 @@
+.git
+.venv
+.ruff_cache
+data
+out
+**/__pycache__
+benchmarks/comparison/report
+benchmarks/comparison/results
+benchmarks/speed/notebooks
+use_cases

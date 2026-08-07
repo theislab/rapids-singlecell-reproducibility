@@ -1,0 +1,165 @@
+{
+  "method": "scanpy_core_hvg_pca",
+  "reference_package": "scanpy",
+  "dataset": "pbmc3k",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "highly_variable_genes.seurat.selection_jaccard",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.99,
+      "criterion": ">= 0.99",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.seurat.means.max_abs_error",
+      "observed": 1.3194125125792766e-08,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.seurat.dispersions.max_abs_error",
+      "observed": 1.9906220849463807e-07,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.seurat.dispersions_norm.max_abs_error",
+      "observed": 4.76837158203125e-07,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.cell_ranger.selection_jaccard",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.99,
+      "criterion": ">= 0.99",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.cell_ranger.means.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.cell_ranger.dispersions.max_abs_error",
+      "observed": 8.710320242855119e-08,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.cell_ranger.dispersions_norm.max_abs_error",
+      "observed": 4.76837158203125e-06,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.seurat_v3.selection_jaccard",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.99,
+      "criterion": ">= 0.99",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.seurat_v3.means.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.seurat_v3.variances.max_abs_error",
+      "observed": 1.1368683772161603e-13,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.seurat_v3.variances_norm.max_abs_error",
+      "observed": 2.6356694604601216e-13,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.pearson_residuals.selection_jaccard",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.99,
+      "criterion": ">= 0.99",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.pearson_residuals.means.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.pearson_residuals.variances.max_abs_error",
+      "observed": 1.1368683772161603e-13,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "highly_variable_genes.pearson_residuals.residual_variances.max_abs_error",
+      "observed": 2.5951500632004354e-05,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "pca.scores.minimum_component_abs_correlation",
+      "observed": 0.9999999999999996,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "pca.loadings.minimum_component_abs_correlation",
+      "observed": 0.9999999999999991,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "pca.explained_variance_ratio.max_abs_error",
+      "observed": 4.163336342344337e-17,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    }
+  ]
+}

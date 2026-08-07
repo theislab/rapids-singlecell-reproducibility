@@ -1,0 +1,184 @@
+{
+  "executions": [
+    {
+      "script": "squidpy/spatial_autocorr.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:29:28.084335+00:00",
+      "duration_seconds": 25.078617963939905,
+      "log": "logs/squidpy__spatial_autocorr.py.log",
+      "result_present": true
+    },
+    {
+      "script": "squidpy/co_occurrence.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:29:53.164135+00:00",
+      "duration_seconds": 17.91078212764114,
+      "log": "logs/squidpy__co_occurrence.py.log",
+      "result_present": true
+    },
+    {
+      "script": "squidpy/ligrec.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:30:11.076092+00:00",
+      "duration_seconds": 13.351977044716477,
+      "log": "logs/squidpy__ligrec.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_core/preprocessing.py",
+      "exit_code": 1,
+      "passed": false,
+      "started_at": "2026-07-31T22:30:24.429814+00:00",
+      "duration_seconds": 38.0872803106904,
+      "log": "logs/scanpy_core__preprocessing.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_core/hvg_pca.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:31:02.518466+00:00",
+      "duration_seconds": 20.379259852692485,
+      "log": "logs/scanpy_core__hvg_pca.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_core/graphs_embeddings.py",
+      "exit_code": 1,
+      "passed": false,
+      "started_at": "2026-07-31T22:31:22.901761+00:00",
+      "duration_seconds": 24.070536768063903,
+      "log": "logs/scanpy_core__graphs_embeddings.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_core/harmony.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:31:46.973721+00:00",
+      "duration_seconds": 14.216795064508915,
+      "log": "logs/scanpy_core__harmony.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_extended/sqrt.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:32:01.192744+00:00",
+      "duration_seconds": 6.054640122689307,
+      "log": "logs/scanpy_extended__sqrt.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_extended/bbknn_scrublet.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:32:07.249085+00:00",
+      "duration_seconds": 69.9375836821273,
+      "log": "logs/scanpy_extended__bbknn_scrublet.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_extended/clustering.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:33:17.189271+00:00",
+      "duration_seconds": 6.966318243183196,
+      "log": "logs/scanpy_extended__clustering.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_extended/embeddings.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:33:24.158784+00:00",
+      "duration_seconds": 17.5844720415771,
+      "log": "logs/scanpy_extended__embeddings.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_extended/ingest_cell_cycle.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:33:41.746160+00:00",
+      "duration_seconds": 52.723843957297504,
+      "log": "logs/scanpy_extended__ingest_cell_cycle.py.log",
+      "result_present": true
+    },
+    {
+      "script": "scanpy_extended/rank_genes_groups.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:34:34.473345+00:00",
+      "duration_seconds": 24.933683171868324,
+      "log": "logs/scanpy_extended__rank_genes_groups.py.log",
+      "result_present": true
+    },
+    {
+      "script": "decoupler/decoupler.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:34:59.411567+00:00",
+      "duration_seconds": 52.857236336916685,
+      "log": "logs/decoupler__decoupler.py.log",
+      "result_present": true
+    },
+    {
+      "script": "pertpy/distance.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:35:52.273451+00:00",
+      "duration_seconds": 16.67689887434244,
+      "log": "logs/pertpy__distance.py.log",
+      "result_present": true
+    },
+    {
+      "script": "pertpy/guide_assignment.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:36:08.952904+00:00",
+      "duration_seconds": 16.832881074398756,
+      "log": "logs/pertpy__guide_assignment.py.log",
+      "result_present": true
+    },
+    {
+      "script": "pertpy/mixscape.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:36:25.789676+00:00",
+      "duration_seconds": 72.95348815340549,
+      "log": "logs/pertpy__mixscape.py.log",
+      "result_present": true
+    },
+    {
+      "script": "pertpy/mixscale.py",
+      "exit_code": 0,
+      "passed": true,
+      "started_at": "2026-07-31T22:37:38.746523+00:00",
+      "duration_seconds": 9.805521584115922,
+      "log": "logs/pertpy__mixscale.py.log",
+      "result_present": true
+    },
+    {
+      "script": "biological_pipeline/pbmc3k.py",
+      "exit_code": 1,
+      "passed": false,
+      "started_at": "2026-07-31T22:37:48.556312+00:00",
+      "duration_seconds": 25.244842712767422,
+      "log": "logs/biological_pipeline__pbmc3k.py.log",
+      "result_present": true
+    },
+    {
+      "script": "squidpy/calculate_niche.py",
+      "exit_code": 1,
+      "passed": false,
+      "started_at": "2026-07-31T22:38:13.805600+00:00",
+      "duration_seconds": 28.955221517011523,
+      "log": "logs/squidpy__calculate_niche.py.log",
+      "result_present": true
+    }
+  ]
+}

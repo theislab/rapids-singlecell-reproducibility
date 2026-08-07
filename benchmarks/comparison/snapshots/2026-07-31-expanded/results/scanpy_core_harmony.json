@@ -1,0 +1,37 @@
+{
+  "method": "scanpy_core_harmony",
+  "reference_package": "harmonypy",
+  "dataset": "Harmonypy PBMC 3,500-cell donor benchmark",
+  "tier": "iterative",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "harmonypy": "0.2.0"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "harmony.minimum_component_abs_correlation",
+      "observed": 0.9986045398121391,
+      "comparison": ">=",
+      "tolerance": 0.95,
+      "criterion": ">= 0.95",
+      "passed": true
+    },
+    {
+      "metric": "harmony.mean_component_abs_correlation",
+      "observed": 0.9993025578257303,
+      "comparison": ">=",
+      "tolerance": 0.98,
+      "criterion": ">= 0.98",
+      "passed": true
+    },
+    {
+      "metric": "harmony.standard_deviation_max_abs_error",
+      "observed": 0.007670772551091165,
+      "comparison": "<=",
+      "tolerance": 0.1,
+      "criterion": "<= 0.1",
+      "passed": true
+    }
+  ]
+}

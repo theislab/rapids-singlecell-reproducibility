@@ -1,0 +1,45 @@
+{
+  "method": "ligrec",
+  "reference_package": "squidpy",
+  "dataset": "scanpy.datasets.paul15",
+  "tier": "stochastic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "squidpy": "1.8.3"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "means.max_abs_error",
+      "observed": 4.866455709517936e-07,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "pvalues.nan_mask_agreement",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 1.0,
+      "criterion": ">= 1.0",
+      "passed": true
+    },
+    {
+      "metric": "pvalues.mean_abs_error",
+      "observed": 0.01443877577757444,
+      "comparison": "<=",
+      "tolerance": 0.05,
+      "criterion": "<= 0.05",
+      "passed": true
+    },
+    {
+      "metric": "pvalues.pearson_correlation",
+      "observed": 0.9982074498696519,
+      "comparison": ">=",
+      "tolerance": 0.9,
+      "criterion": ">= 0.9",
+      "passed": true
+    }
+  ]
+}

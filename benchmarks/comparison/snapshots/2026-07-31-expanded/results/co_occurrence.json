@@ -1,0 +1,45 @@
+{
+  "method": "co_occurrence",
+  "reference_package": "squidpy",
+  "dataset": "squidpy.datasets.imc",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "squidpy": "1.8.3"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "interval.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 1e-06,
+      "criterion": "<= 1e-06",
+      "passed": true
+    },
+    {
+      "metric": "occurrence.max_abs_error",
+      "observed": 1.4481226138229886e-06,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "occurrence.mean_abs_error",
+      "observed": 9.838864661065462e-08,
+      "comparison": "<=",
+      "tolerance": 1e-06,
+      "criterion": "<= 1e-06",
+      "passed": true
+    },
+    {
+      "metric": "occurrence.pearson_correlation",
+      "observed": 0.9999999999999503,
+      "comparison": ">=",
+      "tolerance": 0.99999,
+      "criterion": ">= 0.99999",
+      "passed": true
+    }
+  ]
+}

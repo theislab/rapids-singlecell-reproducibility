@@ -1,0 +1,157 @@
+{
+  "method": "distance",
+  "reference_package": "pertpy",
+  "dataset": "seeded grouped Gaussian data",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "pertpy": "1.1.1"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "edistance.pairwise_max_abs_error",
+      "observed": 3.552713678800501e-15,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "edistance.pairwise_correlation",
+      "observed": 0.9999999999999999,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "euclidean.pairwise_max_abs_error",
+      "observed": 1.1102230246251565e-15,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "euclidean.pairwise_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "root_mean_squared_error.pairwise_max_abs_error",
+      "observed": 2.886579864025407e-15,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "root_mean_squared_error.pairwise_correlation",
+      "observed": 0.9999999999999999,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "mse.pairwise_max_abs_error",
+      "observed": 4.440892098500626e-16,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "mse.pairwise_correlation",
+      "observed": 0.9999999999999999,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "mean_absolute_error.pairwise_max_abs_error",
+      "observed": 2.220446049250313e-16,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "mean_absolute_error.pairwise_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "pearson_distance.pairwise_max_abs_error",
+      "observed": 1.3322676295501878e-15,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "pearson_distance.pairwise_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "cosine_distance.pairwise_max_abs_error",
+      "observed": 3.3306690738754696e-16,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "cosine_distance.pairwise_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "r2_distance.pairwise_max_abs_error",
+      "observed": 2.1316282072803006e-14,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "r2_distance.pairwise_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "wasserstein.pairwise_max_abs_error",
+      "observed": 0.00014964405507811307,
+      "comparison": "<=",
+      "tolerance": 0.0005,
+      "criterion": "<= 0.0005",
+      "passed": true
+    },
+    {
+      "metric": "wasserstein.pairwise_correlation",
+      "observed": 0.999999999989776,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    }
+  ]
+}

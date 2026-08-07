@@ -1,0 +1,157 @@
+{
+  "method": "decoupler_methods",
+  "reference_package": "decoupler",
+  "dataset": "decoupler.ds.toy",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "decoupler": "2.2.0"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "mlm.score.max_abs_error",
+      "observed": 4.143194007877327e-06,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "mlm.score.pearson_correlation",
+      "observed": 0.9999999999999153,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "mlm.adjusted_pvalue.max_abs_error",
+      "observed": 1.783945428468492e-05,
+      "comparison": "<=",
+      "tolerance": 0.0005,
+      "criterion": "<= 0.0005",
+      "passed": true
+    },
+    {
+      "metric": "mlm.adjusted_pvalue.pearson_correlation",
+      "observed": 0.9999999999805405,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "ulm.score.max_abs_error",
+      "observed": 3.8806070419283856e-06,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "ulm.score.pearson_correlation",
+      "observed": 0.9999999999999819,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "ulm.adjusted_pvalue.max_abs_error",
+      "observed": 0.00021147727966308594,
+      "comparison": "<=",
+      "tolerance": 0.0005,
+      "criterion": "<= 0.0005",
+      "passed": true
+    },
+    {
+      "metric": "ulm.adjusted_pvalue.pearson_correlation",
+      "observed": 0.9999999988697567,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "aucell.score.max_abs_error",
+      "observed": 1.9868214962137642e-08,
+      "comparison": "<=",
+      "tolerance": 0.001,
+      "criterion": "<= 0.001",
+      "passed": true
+    },
+    {
+      "metric": "aucell.score.pearson_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "zscore.score.max_abs_error",
+      "observed": 1.1061834754855226e-06,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "zscore.score.pearson_correlation",
+      "observed": 0.9999999999999976,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "zscore.adjusted_pvalue.max_abs_error",
+      "observed": 2.384185791015625e-07,
+      "comparison": "<=",
+      "tolerance": 0.0005,
+      "criterion": "<= 0.0005",
+      "passed": true
+    },
+    {
+      "metric": "zscore.adjusted_pvalue.pearson_correlation",
+      "observed": 0.9999999999999483,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "waggr.score.max_abs_error",
+      "observed": 1.2449623305599289e-06,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "waggr.score.pearson_correlation",
+      "observed": 0.9999999999999983,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "waggr.adjusted_pvalue.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 0.0005,
+      "criterion": "<= 0.0005",
+      "passed": true
+    },
+    {
+      "metric": "waggr.adjusted_pvalue.pearson_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    }
+  ]
+}

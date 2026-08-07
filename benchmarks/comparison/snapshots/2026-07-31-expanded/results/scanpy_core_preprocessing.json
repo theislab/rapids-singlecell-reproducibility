@@ -1,0 +1,141 @@
+{
+  "method": "scanpy_core_preprocessing",
+  "reference_package": "scanpy",
+  "dataset": "pbmc3k",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "passed": false,
+  "metrics": [
+    {
+      "metric": "filter_cells.obs_name_agreement",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 1.0,
+      "criterion": ">= 1.0",
+      "passed": true
+    },
+    {
+      "metric": "filter_genes.var_name_agreement",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 1.0,
+      "criterion": ">= 1.0",
+      "passed": true
+    },
+    {
+      "metric": "calculate_qc_metrics.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "normalize_total.max_abs_error",
+      "observed": 0.0001220703125,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": false
+    },
+    {
+      "metric": "normalize_total.pearson_correlation",
+      "observed": 0.9999999999999994,
+      "comparison": ">=",
+      "tolerance": 0.999999,
+      "criterion": ">= 0.999999",
+      "passed": true
+    },
+    {
+      "metric": "log1p.max_abs_error",
+      "observed": 4.76837158203125e-07,
+      "comparison": "<=",
+      "tolerance": 1e-06,
+      "criterion": "<= 1e-06",
+      "passed": true
+    },
+    {
+      "metric": "log1p.pearson_correlation",
+      "observed": 0.9999999999999369,
+      "comparison": ">=",
+      "tolerance": 0.999999,
+      "criterion": ">= 0.999999",
+      "passed": true
+    },
+    {
+      "metric": "normalize_pearson_residuals.max_abs_error",
+      "observed": 7.62939453125e-06,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "normalize_pearson_residuals.pearson_correlation",
+      "observed": 0.9999999999999971,
+      "comparison": ">=",
+      "tolerance": 0.99999,
+      "criterion": ">= 0.99999",
+      "passed": true
+    },
+    {
+      "metric": "scale.max_abs_error",
+      "observed": 1.3282611934783972e-06,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "scale.pearson_correlation",
+      "observed": 0.9999999999999993,
+      "comparison": ">=",
+      "tolerance": 0.99999,
+      "criterion": ">= 0.99999",
+      "passed": true
+    },
+    {
+      "metric": "regress_out.max_abs_error",
+      "observed": 5.7220458984375e-06,
+      "comparison": "<=",
+      "tolerance": 0.0001,
+      "criterion": "<= 0.0001",
+      "passed": true
+    },
+    {
+      "metric": "regress_out.pearson_correlation",
+      "observed": 0.9999999999999853,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "score_genes.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 1e-05,
+      "criterion": "<= 1e-05",
+      "passed": true
+    },
+    {
+      "metric": "score_genes.pearson_correlation",
+      "observed": 0.9999999999999999,
+      "comparison": ">=",
+      "tolerance": 0.9999,
+      "criterion": ">= 0.9999",
+      "passed": true
+    },
+    {
+      "metric": "sqrt.max_abs_error",
+      "observed": 0.0,
+      "comparison": "<=",
+      "tolerance": 1e-06,
+      "criterion": "<= 1e-06",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "method": "ingest_cell_cycle",
+  "reference_package": "scanpy",
+  "dataset": "scanpy.datasets.pbmc68k_reduced",
+  "tier": "near-deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "passed": true,
+  "metrics": [
+    {
+      "metric": "ingest.label_agreement",
+      "observed": 0.9914285714285714,
+      "comparison": ">=",
+      "tolerance": 0.98,
+      "criterion": ">= 0.98",
+      "passed": true
+    },
+    {
+      "metric": "ingest.pca_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "ingest.umap_knn_overlap",
+      "observed": 0.5276190476190475,
+      "comparison": ">=",
+      "tolerance": 0.45,
+      "criterion": ">= 0.45",
+      "passed": true
+    },
+    {
+      "metric": "score_genes_cell_cycle.S_score_correlation",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "score_genes_cell_cycle.G2M_score_correlation",
+      "observed": 0.9999999999999999,
+      "comparison": ">=",
+      "tolerance": 0.999,
+      "criterion": ">= 0.999",
+      "passed": true
+    },
+    {
+      "metric": "score_genes_cell_cycle.phase_agreement",
+      "observed": 1.0,
+      "comparison": ">=",
+      "tolerance": 0.99,
+      "criterion": ">= 0.99",
+      "passed": true
+    }
+  ]
+}
