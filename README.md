@@ -20,12 +20,25 @@ previously uncovered Scanpy, Squidpy, Decoupler, and Pertpy APIs:
 - [`decoupler`](benchmarks/comparison/decoupler/README.md)
 - [`pertpy`](benchmarks/comparison/pertpy/README.md)
 
-Each new script writes a JSON record containing the method, reference-package version,
-dataset, metric, tolerance, observed value, tier, and pass/fail status. Metrics are split
-into criteria that gate the suite and measurements that are recorded as evidence. Thresholds are
-never widened to make a run green; failing criteria are diagnosed and left in place. See
-[`THRESHOLDS.md`](benchmarks/comparison/THRESHOLDS.md) for the record schema and for the
-diagnosis behind each current failure. After running the comparisons individually, aggregate the
+Each script writes a JSON record identifying the method, reference package and version,
+dataset and tier, plus one entry per metric:
+
+| Field        | Meaning                                                |
+| ------------ | ------------------------------------------------------ |
+| `metric`     | Metric name, unique within a method group              |
+| `observed`   | Measured value                                         |
+| `comparison` | `<=`, `>=`, or `observed` for a non-gating measurement |
+| `tolerance`  | Threshold, or `null` for a non-gating measurement      |
+| `criterion`  | Human-readable form of the threshold                   |
+| `gating`     | Whether the metric decides pass/fail                   |
+| `basis`      | Why the threshold is what it is; empty until reviewed  |
+| `diagnosis`  | For a failing criterion, what the investigation found  |
+| `passed`     | Result; always `true` for non-gating measurements      |
+
+Metrics are split into criteria that gate the suite and measurements recorded as evidence;
+`collect_results.py` rejects a record that mixes the two. **Thresholds are never widened to
+make a run green.** A failing criterion keeps its value and carries its `diagnosis`, which the
+generated report prints beside it. After running the comparisons individually, aggregate the
 records with:
 
 ```bash
@@ -59,13 +72,43 @@ PBMC3k biological workflow. It always preserves per-script logs and produces:
 A failed threshold makes the final command fail but does not stop later comparisons from
 running, so incomplete equivalence still yields a complete diagnostic report.
 
-For the Theislab/HMGU GPU cluster, use the documented
-[SLURM + uv + localscratch workflow](cluster/README.md).
-
 See the complete [CPU/GPU coverage inventory](benchmarks/comparison/COVERAGE.md) for
 the mapping from public methods to evidence scripts, and [`OPEN.md`](OPEN.md) for what this
 evidence does **not** establish — scale limits, unreviewed thresholds, upstream issues found,
 GPU portability, and what automated validation would require.
+
+## Container
+
+The suite ships as a container, so reproducing it does not mean rebuilding the environment
+by hand. CUDA comes from the wheels pinned in `uv.lock`; the only host requirement is an
+NVIDIA driver.
+
+```bash
+docker build -t rsc-equivalence .
+```
+
+```bash
+docker run --rm --gpus all -v "$PWD/out:/out" rsc-equivalence
+```
+
+Everything a run writes — result records, the report, downloaded datasets — lands in `out/`.
+The image takes the same arguments as `run_structured.py`, and also carries a fast GPU check
+that tells an unusable GPU apart from a scientific failure and exits `90` when
+rapids-singlecell kernels cannot run at all:
+
+```bash
+docker run --rm --gpus all -v "$PWD/out:/out" rsc-equivalence /repro/benchmarks/comparison/gpu_smoke_check.py --output /out/gpu-smoke.json
+```
+
+```bash
+docker run --rm --gpus all -v "$PWD/out:/out" rsc-equivalence /repro/benchmarks/comparison/run_structured.py scanpy_core/preprocessing.py
+```
+
+Rootless hosts can convert and run the same image with Apptainer:
+
+```bash
+apptainer run --nv --pwd /out -B "$PWD/out:/out" rsc-equivalence.sif
+```
 
 ## Run time
 
@@ -76,4 +119,4 @@ the comparison suite measures numerical and biological agreement.
 
 Automatic execution requires GPU-backed CI. The manual
 [`gpu-equivalence` workflow](.github/workflows/gpu-equivalence.yml) targets a self-hosted
-Linux runner labeled `gpu`; otherwise submit the documented Slurm job directly.
+Linux runner labeled `gpu`; without one, run the container on a GPU host as above.

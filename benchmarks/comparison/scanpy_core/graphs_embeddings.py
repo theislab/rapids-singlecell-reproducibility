@@ -50,14 +50,24 @@ baseline_overlap = reseeded_umap_overlap(
     lambda adata, seed: sc.tl.umap(adata, random_state=seed),
 )
 
-# The original criteria are kept exactly as they were, including the ones that fail.
-# The reseeded-CPU baseline and the trustworthiness difference are added alongside as
-# evidence for interpreting them, never in place of them; see ../THRESHOLDS.md.
+TRUSTWORTHINESS_DIAGNOSIS = (
+    "Trustworthiness scores an embedding against its own input, so it does not test CPU/GPU "
+    "agreement at all. See `umap.trustworthiness_difference` for the actual gap."
+)
+OVERLAP_DIAGNOSIS = (
+    "UMAP is stochastic, and this threshold asks for more agreement than the CPU reference shows "
+    "against itself. See `umap.cpu_reseeded_knn_overlap`, the same measurement with only the seed "
+    "changed, and `umap.cross_embedding_overlap_vs_cpu_baseline`."
+)
+
+# The original criteria are kept exactly as they were, including the ones that fail. The
+# reseeded-CPU baseline and the trustworthiness difference are recorded alongside as
+# evidence for interpreting them, never in place of them.
 metrics.extend(
     [
-        lower("umap.cpu.trustworthiness", cpu_trustworthiness, 0.9),
-        lower("umap.gpu.trustworthiness", gpu_trustworthiness, 0.9),
-        lower("umap.cross_embedding_knn_overlap", cross_overlap, 0.65),
+        lower("umap.cpu.trustworthiness", cpu_trustworthiness, 0.9) | {"diagnosis": TRUSTWORTHINESS_DIAGNOSIS},
+        lower("umap.gpu.trustworthiness", gpu_trustworthiness, 0.9) | {"diagnosis": TRUSTWORTHINESS_DIAGNOSIS},
+        lower("umap.cross_embedding_knn_overlap", cross_overlap, 0.65) | {"diagnosis": OVERLAP_DIAGNOSIS},
         observed_only(
             "umap.trustworthiness_difference",
             abs(cpu_trustworthiness - gpu_trustworthiness),

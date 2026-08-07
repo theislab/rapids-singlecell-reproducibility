@@ -41,6 +41,7 @@ def render_csv(summary: dict, output: Path) -> None:
         "tolerance",
         "gating",
         "basis",
+        "diagnosis",
         "passed",
         "versions",
     ]
@@ -61,6 +62,7 @@ def render_csv(summary: dict, output: Path) -> None:
                         "tolerance": metric["tolerance"],
                         "gating": is_gating(metric),
                         "basis": metric.get("basis", ""),
+                        "diagnosis": metric.get("diagnosis", ""),
                         "passed": metric["passed"],
                         "versions": json.dumps(record.get("versions", {}), sort_keys=True),
                     }
@@ -161,12 +163,18 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
     if failed_metrics:
         lines.extend(
             [
-                "| Method group | Metric | Observed | Criterion |",
-                "| --- | --- | ---: | --- |",
+                "A criterion is never widened to make a run green. Where a failure has been"
+                " investigated, what the investigation found is recorded with it.",
+                "",
+                "| Method group | Metric | Observed | Criterion | Why it fails |",
+                "| --- | --- | ---: | --- | --- |",
             ]
         )
         for method, metric in failed_metrics:
-            lines.append(f"| `{method}` | `{metric['metric']}` | {metric['observed']:.8g} | {metric['criterion']} |")
+            lines.append(
+                f"| `{method}` | `{metric['metric']}` | {metric['observed']:.8g} | {metric['criterion']} | "
+                f"{metric.get('diagnosis') or 'Not yet diagnosed.'} |"
+            )
     else:
         lines.append("None.")
 
@@ -243,7 +251,7 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
             "| Additional scverse APIs | Direct Squidpy, Decoupler, and Pertpy reference comparisons |",
             "",
             "Raw metric records are available in [`metrics.csv`](metrics.csv) and [`equivalence.json`](../equivalence.json).",
-            "Automatic publication of this report requires GPU-backed CI, either through a self-hosted GPU runner or a CI-to-Slurm integration.",
+            "Automatic publication of this report requires GPU-backed CI on a self-hosted GPU runner.",
         ]
     )
     output.write_text("\n".join(lines) + "\n")

@@ -42,13 +42,19 @@ gpu = gpu_copy(counts)
 sc.pp.normalize_total(cpu, target_sum=10_000)
 rsc.pp.normalize_total(gpu, target_sum=10_000)
 rsc.get.anndata_to_CPU(gpu)
-# This criterion fails, and is left failing on purpose. pbmc3k normalized to
-# target_sum=10000 reaches ~1751, where one float32 ULP is already 1.22e-4, so no
-# float32 implementation can meet a 1e-5 absolute tolerance. That is recorded as
-# evidence next to the criterion rather than used to change it; see ../THRESHOLDS.md.
+# This criterion fails, and is left failing on purpose: the diagnosis is recorded with
+# it and the two supporting quantities are recorded beside it, rather than the threshold
+# being changed.
 metrics.extend(
     [
-        upper("normalize_total.max_abs_error", max_abs(cpu.X, gpu.X), 1e-5),
+        upper("normalize_total.max_abs_error", max_abs(cpu.X, gpu.X), 1e-5)
+        | {
+            "diagnosis": (
+                "The observed error is exactly one float32 ULP at the largest normalized value "
+                "(~1751), so no float32 implementation can meet an absolute 1e-5 here. See "
+                "`normalize_total.float32_ulp_at_max` and `normalize_total.max_rel_error`."
+            )
+        },
         observed_only(
             "normalize_total.float32_ulp_at_max",
             float32_ulp(cpu.X),

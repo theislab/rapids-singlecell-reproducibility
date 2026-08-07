@@ -10,14 +10,14 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 WORKDIR /repro
 COPY pyproject.toml uv.lock ./
-# Everything else resolves to a wheel; bbknn pulls annoy, which has no cp312 wheel and
-# builds from source. annoy's setup.py otherwise adds -march=native, which would tie the
-# image to the CPU that built it; ANNOY_COMPILER_ARGS replaces the whole flag list.
-# APT::Sandbox::User=root keeps apt from dropping to `_apt`, which it cannot do under a
-# rootless builder that has only one UID to map.
+# Everything else in the lock file resolves to a wheel; bbknn pulls annoy, which has no
+# cp312 wheel and builds from source. APT::Sandbox::User=root keeps apt from dropping to
+# `_apt`, which it cannot do under a rootless builder with only one UID to map.
 RUN apt-get -o APT::Sandbox::User=root update \
     && apt-get -o APT::Sandbox::User=root install -y --no-install-recommends g++ \
     && rm -rf /var/lib/apt/lists/*
+# annoy's setup.py otherwise appends -march=native, which would tie the image to the CPU
+# that built it. ANNOY_COMPILER_ARGS replaces the whole flag list, so drop just that one.
 ENV ANNOY_COMPILER_ARGS=-D_CRT_SECURE_NO_WARNINGS,-fpermissive,-O3,-ffast-math,-fno-associative-math,-DANNOYLIB_MULTITHREADED_BUILD,-std=c++14
 RUN uv sync --frozen
 COPY . .

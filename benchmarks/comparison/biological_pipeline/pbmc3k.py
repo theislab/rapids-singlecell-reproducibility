@@ -149,6 +149,17 @@ cpu_label_nmi = normalized_mutual_info_score(cpu.obs["cell_type"], cpu.obs["clus
 gpu_label_nmi = normalized_mutual_info_score(gpu.obs["cell_type"], gpu.obs["clusters"])
 pca_correlations = component_abs_correlations(cpu.obsm["X_pca"], gpu.obsm["X_pca"])
 
+TRUSTWORTHINESS_DIAGNOSIS = (
+    "Trustworthiness scores an embedding against its own input, so it does not test CPU/GPU "
+    "agreement at all, and Scanpy itself does not reach 0.9 on pbmc3k. See "
+    "`umap.trustworthiness_difference` for the actual gap."
+)
+OVERLAP_DIAGNOSIS = (
+    "UMAP is stochastic, and this threshold asks for more agreement than the CPU reference shows "
+    "against itself. See `umap.cpu_reseeded_knn_overlap`, the same measurement with only the seed "
+    "changed, and `umap.cross_embedding_overlap_vs_cpu_baseline`."
+)
+
 metrics = [
     lower(
         "highly_variable_genes.selection_jaccard",
@@ -158,10 +169,10 @@ metrics = [
     lower("pca.minimum_component_abs_correlation", pca_correlations.min(), 0.95),
     # Original criteria unchanged, including the three that fail. The reseeded-CPU
     # baseline and trustworthiness gap are recorded beside them as evidence for
-    # interpretation, never as replacements; see ../THRESHOLDS.md.
-    lower("umap.cpu.trustworthiness", cpu_trustworthiness, 0.9),
-    lower("umap.gpu.trustworthiness", gpu_trustworthiness, 0.9),
-    lower("umap.cross_embedding_knn_overlap", cross_overlap, 0.6),
+    # interpretation, never as replacements.
+    lower("umap.cpu.trustworthiness", cpu_trustworthiness, 0.9) | {"diagnosis": TRUSTWORTHINESS_DIAGNOSIS},
+    lower("umap.gpu.trustworthiness", gpu_trustworthiness, 0.9) | {"diagnosis": TRUSTWORTHINESS_DIAGNOSIS},
+    lower("umap.cross_embedding_knn_overlap", cross_overlap, 0.6) | {"diagnosis": OVERLAP_DIAGNOSIS},
     observed_only(
         "umap.trustworthiness_difference",
         abs(cpu_trustworthiness - gpu_trustworthiness),

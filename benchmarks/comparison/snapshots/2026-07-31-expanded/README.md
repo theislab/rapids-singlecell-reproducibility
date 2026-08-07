@@ -24,7 +24,7 @@ Every one of the four non-zero exits was a threshold assertion raised _after_ th
 written. There were no runtime failures, no API failures, and no missing records: the suite
 produced complete evidence.
 
-## Read the criteria alongside `THRESHOLDS.md`
+## Read the criteria alongside the diagnoses
 
 All ten failing metrics were investigated and **every criterion was left exactly as it is**.
 Thresholds in this suite are not widened to make a run green. The diagnoses below explain what
@@ -40,7 +40,7 @@ each failure means; acting on any of them is a decision for the method owners.
 | `calculate_niche` neighborhood ARI 0.8590, NMI 0.8067  | FAIL vs `>= 0.9`             | Feature space has 3913 duplicate rows of 4668; the GPU kNN is exact and the CPU is not    |
 | `calculate_niche` cluster-count difference = 11        | FAIL vs `<= 1`               | `resolution` is not comparable across Leiden implementations                              |
 
-See [`../../THRESHOLDS.md`](../../THRESHOLDS.md) for the full evidence, including the probes that
+See [`OPEN.md`](../../../../OPEN.md) for the supporting measurements, including the probes that
 looked for a rapids-singlecell-side defect behind each failure and found none.
 
 Later runs added non-gating evidence measurements beside these criteria, so a newer snapshot will

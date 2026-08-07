@@ -16,8 +16,8 @@ It prints measurements and asserts nothing, so it never gates a run. Run it dire
 
     python benchmarks/comparison/squidpy/niche_divergence_diagnostic.py
 
-Findings from jobs 38956728, 38956767, 38957332, 38957359 and 38957415 are written up in
-../THRESHOLDS.md. Summary: no rapids-singlecell defect. On this feature space rsc's kNN is
+Findings from the probes this script drives are written up in the repository's
+OPEN.md. Summary: no rapids-singlecell defect. On this feature space rsc's kNN is
 exact while scanpy's is not, because the profile holds 3913 duplicate rows out of 4668.
 """
 

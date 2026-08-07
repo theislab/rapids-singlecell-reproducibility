@@ -188,4 +188,4 @@ benchmarks/comparison/results/
 benchmarks/comparison/report/
 benchmarks/comparison/scanpy_core/results/
 benchmarks/comparison/biological_pipeline/results/
-benchmarks/comparison/cluster-results/
+out/

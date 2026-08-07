@@ -24,23 +24,23 @@ reviewer suite.
 - pertpy: 1.1.1
 - decoupler: 2.2.0
 
-| Comparison | Result | Metrics |
-| --- | --- | ---: |
-| bbknn_scrublet | PASS | 5/5 |
-| calculate_niche | FAIL | 3/9 |
-| clustering_extended | PASS | 4/4 |
-| co_occurrence | PASS | 4/4 |
-| decoupler_methods | PASS | 18/18 |
-| distance | PASS | 18/18 |
-| embeddings_extended | PASS | 6/6 |
-| guide_assignment | PASS | 3/3 |
-| ingest_cell_cycle | PASS | 6/6 |
-| ligrec | PASS | 4/4 |
-| mixscale | PASS | 2/2 |
-| mixscape | PASS | 5/5 |
-| rank_genes_groups | PASS | 60/60 |
-| spatial_autocorr | PASS | 4/4 |
-| sqrt | PASS | 1/1 |
+| Comparison          | Result | Metrics |
+| ------------------- | ------ | ------: |
+| bbknn_scrublet      | PASS   |     5/5 |
+| calculate_niche     | FAIL   |     3/9 |
+| clustering_extended | PASS   |     4/4 |
+| co_occurrence       | PASS   |     4/4 |
+| decoupler_methods   | PASS   |   18/18 |
+| distance            | PASS   |   18/18 |
+| embeddings_extended | PASS   |     6/6 |
+| guide_assignment    | PASS   |     3/3 |
+| ingest_cell_cycle   | PASS   |     6/6 |
+| ligrec              | PASS   |     4/4 |
+| mixscale            | PASS   |     2/2 |
+| mixscape            | PASS   |     5/5 |
+| rank_genes_groups   | PASS   |   60/60 |
+| spatial_autocorr    | PASS   |     4/4 |
+| sqrt                | PASS   |     1/1 |
 
 The CellCharter portion of `calculate_niche` passed. Neighborhood and UTAG clustering did not meet the configured equivalence thresholds; their exact measurements are recorded in [equivalence.json](equivalence.json).
 
