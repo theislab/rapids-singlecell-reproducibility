@@ -342,4 +342,4 @@ None.
 | Additional scverse APIs | Direct Squidpy, Decoupler, and Pertpy reference comparisons |
 
 Raw metric records are available in [`metrics.csv`](metrics.csv) and [`equivalence.json`](../equivalence.json).
-Automatic publication of this report requires GPU-backed CI on a self-hosted GPU runner.
+This report is produced by a person running the suite; it is not published automatically.

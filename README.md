@@ -127,6 +127,5 @@ The benchmark notebooks and source figures are available under
 separate from the CPU/GPU equivalence thresholds above: speed measures performance, while
 the comparison suite measures numerical and biological agreement.
 
-Automatic execution requires GPU-backed CI. The manual
-[`gpu-equivalence` workflow](.github/workflows/gpu-equivalence.yml) targets a self-hosted
-Linux runner labeled `gpu`; without one, run the container on a GPU host as above.
+The comparison suite is not run automatically. Reproducing it means running the container on a
+GPU host as above; the committed snapshots are point-in-time evidence, not a regression guard.

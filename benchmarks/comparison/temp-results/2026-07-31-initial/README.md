@@ -50,4 +50,4 @@ The CellCharter portion of `calculate_niche` passed. Neighborhood and UTAG clust
 - [execution.json](execution.json) records the exit status of every comparison script.
 - [environment.txt](environment.txt) records the pinned Python environment.
 
-This snapshot is not updated automatically. Automatic reporting requires GPU-backed CI on a self-hosted GPU runner. That CI should run the suite, retain the JSON and environment files as artifacts, and publish the aggregate result as a job or pull-request summary.
+This snapshot is not updated automatically; the suite has no CI. That CI should run the suite, retain the JSON and environment files as artifacts, and publish the aggregate result as a job or pull-request summary.

@@ -201,21 +201,23 @@ Consequently every number in the committed snapshots comes from **A100 or H100 o
 
 ## 7. No automated validation
 
-There is no GPU-backed CI, so all of this is a **point-in-time result rather than a regression
-guard**. Nothing prevents a future change from silently breaking equivalence.
+Nothing runs the suite on a schedule, on a pull request, or on a release. Every result in this
+repository was produced by a person running the container on a GPU host, so all of it is a
+**point-in-time result rather than a regression guard**. Nothing prevents a future change from
+silently breaking equivalence.
 
-The manual [`gpu-equivalence` workflow](.github/workflows/gpu-equivalence.yml) targets a
-self-hosted runner labelled `gpu` that does not exist yet, and has never been exercised. Making
-this automatic needs, in order:
+Making it automatic needs, in order:
 
-1. a self-hosted GPU runner carrying the workflow's labels;
-2. one run proving that reports and per-script logs upload **even when thresholds fail**, since a
-   failing suite is the normal case here and must still publish evidence;
+1. a GPU runner the project actually controls, since the suite cannot run on hosted CI;
+2. one run proving that reports and per-script logs are published **even when criteria fail**, since
+   a failing suite is the normal case here and must still produce evidence;
 3. an agreed blocking policy — infrastructure failures, missing result records, and a failed smoke
    check should always block, while provisional scientific thresholds should only block once
    reviewed and baselined; and
-4. scheduled or release-triggered runs, once the resource cost is understood. Keep pull-request
-   execution manual or scoped until then.
+4. scheduled or release-triggered runs, once the resource cost is understood.
+
+Evaluation is cheaper than measurement and needs no GPU, so re-scoring a committed snapshot against
+changed criteria is the one part of this that could be automated today.
 
 ## 8. Data provenance is not pinned
 

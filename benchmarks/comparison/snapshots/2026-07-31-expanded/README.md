@@ -62,5 +62,4 @@ show more recorded metrics but the same gating criteria and the same failures.
 `report/summary.md` here predates the gating/informational split, so it reports all 210
 metrics as gating. Snapshots taken after the correction separate the two.
 
-This snapshot is not updated automatically. Automatic reporting requires GPU-backed CI on a
-self-hosted GPU runner.
+This snapshot is not updated automatically; the suite has no CI.
