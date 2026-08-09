@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import pertpy as pt
 import rapids_singlecell as rsc
-from _report import measure, write_report
-from _shared import allclose_excess, pearson, screen_adata
+from _report import capture, write_report
+from _shared import screen_adata
+
+METHOD = "mixscale"
 
 if not hasattr(pt.tl, "Mixscale"):
     raise RuntimeError(
@@ -17,8 +19,5 @@ pt.tl.Mixscale().mixscale(cpu, pert_key="gene_target", control="NT", layer="X_pe
 rsc.ptg.Mixscale().mixscale(gpu, pert_key="gene_target", control="NT", layer="X_pert", test_method="t-test")
 cpu_score = cpu.obs["mixscale_score"].to_numpy(dtype=float)
 gpu_score = gpu.obs["mixscale_score"].to_numpy(dtype=float)
-metrics = [
-    measure("mixscale.score_allclose_excess", allclose_excess(gpu_score, cpu_score)),
-    measure("mixscale.score_correlation", pearson(cpu_score, gpu_score)),
-]
-write_report("mixscale", "seeded synthetic perturbation screen", "deterministic", metrics)
+capture(METHOD, "mixscale.score", reference=cpu_score, candidate=gpu_score)
+write_report(METHOD, "seeded synthetic perturbation screen", "deterministic", [])

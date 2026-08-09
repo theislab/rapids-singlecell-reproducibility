@@ -11,18 +11,12 @@ import numpy as np
 import pandas as pd
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import measure, write_report
-from _shared import (
-    component_abs_correlations,
-    embedding_knn_overlap,
-    jaccard,
-    ranked_names,
-    reseeded_umap_overlap,
-)
-from sklearn.manifold import trustworthiness
-from sklearn.metrics import accuracy_score, adjusted_rand_score, normalized_mutual_info_score
+from _report import capture, measure, write_report
+from _shared import embedding_knn_overlap, ranked_names, reseeded_umap_overlap
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.neighbors import KNeighborsClassifier
+
+METHOD = "biological_pipeline_pbmc3k"
 
 
 def cpu_pipeline(source):
@@ -73,6 +67,12 @@ def gpu_pipeline(source):
     return adata
 
 
+def jaccard_overlap(left, right) -> float:
+    """Only used for the artefact table; the criterion is computed from the stored names."""
+    left_set, right_set = set(left), set(right)
+    return len(left_set & right_set) / max(1, len(left_set | right_set))
+
+
 def annotate(embedding, labels):
     splitter = StratifiedShuffleSplit(n_splits=1, test_size=0.35, random_state=0)
     train, test = next(splitter.split(embedding, labels))
@@ -121,60 +121,54 @@ if not np.array_equal(cpu_test, gpu_test):
     raise RuntimeError("CPU and GPU annotation splits differ despite a fixed random seed")
 truth = np.asarray(cpu.obs["cell_type"])[cpu_test]
 
-marker_overlaps = []
+# Marker lists per cell type: the overlap and its aggregate are computed at evaluation time.
 marker_rows = []
 for group in cpu.obs["cell_type"].cat.categories:
     cpu_markers = ranked_names(cpu, "markers", group, n_genes=50)
     gpu_markers = ranked_names(gpu, "markers", group, n_genes=50)
-    overlap = jaccard(cpu_markers, gpu_markers)
-    marker_overlaps.append(overlap)
-    marker_rows.append({"cell_type": group, "top50_jaccard": overlap})
+    capture(METHOD, f"markers.{group}", reference=np.asarray(cpu_markers), candidate=np.asarray(gpu_markers))
+    marker_rows.append({"cell_type": group, "top50_jaccard": jaccard_overlap(cpu_markers, gpu_markers)})
 
-cpu_trustworthiness = trustworthiness(cpu.obsm["X_pca"], cpu.obsm["X_umap"], n_neighbors=15)
-gpu_trustworthiness = trustworthiness(gpu.obsm["X_pca"], gpu.obsm["X_umap"], n_neighbors=15)
-cross_overlap = embedding_knn_overlap(cpu.obsm["X_umap"], gpu.obsm["X_umap"])
+capture(
+    METHOD, "highly_variable_genes.selection", reference=cpu.var_names.to_numpy(), candidate=gpu.var_names.to_numpy()
+)
+capture(METHOD, "pca", reference=cpu.obsm["X_pca"], candidate=gpu.obsm["X_pca"])
+capture(
+    METHOD,
+    "umap",
+    reference=cpu.obsm["X_umap"],
+    candidate=gpu.obsm["X_umap"],
+    reference_basis=cpu.obsm["X_pca"],
+    candidate_basis=gpu.obsm["X_pca"],
+)
+# Clusters travel with the published labels they are scored against, so the per-backend
+# cell-type NMI and its CPU/GPU difference are derived rather than fixed here.
+capture(
+    METHOD,
+    "clustering",
+    reference=cpu.obs["clusters"],
+    candidate=gpu.obs["clusters"],
+    reference_truth=cpu.obs["cell_type"],
+    candidate_truth=gpu.obs["cell_type"],
+)
+capture(
+    METHOD,
+    "annotation",
+    reference=cpu_prediction,
+    candidate=gpu_prediction,
+    truth=truth,
+)
 
-# Reseeded CPU embeddings, computed from the CPU neighbor graph already in `cpu`,
-# give the null model for the CPU-vs-GPU overlap below.
+# Reseeding reruns UMAP, so this cannot come from stored arrays.
 baseline_overlap = reseeded_umap_overlap(
     cpu,
     cpu.obsm["X_umap"],
     lambda adata, seed: sc.tl.umap(adata, random_state=seed),
 )
-
-cpu_accuracy = accuracy_score(truth, cpu_prediction)
-gpu_accuracy = accuracy_score(truth, gpu_prediction)
-cpu_label_nmi = normalized_mutual_info_score(cpu.obs["cell_type"], cpu.obs["clusters"])
-gpu_label_nmi = normalized_mutual_info_score(gpu.obs["cell_type"], gpu.obs["clusters"])
-pca_correlations = component_abs_correlations(cpu.obsm["X_pca"], gpu.obsm["X_pca"])
-
-
+cross_overlap = embedding_knn_overlap(cpu.obsm["X_umap"], gpu.obsm["X_umap"])
 metrics = [
-    measure("highly_variable_genes.selection_jaccard", jaccard(cpu.var_names, gpu.var_names)),
-    measure("pca.minimum_component_abs_correlation", pca_correlations.min()),
-    # Only differences gate. Single-implementation quality scores — trustworthiness,
-    # per-backend annotation accuracy, per-backend cell-type NMI — are recorded as evidence
-    # beside the paired difference criteria that decide the outcome.
-    measure("umap.cpu.trustworthiness", cpu_trustworthiness),
-    measure("umap.gpu.trustworthiness", gpu_trustworthiness),
-    measure("umap.cross_embedding_knn_overlap", cross_overlap),
-    measure("umap.trustworthiness_difference", abs(cpu_trustworthiness - gpu_trustworthiness)),
     measure("umap.cpu_reseeded_knn_overlap", baseline_overlap),
     measure("umap.cross_embedding_overlap_vs_cpu_baseline", cross_overlap - baseline_overlap),
-    measure("clustering.adjusted_rand_index", adjusted_rand_score(cpu.obs["clusters"], gpu.obs["clusters"])),
-    measure(
-        "clustering.normalized_mutual_information",
-        normalized_mutual_info_score(cpu.obs["clusters"], gpu.obs["clusters"]),
-    ),
-    measure("clustering.cpu_cell_type_nmi", cpu_label_nmi),
-    measure("clustering.gpu_cell_type_nmi", gpu_label_nmi),
-    measure("clustering.cell_type_nmi_difference", abs(cpu_label_nmi - gpu_label_nmi)),
-    measure("markers.mean_top50_jaccard", np.mean(marker_overlaps)),
-    measure("markers.minimum_top50_jaccard", np.min(marker_overlaps)),
-    measure("annotation.cpu_accuracy", cpu_accuracy),
-    measure("annotation.gpu_accuracy", gpu_accuracy),
-    measure("annotation.cpu_gpu_agreement", accuracy_score(cpu_prediction, gpu_prediction)),
-    measure("annotation.accuracy_difference", abs(cpu_accuracy - gpu_accuracy)),
 ]
 
 output_dir = Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", Path(__file__).parent / "results"))
@@ -184,7 +178,7 @@ pd.DataFrame(marker_rows).to_csv(artifact_dir / "biological_pipeline_marker_over
 plot_embeddings(cpu, gpu, artifact_dir / "biological_pipeline_umap.png")
 
 write_report(
-    "biological_pipeline_pbmc3k",
+    METHOD,
     "pbmc3k_processed raw log-expression with published cell-type labels",
     "biological",
     metrics,

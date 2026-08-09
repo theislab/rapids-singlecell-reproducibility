@@ -7,13 +7,10 @@ import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
 import squidpy as sq
-from _report import measure, write_report
-from _shared import (
-    allclose_excess,
-    dataframe_values,
-    mean_abs_error,
-    pearson_correlation,
-)
+from _report import capture, write_report
+from _shared import dataframe_values
+
+METHOD = "ligrec"
 
 adata = sc.datasets.paul15()
 clusters = adata.obs["paul15_clusters"].cat.categories[:4].tolist()
@@ -68,19 +65,14 @@ candidate_means = dataframe_values(candidate["means"])
 reference_pvalues = dataframe_values(reference["pvalues"])
 candidate_pvalues = dataframe_values(candidate["pvalues"])
 
-valid = np.isfinite(reference_pvalues) & np.isfinite(candidate_pvalues)
-nan_agreement = np.mean(np.isnan(reference_pvalues) == np.isnan(candidate_pvalues))
-
-metrics = [
-    measure("means.allclose_excess", allclose_excess(candidate_means, reference_means)),
-    measure("pvalues.nan_mask_agreement", nan_agreement),
-    measure("pvalues.mean_abs_error", mean_abs_error(reference_pvalues[valid], candidate_pvalues[valid])),
-    measure("pvalues.pearson_correlation", pearson_correlation(reference_pvalues[valid], candidate_pvalues[valid])),
-]
+# p-values legitimately carry NaN where a test could not be run, so the NaN pattern is
+# compared as its own criterion and the numeric criteria run over the finite entries.
+capture(METHOD, "means", reference=reference_means, candidate=candidate_means)
+capture(METHOD, "pvalues", reference=reference_pvalues, candidate=candidate_pvalues)
 
 write_report(
-    method="ligrec",
+    method=METHOD,
     dataset="scanpy.datasets.paul15",
     tier="stochastic",
-    metrics=metrics,
+    metrics=[],
 )

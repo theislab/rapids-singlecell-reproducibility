@@ -35,8 +35,8 @@ import tomllib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from arrays import captured_points, load_pair
-from comparisons import COMPARISONS
+from arrays import captured_points, load_arrays
+from comparisons import AGGREGATIONS, ALLCLOSE_EVIDENCE, COMPARISONS
 from criteria import CRITERIA, criterion_for, diagnosis_for
 
 HERE = Path(__file__).parent
@@ -100,8 +100,10 @@ def validate(record: dict) -> str | None:
     """
     if not {"method", "reference_package", "dataset", "tier", "versions", "metrics"}.issubset(record):
         return "Missing required result fields"
-    if not isinstance(record["metrics"], list) or not record["metrics"]:
-        return "Metrics must be a non-empty list"
+    # An empty list is normal now: a script whose comparisons all come from stored arrays
+    # records no scalars of its own.
+    if not isinstance(record["metrics"], list):
+        return "Metrics must be a list"
     seen = set()
     for metric in record["metrics"]:
         if not {"metric", "observed"}.issubset(metric):
@@ -112,37 +114,69 @@ def validate(record: dict) -> str | None:
     return None
 
 
+MISAPPLIED: list[str] = []
+
+
 def derive_from_arrays(method: str) -> dict[str, float]:
     """Compute every comparison the stored arrays support for one method group.
 
-    A criterion named `<point>.<suffix>` is computed when `<point>` was captured and
-    `<suffix>` is a known comparison. The evidence quantities that explain an
-    `allclose_excess` failure are derived alongside it, so nothing has to be anticipated
-    at measurement time.
+    A criterion named `<point>.<suffix>` is computed when `<point>` carries the arrays that
+    `<suffix>` declares it needs. Evidence quantities for an `allclose` criterion, and
+    aggregations over a family of metrics, are derived alongside — so a question about a
+    run never has to be anticipated while the run is happening.
     """
     points = captured_points(method)
     if not points:
         return {}
+
     wanted: dict[str, str] = {}
     for pattern, *_ in CRITERIA.get(method, []):
         head, _, suffix = pattern.rpartition(".")
-        if suffix not in COMPARISONS:
+        # `markers.mean_set_jaccard` is a reduction over `markers.<group>.set_jaccard`, so
+        # the members have to be computed even though no criterion names them directly.
+        if suffix in AGGREGATIONS:
+            member = AGGREGATIONS[suffix][0]
+            for point in points:
+                if point.startswith(f"{head}."):
+                    wanted[f"{point}.{member}"] = member
             continue
-        for point in points:
-            if head in (point, "*") or fnmatch.fnmatchcase(point, head):
-                wanted[f"{point}.{suffix}"] = suffix
-                if suffix.endswith("allclose_excess"):
-                    for evidence in ("allclose_worst_magnitude", "max_abs_error", "max_rel_error"):
-                        wanted[f"{point}.{evidence}"] = evidence
+        # Some suffixes are themselves dotted, e.g. `umap.cpu.trustworthiness`.
+        for candidate_suffix in (suffix, ".".join(pattern.rsplit(".", 2)[-2:])):
+            if candidate_suffix not in COMPARISONS:
+                continue
+            head = pattern[: -(len(candidate_suffix) + 1)]
+            for point in points:
+                if head in (point, "*") or fnmatch.fnmatchcase(point, head):
+                    wanted[f"{point}.{candidate_suffix}"] = candidate_suffix
+                    if candidate_suffix.endswith("allclose_excess"):
+                        for evidence in ALLCLOSE_EVIDENCE:
+                            wanted[f"{point}.{evidence}"] = evidence
+            break
 
     derived: dict[str, float] = {}
     for name, suffix in wanted.items():
         point = name[: -(len(suffix) + 1)]
-        pair = load_pair(method, point)
-        if pair is None:
+        comparison = COMPARISONS[suffix]
+        loaded = load_arrays(method, point, comparison.inputs)
+        if loaded is None:
             continue
-        reference, candidate = pair
-        derived[name] = COMPARISONS[suffix](candidate, reference)
+        try:
+            derived[name] = comparison.fn(*loaded)
+        except Exception as error:  # noqa: BLE001 - a bad rule must not cost the whole run
+            # Almost always a criterion pointed at arrays the comparison cannot handle, e.g.
+            # a numeric comparison matched against captured gene names by too broad a glob.
+            MISAPPLIED.append(f"{method}.{name}: {type(error).__name__}: {error}")
+
+    # Criteria stated over a family — "the weakest marker overlap across cell types" — are
+    # aggregations of metrics just computed, not separate measurements.
+    for pattern, *_ in CRITERIA.get(method, []):
+        head, _, suffix = pattern.rpartition(".")
+        if suffix not in AGGREGATIONS:
+            continue
+        member_suffix, reduce = AGGREGATIONS[suffix]
+        values = [v for k, v in derived.items() if k.endswith(f".{member_suffix}") and k.startswith(f"{head}.")]
+        if values:
+            derived[pattern] = reduce(values)
     return derived
 
 
@@ -206,7 +240,12 @@ def main() -> int:
             if not metric["passed"]:
                 metric["diagnosis"] = diagnosis_for(record["method"], metric["metric"])
         if not any(m["gating"] for m in record["metrics"]):
-            invalid.append({"path": record["method"], "error": "No metric in this record has a criterion"})
+            invalid.append(
+                {
+                    "path": record["method"],
+                    "error": "No criterion applies: the script captured nothing criteria.py knows about",
+                }
+            )
             continue
         record["passed"] = all(m["passed"] for m in record["metrics"] if m["gating"])
 
@@ -225,6 +264,7 @@ def main() -> int:
         "n_informational_metrics": len(metrics) - len(gating),
         "criteria_overrides": sorted(overrides),
         "recorded_without_criterion": ungated,
+        "misapplied_comparisons": MISAPPLIED,
         "invalid_records": invalid,
         "records": records,
     }
@@ -255,8 +295,13 @@ def main() -> int:
             check=False,
         )
 
+    if MISAPPLIED:
+        for item in MISAPPLIED:
+            print(f"### comparison could not be applied: {item}", file=sys.stderr)
     if not records:
         raise SystemExit("No result records found. Run the comparison scripts first.")
+    if MISAPPLIED:
+        raise SystemExit(f"{len(MISAPPLIED)} criterion/criteria point at arrays their comparison cannot use.")
     if invalid:
         for item in invalid:
             print(f"### invalid record {item['path']}: {item['error']}", file=sys.stderr)

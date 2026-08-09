@@ -2,33 +2,21 @@ from __future__ import annotations
 
 import rapids_singlecell as rsc
 import squidpy as sq
-from _report import measure, write_report
+from _report import capture, write_report
 from _shared import IMC_CLUSTER_KEY, load_imc
 from scipy import sparse
-from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 
+METHOD = "calculate_niche"
 adata = load_imc()
-metrics = []
 
 
 def compare_labels(flavor, reference, candidate, key):
-    reference_labels = reference.obs[key].astype(str)
-    candidate_labels = candidate.obs[key].astype(str)
-    metrics.extend(
-        [
-            measure(f"{flavor}.adjusted_rand_index", adjusted_rand_score(reference_labels, candidate_labels)),
-            measure(
-                f"{flavor}.normalized_mutual_information",
-                normalized_mutual_info_score(reference_labels, candidate_labels),
-            ),
-            measure(f"{flavor}.cluster_count_difference", abs(reference_labels.nunique() - candidate_labels.nunique())),
-        ]
-    )
+    capture(METHOD, flavor, reference=reference.obs[key].astype(str), candidate=candidate.obs[key].astype(str))
 
 
-# Both Leiden-based flavors fail, and both criteria are left in place. `niche_divergence_diagnostic.py`
-# separates the features, the kNN graph and the Leiden backend behind these numbers.
-
+# Both Leiden-based flavors fail and both criteria are left in place;
+# `niche_divergence_diagnostic.py` separates the features, the kNN graph and the Leiden
+# backend behind those numbers.
 
 # Neighborhood-profile niches. Squidpy's CPU implementation currently uses Scanpy's
 # default seed (0) for neighbors and Leiden, so the GPU run uses that seed explicitly.
@@ -117,8 +105,8 @@ compare_labels(
 )
 
 write_report(
-    method="calculate_niche",
+    method=METHOD,
     dataset="squidpy.datasets.imc",
     tier="stochastic",
-    metrics=metrics,
+    metrics=[],
 )

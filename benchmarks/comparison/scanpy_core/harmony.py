@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 import pooch
 import rapids_singlecell as rsc
-from _report import measure, write_report
-from _shared import component_abs_correlations, max_abs
+from _report import capture, write_report
+
+METHOD = "scanpy_core_harmony"
 
 pcs_path = pooch.retrieve(
     "https://github.com/slowkow/harmonypy/raw/refs/heads/master/data/pbmc_3500_pcs.tsv.gz",
@@ -51,21 +52,18 @@ rsc.pp.harmony_integrate(
 )
 rsc.get.anndata_to_CPU(candidate)
 
-component_correlations = component_abs_correlations(reference.obsm["X_pca_harmony"], candidate.obsm["X_pca_harmony"])
-metrics = [
-    measure("harmony.minimum_component_abs_correlation", component_correlations.min()),
-    measure("harmony.mean_component_abs_correlation", component_correlations.mean()),
-    measure(
-        "harmony.standard_deviation_max_abs_error",
-        max_abs(reference.obsm["X_pca_harmony"].std(axis=0), candidate.obsm["X_pca_harmony"].std(axis=0)),
-    ),
-]
+capture(
+    METHOD,
+    "harmony",
+    reference=reference.obsm["X_pca_harmony"],
+    candidate=candidate.obsm["X_pca_harmony"],
+)
 
 write_report(
-    "scanpy_core_harmony",
+    METHOD,
     "Harmonypy PBMC 3,500-cell donor benchmark",
     "iterative",
-    metrics,
+    [],
     reference_package="harmonypy",
     packages=("harmonypy",),
 )

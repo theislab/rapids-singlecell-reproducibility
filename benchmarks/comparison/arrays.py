@@ -67,14 +67,20 @@ def _write(group: zarr.Group, name: str, value) -> None:
     )[:] = array
 
 
-def capture(method: str, name: str, reference, candidate) -> None:
-    """Record one comparison point: what the CPU produced and what the GPU produced.
+def capture(method: str, point: str, **arrays) -> None:
+    """Record the outputs at one comparison point. Nothing is compared here.
 
-    `reference` is the CPU side. Nothing is compared here — that is `evaluate.py`'s job.
+    Arrays are keyword-only and named. By convention `reference` is the CPU side and
+    `candidate` the GPU side; a comparison that needs more — trustworthiness needs the
+    basis its embedding was built from — takes extra names such as `reference_basis`.
+    Keyword-only because these are easy to transpose and several comparisons are
+    asymmetric.
     """
     root = zarr.open_group(str(store_path(method)), mode="a")
-    _write(root, f"{name}/reference", reference)
-    _write(root, f"{name}/candidate", candidate)
+    for name, value in arrays.items():
+        if value is None:
+            continue
+        _write(root, f"{point}/{name}", value)
 
 
 def _read(group: zarr.Group):
@@ -84,18 +90,18 @@ def _read(group: zarr.Group):
     return group["values"][:]
 
 
-def load_pair(method: str, name: str):
-    """Return `(reference, candidate)` for one comparison point, or None if not captured."""
+def load_arrays(method: str, point: str, names: tuple[str, ...]):
+    """Return the named arrays at one comparison point, or None if any is missing."""
     path = store_path(method)
     if not path.exists():
         return None
     root = zarr.open_group(str(path), mode="r")
-    if name not in root:
+    if point not in root:
         return None
-    pair = root[name]
-    if "reference" not in pair or "candidate" not in pair:
+    stored = root[point]
+    if any(name not in stored for name in names):
         return None
-    return _read(pair["reference"]), _read(pair["candidate"])
+    return tuple(_read(stored[name]) for name in names)
 
 
 def captured_points(method: str) -> list[str]:

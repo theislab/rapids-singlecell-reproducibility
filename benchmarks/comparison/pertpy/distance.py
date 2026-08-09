@@ -3,11 +3,12 @@ from __future__ import annotations
 import numpy as np
 import pertpy as pt
 import rapids_singlecell as rsc
-from _report import measure, write_report
-from _shared import allclose_excess, grouped_adata
+from _report import capture, write_report
+from _shared import grouped_adata
+
+METHOD = "distance"
 
 adata = grouped_adata()
-metrics = []
 metric_names = (
     "edistance",
     "euclidean",
@@ -25,13 +26,6 @@ for name in metric_names:
     candidate = rsc.ptg.Distance(name, obsm_key="X_pca").pairwise(adata, groupby="group", multi_gpu=False)
     np.testing.assert_array_equal(reference.index, candidate.index)
     np.testing.assert_array_equal(reference.columns, candidate.columns)
-    excess = allclose_excess(candidate.to_numpy(), reference.to_numpy())
-    metrics.append(measure(f"{name}.pairwise_allclose_excess", excess))
-    metrics.append(
-        measure(
-            f"{name}.pairwise_correlation",
-            np.corrcoef(reference.to_numpy().ravel(), candidate.to_numpy().ravel())[0, 1],
-        )
-    )
+    capture(METHOD, f"{name}.pairwise", reference=reference.to_numpy(), candidate=candidate.to_numpy())
 
-write_report("distance", "seeded grouped Gaussian data", "deterministic", metrics)
+write_report(METHOD, "seeded grouped Gaussian data", "deterministic", [])

@@ -2,8 +2,13 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parents[1]))
+
+from arrays import capture
 
 
 def package_version(package):

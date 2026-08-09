@@ -3,9 +3,9 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import measure, write_report
-from _shared import allclose_excess
+from _report import capture, write_report
 
+METHOD = "sqrt"
 reference = sc.datasets.pbmc3k()
 candidate = reference.copy()
 rsc.get.anndata_to_GPU(candidate)
@@ -18,5 +18,5 @@ if hasattr(reference.X, "toarray"):
 else:
     reference_x = np.asarray(reference.X)
     candidate_x = np.asarray(candidate_x)
-excess = allclose_excess(candidate_x, reference_x)
-write_report("sqrt", "scanpy.datasets.pbmc3k", "deterministic", [measure("X.allclose_excess", excess)])
+capture(METHOD, "X", reference=reference_x, candidate=candidate_x)
+write_report(METHOD, "scanpy.datasets.pbmc3k", "deterministic", [])

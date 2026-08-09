@@ -20,14 +20,18 @@ previously uncovered Scanpy, Squidpy, Decoupler, and Pertpy APIs:
 - [`decoupler`](benchmarks/comparison/decoupler/README.md)
 - [`pertpy`](benchmarks/comparison/pertpy/README.md)
 
-The suite is two programs. The comparison scripts **measure** and write one JSON record per
-method group — `{"metric": ..., "observed": ...}` and nothing else. Then
-[`evaluate.py`](benchmarks/comparison/evaluate.py) **evaluates** those measurements against
-[`criteria.py`](benchmarks/comparison/criteria.py), the only place a threshold is written down.
+The suite is two programs. The comparison scripts **run both implementations and store their
+outputs** as Zarr, one store per method group. Then
+[`evaluate.py`](benchmarks/comparison/evaluate.py) **compares and judges**: it applies
+[`comparisons.py`](benchmarks/comparison/comparisons.py) to those stored arrays and scores the
+results against [`criteria.py`](benchmarks/comparison/criteria.py), the only place a threshold
+is written down.
 
-Measuring needs a GPU and about ten minutes; evaluating needs neither. So any question of the
-form "what would the verdict be if this tolerance were different" is answered against records
-that already exist:
+Nothing is compared on the GPU node, so a new question about a finished run — which term of
+`numpy.allclose` bound a failure, how the error is distributed, whether a different metric
+says something else — is answered from the stored arrays instead of costing another run.
+
+Measuring needs a GPU and about ten minutes; evaluating needs neither:
 
 ```bash
 python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-07-31-expanded/results

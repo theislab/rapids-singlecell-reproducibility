@@ -3,12 +3,12 @@ from __future__ import annotations
 import pandas as pd
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import measure, write_report
-from _shared import pbmc68k, pearson
+from _report import capture, write_report
+from _shared import pbmc68k
 
+METHOD = "rank_genes_groups"
 adata = pbmc68k()
 groupby = "bulk_labels"
-metrics = []
 
 for method in ("t-test", "wilcoxon", "logreg"):
     reference, candidate = adata.copy(), adata.copy()
@@ -23,12 +23,23 @@ for method in ("t-test", "wilcoxon", "logreg"):
     ref_scores = pd.DataFrame(reference.uns["de"]["scores"])
     gpu_scores = pd.DataFrame(candidate.uns["de"]["scores"])
     for group in ref_names.columns:
-        top_ref = set(ref_names[group].iloc[:50])
-        top_gpu = set(gpu_names[group].iloc[:50])
-        metrics.append(measure(f"{method}.{group}.top50_jaccard", len(top_ref & top_gpu) / len(top_ref | top_gpu)))
-        merged = pd.DataFrame({"ref_name": ref_names[group], "ref_score": ref_scores[group]}).merge(
-            pd.DataFrame({"ref_name": gpu_names[group], "gpu_score": gpu_scores[group]}), on="ref_name"
+        # Top-50 gene names, for the overlap criterion.
+        capture(
+            METHOD,
+            f"{method}.{group}.markers",
+            reference=ref_names[group].iloc[:50].to_numpy(),
+            candidate=gpu_names[group].iloc[:50].to_numpy(),
         )
-        metrics.append(measure(f"{method}.{group}.score_correlation", pearson(merged.ref_score, merged.gpu_score)))
+        # Scores aligned on gene name, because the two sides rank genes in different orders
+        # and correlating them positionally would compare unrelated genes.
+        merged = pd.DataFrame({"gene": ref_names[group], "ref_score": ref_scores[group]}).merge(
+            pd.DataFrame({"gene": gpu_names[group], "gpu_score": gpu_scores[group]}), on="gene"
+        )
+        capture(
+            METHOD,
+            f"{method}.{group}.score",
+            reference=merged.ref_score.to_numpy(),
+            candidate=merged.gpu_score.to_numpy(),
+        )
 
-write_report("rank_genes_groups", "scanpy.datasets.pbmc68k_reduced", "near-deterministic", metrics)
+write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "near-deterministic", [])

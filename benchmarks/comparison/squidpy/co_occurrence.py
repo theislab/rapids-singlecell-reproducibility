@@ -3,14 +3,10 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import squidpy as sq
-from _report import measure, write_report
-from _shared import (
-    IMC_CLUSTER_KEY,
-    allclose_excess,
-    load_imc,
-    mean_abs_error,
-    pearson_correlation,
-)
+from _report import capture, write_report
+from _shared import IMC_CLUSTER_KEY, load_imc
+
+METHOD = "co_occurrence"
 
 adata = load_imc()
 
@@ -35,16 +31,12 @@ candidate_occ, candidate_interval = rsc.gr.co_occurrence(
 )
 
 np.testing.assert_array_equal(reference_occ.shape, candidate_occ.shape)
-metrics = [
-    measure("interval.allclose_excess", allclose_excess(candidate_interval, reference_interval)),
-    measure("occurrence.allclose_excess", allclose_excess(candidate_occ, reference_occ)),
-    measure("occurrence.mean_abs_error", mean_abs_error(reference_occ, candidate_occ)),
-    measure("occurrence.pearson_correlation", pearson_correlation(reference_occ, candidate_occ)),
-]
+capture(METHOD, "interval", reference=reference_interval, candidate=candidate_interval)
+capture(METHOD, "occurrence", reference=reference_occ, candidate=candidate_occ)
 
 write_report(
-    method="co_occurrence",
+    method=METHOD,
     dataset="squidpy.datasets.imc",
     tier="deterministic",
-    metrics=metrics,
+    metrics=[],
 )

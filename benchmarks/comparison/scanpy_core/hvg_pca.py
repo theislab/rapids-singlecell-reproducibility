@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import measure, write_report
-from _shared import allclose_excess, component_abs_correlations, jaccard
+from _report import capture, write_report
+
+METHOD = "scanpy_core_hvg_pca"
 
 
 def gpu_copy(adata):
@@ -13,7 +13,6 @@ def gpu_copy(adata):
     return candidate
 
 
-metrics = []
 counts = sc.datasets.pbmc3k()
 sc.pp.filter_genes(counts, min_cells=3)
 
@@ -35,18 +34,18 @@ for flavor, columns in flavor_columns.items():
     else:
         sc.pp.highly_variable_genes(cpu, flavor=flavor, n_top_genes=1_000)
     rsc.pp.highly_variable_genes(gpu, flavor=flavor, n_top_genes=1_000)
-    metrics.append(
-        measure(
-            f"highly_variable_genes.{flavor}.selection_jaccard",
-            jaccard(cpu.var_names[cpu.var.highly_variable], gpu.var_names[gpu.var.highly_variable]),
-        )
+    capture(
+        METHOD,
+        f"highly_variable_genes.{flavor}.selection",
+        reference=cpu.var_names[cpu.var.highly_variable].to_numpy(),
+        candidate=gpu.var_names[gpu.var.highly_variable].to_numpy(),
     )
     for column in columns:
-        metrics.append(
-            measure(
-                f"highly_variable_genes.{flavor}.{column}.allclose_excess",
-                allclose_excess(gpu.var[column], cpu.var[column]),
-            )
+        capture(
+            METHOD,
+            f"highly_variable_genes.{flavor}.{column}",
+            reference=cpu.var[column].to_numpy(),
+            candidate=gpu.var[column].to_numpy(),
         )
 
 pca_input = counts.copy()
@@ -61,17 +60,13 @@ sc.pp.pca(cpu, n_comps=50, random_state=0)
 rsc.pp.pca(gpu, n_comps=50, random_state=0)
 rsc.get.anndata_to_CPU(gpu)
 gpu.obsm["X_pca"] = rsc.get.X_to_CPU(gpu.obsm["X_pca"])
-score_correlations = component_abs_correlations(cpu.obsm["X_pca"], gpu.obsm["X_pca"])
-loading_correlations = component_abs_correlations(cpu.varm["PCs"], gpu.varm["PCs"])
-metrics.extend(
-    [
-        measure("pca.scores.minimum_component_abs_correlation", np.min(score_correlations)),
-        measure("pca.loadings.minimum_component_abs_correlation", np.min(loading_correlations)),
-        measure(
-            "pca.explained_variance_ratio.allclose_excess",
-            allclose_excess(gpu.uns["pca"]["variance_ratio"], cpu.uns["pca"]["variance_ratio"]),
-        ),
-    ]
+capture(METHOD, "pca.scores", reference=cpu.obsm["X_pca"], candidate=gpu.obsm["X_pca"])
+capture(METHOD, "pca.loadings", reference=cpu.varm["PCs"], candidate=gpu.varm["PCs"])
+capture(
+    METHOD,
+    "pca.explained_variance_ratio",
+    reference=cpu.uns["pca"]["variance_ratio"],
+    candidate=gpu.uns["pca"]["variance_ratio"],
 )
 
-write_report("scanpy_core_hvg_pca", "pbmc3k", "deterministic", metrics)
+write_report(METHOD, "pbmc3k", "deterministic", [])
