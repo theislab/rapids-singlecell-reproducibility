@@ -183,3 +183,58 @@ def criterion_for(method: str, metric: str) -> tuple[str, float, str] | None:
         if fnmatch.fnmatchcase(metric, pattern):
             return comparison, tolerance, basis
     return None
+
+
+# Why a criterion fails, where that has been investigated. Kept here rather than in the
+# comparison scripts because it is a statement about the criterion, not a measurement, and
+# because `evaluate.py` shows it only for metrics that actually fail.
+DIAGNOSES: dict[tuple[str, str], str] = {
+    ("biological_pipeline_pbmc3k", "umap.cross_embedding_knn_overlap"): (
+        "UMAP is stochastic, and this threshold asks for more agreement than the CPU reference shows "
+        "against itself. Compare `umap.cpu_reseeded_knn_overlap`, the same measurement with only the "
+        "seed changed, and `umap.cross_embedding_overlap_vs_cpu_baseline`."
+    ),
+    ("scanpy_core_graphs_embeddings", "umap.cross_embedding_knn_overlap"): (
+        "UMAP is stochastic, and this threshold asks for more agreement than the CPU reference shows "
+        "against itself. On this dataset the GPU embedding is closer to the CPU one than a reseeded "
+        "CPU run is, and the criterion still fails."
+    ),
+    ("calculate_niche", "neighborhood.adjusted_rand_index"): (
+        "The neighborhood profile holds only 755 distinct rows across 4668 cells, so 89.67% of cells "
+        "have an exact distance tie at the k-th neighbour. Against exact float64 ground truth the GPU "
+        "kNN is exact and `sc.pp.neighbors` is not, on 743 rows: the divergence is the CPU reference."
+    ),
+    ("calculate_niche", "utag.adjusted_rand_index"): (
+        "Squidpy calls `sc.tl.leiden` without a flavor, so CPU and GPU use different Leiden backends. "
+        "On identical input Scanpy's own leidenalg and igraph backends agree only at ARI 0.5041, below "
+        "this threshold, so the criterion measures backend choice rather than correctness."
+    ),
+    ("calculate_niche", "*.cluster_count_difference"): (
+        "`resolution` does not carry the same meaning across Leiden implementations: on identical input "
+        "cuGraph found 34 clusters where leidenalg found 41, and Scanpy's own two backends already "
+        "differ by 1."
+    ),
+    ("*", "*.allclose_excess"): (
+        "numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude "
+        "of the element that fails. Where a quantity passes through zero the absolute floor binds, and "
+        "at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for "
+        "the per-comparison split between that case and a genuine relative disagreement."
+    ),
+}
+DIAGNOSES[("calculate_niche", "neighborhood.normalized_mutual_information")] = DIAGNOSES[
+    ("calculate_niche", "neighborhood.adjusted_rand_index")
+]
+DIAGNOSES[("calculate_niche", "utag.normalized_mutual_information")] = DIAGNOSES[
+    ("calculate_niche", "utag.adjusted_rand_index")
+]
+
+
+def diagnosis_for(method: str, metric: str) -> str:
+    """The recorded explanation for a failing criterion, or "" if none was written."""
+    for key in ((method, metric), ("*", metric)):
+        if key in DIAGNOSES:
+            return DIAGNOSES[key]
+    for (rule_method, pattern), text in DIAGNOSES.items():
+        if rule_method in (method, "*") and fnmatch.fnmatchcase(metric, pattern):
+            return text
+    return ""

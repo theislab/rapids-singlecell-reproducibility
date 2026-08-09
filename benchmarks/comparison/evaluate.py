@@ -34,7 +34,7 @@ import tomllib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from criteria import criterion_for
+from criteria import criterion_for, diagnosis_for
 
 HERE = Path(__file__).parent
 
@@ -147,6 +147,8 @@ def main() -> int:
                 basis=basis,
             )
             metric["passed"] = decide(metric)
+            if not metric["passed"]:
+                metric["diagnosis"] = diagnosis_for(record["method"], metric["metric"])
         if not any(m["gating"] for m in record["metrics"]):
             invalid.append({"path": record["method"], "error": "No metric in this record has a criterion"})
             continue
