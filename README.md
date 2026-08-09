@@ -20,30 +20,23 @@ previously uncovered Scanpy, Squidpy, Decoupler, and Pertpy APIs:
 - [`decoupler`](benchmarks/comparison/decoupler/README.md)
 - [`pertpy`](benchmarks/comparison/pertpy/README.md)
 
-Each script writes a JSON record identifying the method, reference package and version,
-dataset and tier, plus one entry per metric:
+The suite is two programs. The comparison scripts **measure** and write one JSON record per
+method group — `{"metric": ..., "observed": ...}` and nothing else. Then
+[`evaluate.py`](benchmarks/comparison/evaluate.py) **evaluates** those measurements against
+[`criteria.py`](benchmarks/comparison/criteria.py), the only place a threshold is written down.
 
-| Field        | Meaning                                                |
-| ------------ | ------------------------------------------------------ |
-| `metric`     | Metric name, unique within a method group              |
-| `observed`   | Measured value                                         |
-| `comparison` | `<=`, `>=`, or `observed` for a non-gating measurement |
-| `tolerance`  | Threshold, or `null` for a non-gating measurement      |
-| `criterion`  | Human-readable form of the threshold                   |
-| `gating`     | Whether the metric decides pass/fail                   |
-| `basis`      | Why the threshold is what it is; empty until reviewed  |
-| `diagnosis`  | For a failing criterion, what the investigation found  |
-| `passed`     | Result; always `true` for non-gating measurements      |
-
-Metrics are split into criteria that gate the suite and measurements recorded as evidence;
-`collect_results.py` rejects a record that mixes the two. **Thresholds are never widened to
-make a run green.** A failing criterion keeps its value and carries its `diagnosis`, which the
-generated report prints beside it. After running the comparisons individually, aggregate the
-records with:
+Measuring needs a GPU and about ten minutes; evaluating needs neither. So any question of the
+form "what would the verdict be if this tolerance were different" is answered against records
+that already exist:
 
 ```bash
-python benchmarks/comparison/collect_results.py
+python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-07-31-expanded/results
 ```
+
+Criteria are keyed by `(method group, metric)`, because a metric name is only unique within a
+group. A measurement with no matching rule is recorded as evidence and does not gate;
+`evaluate.py` lists those on every run so a new metric cannot slip in ungated. **Thresholds are
+never widened to make a run green** — a criterion that fails keeps its value.
 
 To run the complete structured suite in isolated processes and aggregate it
 automatically:
@@ -69,8 +62,10 @@ PBMC3k biological workflow. It always preserves per-script logs and produces:
 - `benchmarks/comparison/report/metrics.csv` for a supplementary table; and
 - figures and biological marker-overlap tables under `benchmarks/comparison/report/artifacts`.
 
-A failed threshold makes the final command fail but does not stop later comparisons from
-running, so incomplete equivalence still yields a complete diagnostic report.
+A missed criterion makes the final command fail but does not stop later comparisons from
+running, so incomplete equivalence still yields a complete diagnostic report. A comparison
+script exiting non-zero now means it failed to produce a record at all — an infrastructure
+problem, kept distinct from a criterion being missed.
 
 See the complete [CPU/GPU coverage inventory](benchmarks/comparison/COVERAGE.md) for
 the mapping from public methods to evidence scripts, and [`OPEN.md`](OPEN.md) for what this
@@ -106,6 +101,13 @@ docker run --rm --gpus all -v "$PWD/out:/out" rsc-equivalence /repro/benchmarks/
 
 ```bash
 docker run --rm --gpus all -v "$PWD/out:/out" rsc-equivalence /repro/benchmarks/comparison/run_structured.py scanpy_core/preprocessing.py
+```
+
+Evaluation needs no GPU, so re-scoring stored measurements works in the same image without
+`--gpus`:
+
+```bash
+docker run --rm -v "$PWD/out:/out" rsc-equivalence /repro/benchmarks/comparison/evaluate.py --results /out/results
 ```
 
 Rootless hosts can convert and run the same image with Apptainer:

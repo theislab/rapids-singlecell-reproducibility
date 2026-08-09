@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pertpy as pt
 import rapids_singlecell as rsc
-from _report import lower, write_report
+from _report import measure, write_report
 from _shared import guide_adata
 
 metrics = []
@@ -22,16 +22,15 @@ for method in ("assign_by_threshold", "assign_to_max_guide"):
         agreement = np.mean(np.asarray(cpu_assignment) == np.asarray(gpu_assignment))
     else:
         agreement = np.mean(cpu.obs["assigned_guide"].to_numpy() == gpu.obs["assigned_guide"].to_numpy())
-    metrics.append(lower(f"{method}.assignment_agreement", agreement, 1.0))
+    metrics.append(measure(f"{method}.assignment_agreement", agreement))
 
 cpu, gpu = guide_adata(), guide_adata()
 pt.pp.GuideAssignment().assign_mixture_model(cpu)
 rsc.ptg.GuideAssignment().assign_mixture_model(gpu)
 metrics.append(
-    lower(
+    measure(
         "assign_mixture_model.assignment_agreement",
         np.mean(cpu.obs["assigned_guide"].to_numpy() == gpu.obs["assigned_guide"].to_numpy()),
-        0.90,
     )
 )
 

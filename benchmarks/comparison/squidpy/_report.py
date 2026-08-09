@@ -17,28 +17,14 @@ def package_version(package: str) -> str:
     return "unknown"
 
 
-def upper_bound(metric: str, observed: float, threshold: float, *, basis: str = "") -> dict[str, Any]:
-    return {
-        "metric": metric,
-        "observed": float(observed),
-        "comparison": "<=",
-        "tolerance": float(threshold),
-        "criterion": f"<= {threshold}",
-        "passed": bool(observed <= threshold),
-        "basis": basis,
-    }
+def measure(metric: str, observed: float) -> dict:
+    """Record one measurement. Nothing here decides anything.
 
-
-def lower_bound(metric: str, observed: float, threshold: float, *, basis: str = "") -> dict[str, Any]:
-    return {
-        "metric": metric,
-        "observed": float(observed),
-        "comparison": ">=",
-        "tolerance": float(threshold),
-        "criterion": f">= {threshold}",
-        "passed": bool(observed >= threshold),
-        "basis": basis,
-    }
+    Whether this metric gates, and against what threshold, is `criteria.py`'s business and
+    `evaluate.py` applies it. Keeping the two apart is what lets a stored run be re-scored
+    without a GPU.
+    """
+    return {"metric": metric, "observed": float(observed)}
 
 
 def write_report(*, method: str, dataset: str, tier: str, metrics: list[dict[str, Any]]) -> Path:
@@ -51,7 +37,6 @@ def write_report(*, method: str, dataset: str, tier: str, metrics: list[dict[str
             "rapids-singlecell": package_version("rapids-singlecell"),
             "squidpy": package_version("squidpy"),
         },
-        "passed": all(metric["passed"] for metric in metrics),
         "metrics": metrics,
     }
 
@@ -61,8 +46,6 @@ def write_report(*, method: str, dataset: str, tier: str, metrics: list[dict[str
     output.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
 
-    failures = [metric for metric in metrics if not metric["passed"]]
-    if failures:
-        details = ", ".join(f"{item['metric']}={item['observed']} ({item['criterion']})" for item in failures)
-        raise AssertionError(f"Equivalence thresholds failed: {details}")
+    # Measuring is not evaluating: the verdict is formed by evaluate.py from this
+    # record, so a missed threshold here is evidence, not a script failure.
     return output

@@ -38,13 +38,7 @@ def graph_overlap(a, b):
     return float(np.mean(scores))
 
 
-ALLCLOSE_BASIS = (
-    "Manuscript Methods: deterministic operations are validated with numpy.allclose at "
-    "default parameters (rtol=1e-5, atol=1e-8)."
-)
-
-
-def allclose_excess(a, b, *, rtol=1e-5, atol=1e-8):
+def allclose_excess(candidate, reference, *, rtol=1e-5, atol=1e-8):
     """Worst elementwise violation of `numpy.allclose`, as a fraction of its own envelope.
 
     The published validation standard for deterministic operations is `numpy.allclose` at
@@ -54,6 +48,6 @@ def allclose_excess(a, b, *, rtol=1e-5, atol=1e-8):
     element sits. An absolute tolerance cannot express this, because the same disagreement
     is negligible at 1e3 and fatal at 1e-3.
     """
-    a = np.asarray(a, dtype=float)
-    b = np.asarray(b, dtype=float)
-    return float(np.nanmax(np.abs(a - b) / (atol + rtol * np.abs(b))))
+    candidate = np.asarray(candidate, dtype=float)
+    reference = np.asarray(reference, dtype=float)
+    return float(np.max(np.abs(candidate - reference) / (atol + rtol * np.abs(reference))))

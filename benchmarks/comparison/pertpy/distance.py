@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pertpy as pt
 import rapids_singlecell as rsc
-from _report import lower, upper, write_report
+from _report import measure, write_report
 from _shared import allclose_excess, grouped_adata
 
 adata = grouped_adata()
@@ -26,12 +26,11 @@ for name in metric_names:
     np.testing.assert_array_equal(reference.index, candidate.index)
     np.testing.assert_array_equal(reference.columns, candidate.columns)
     excess = allclose_excess(candidate.to_numpy(), reference.to_numpy())
-    metrics.append(upper(f"{name}.pairwise_allclose_excess", excess, 1.0))
+    metrics.append(measure(f"{name}.pairwise_allclose_excess", excess))
     metrics.append(
-        lower(
+        measure(
             f"{name}.pairwise_correlation",
             np.corrcoef(reference.to_numpy().ravel(), candidate.to_numpy().ravel())[0, 1],
-            0.9999,
         )
     )
 

@@ -5,7 +5,7 @@ import inspect
 import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import lower, upper, write_report
+from _report import measure, write_report
 from _shared import graph_overlap, pearson
 
 metrics = []
@@ -15,10 +15,8 @@ reference, candidate = adata.copy(), adata.copy()
 sc.external.pp.bbknn(reference, batch_key="batch", neighbors_within_batch=3, n_pcs=50)
 rsc.pp.bbknn(candidate, batch_key="batch", neighbors_within_batch=3, n_pcs=50, algorithm="brute")
 metrics.append(
-    lower(
-        "bbknn.connectivity_jaccard",
-        graph_overlap(reference.obsp["connectivities"], candidate.obsp["connectivities"]),
-        0.85,
+    measure(
+        "bbknn.connectivity_jaccard", graph_overlap(reference.obsp["connectivities"], candidate.obsp["connectivities"])
     )
 )
 
@@ -30,13 +28,10 @@ sc.pp.scrublet(reference, n_prin_comps=30, use_approx_neighbors=True, **cpu_seed
 rsc.pp.scrublet(candidate, random_state=0, n_prin_comps=30, use_approx_neighbors=True, verbose=False)
 metrics.extend(
     [
-        lower(
-            "scrublet.score_correlation", pearson(reference.obs["doublet_score"], candidate.obs["doublet_score"]), 0.95
-        ),
-        lower(
+        measure("scrublet.score_correlation", pearson(reference.obs["doublet_score"], candidate.obs["doublet_score"])),
+        measure(
             "scrublet.call_agreement",
             np.mean(reference.obs["predicted_doublet"].to_numpy() == candidate.obs["predicted_doublet"].to_numpy()),
-            0.95,
         ),
     ]
 )
@@ -50,15 +45,13 @@ candidate_sim_x = rsc.get.X_to_CPU(candidate_sim.X)
 gpu_totals = np.asarray(candidate_sim_x.sum(axis=1)).ravel()
 metrics.extend(
     [
-        upper(
+        measure(
             "scrublet_simulate_doublets.mean_library_size_relative_error",
             abs(ref_totals.mean() - gpu_totals.mean()) / ref_totals.mean(),
-            0.02,
         ),
-        upper(
+        measure(
             "scrublet_simulate_doublets.std_library_size_relative_error",
             abs(ref_totals.std() - gpu_totals.std()) / ref_totals.std(),
-            0.05,
         ),
     ]
 )

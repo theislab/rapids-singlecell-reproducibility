@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import upper, write_report
+from _report import measure, write_report
 from _shared import allclose_excess
 
 reference = sc.datasets.pbmc3k()
@@ -19,4 +19,4 @@ else:
     reference_x = np.asarray(reference.X)
     candidate_x = np.asarray(candidate_x)
 excess = allclose_excess(candidate_x, reference_x)
-write_report("sqrt", "scanpy.datasets.pbmc3k", "deterministic", [upper("X.allclose_excess", excess, 1.0)])
+write_report("sqrt", "scanpy.datasets.pbmc3k", "deterministic", [measure("X.allclose_excess", excess)])

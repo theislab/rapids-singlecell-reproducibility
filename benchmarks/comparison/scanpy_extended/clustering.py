@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import lower, write_report
+from _report import measure, write_report
 from _shared import pbmc68k
 from sklearn.cluster import KMeans
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
@@ -22,15 +22,13 @@ sc.tl.louvain(
 rsc.tl.louvain(candidate, resolution=1.0, key_added="gpu_louvain")
 metrics.extend(
     [
-        lower(
+        measure(
             "louvain.adjusted_rand_index",
             adjusted_rand_score(reference.obs["cpu_louvain"], candidate.obs["gpu_louvain"]),
-            0.80,
         ),
-        lower(
+        measure(
             "louvain.normalized_mutual_information",
             normalized_mutual_info_score(reference.obs["cpu_louvain"], candidate.obs["gpu_louvain"]),
-            0.80,
         ),
     ]
 )
@@ -40,11 +38,10 @@ candidate = adata.copy()
 rsc.tl.kmeans(candidate, n_clusters=8, n_pcs=50, n_init=10, random_state=42, key_added="gpu_kmeans")
 metrics.extend(
     [
-        lower("kmeans.adjusted_rand_index", adjusted_rand_score(cpu_labels, candidate.obs["gpu_kmeans"]), 0.80),
-        lower(
+        measure("kmeans.adjusted_rand_index", adjusted_rand_score(cpu_labels, candidate.obs["gpu_kmeans"])),
+        measure(
             "kmeans.normalized_mutual_information",
             normalized_mutual_info_score(cpu_labels, candidate.obs["gpu_kmeans"]),
-            0.80,
         ),
     ]
 )

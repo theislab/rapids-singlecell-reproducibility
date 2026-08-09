@@ -55,6 +55,13 @@ def main() -> int:
         (rng.normal(size=256), rng.normal(size=256)),
         (rng.normal(size=256) * 1e-9, rng.normal(size=256) * 1e-9),
         (np.array([1.0, 2.0, 3.0]), np.array([1.0, 2.0, 3.0 + 1e-3])),
+        # Asymmetric: np.allclose(a, b) is True while np.allclose(b, a) is False, because
+        # the envelope is built from the second argument. Without a case like this, a copy
+        # that swapped its arguments would still pass every check below.
+        (np.array([1.0 - 1.0009995e-5]), np.array([1.0])),
+        (np.array([1.0]), np.array([1.0 - 1.0009995e-5])),
+        # NaN is not close to anything, so the excess must not quietly skip the element.
+        (np.array([1.0, np.nan]), np.array([1.0, 2.0])),
     ]
     for path in MODULES:
         excess = load(path)
@@ -63,22 +70,12 @@ def main() -> int:
             right_array = np.atleast_1d(np.asarray(right, dtype=float))
             value = excess(left_array, right_array)
             expected = np.allclose(left_array, right_array)
-            assert (value <= 1.0) == expected, f"{path.parent.name}: excess={value} but np.allclose={expected}"
-            assert value >= 0.0, f"{path.parent.name}: negative excess {value}"
+            verdict = value <= 1.0  # NaN compares False, which is the right answer here
+            assert verdict == expected, (
+                f"{path.parent.name}: excess({left_array}, {right_array})={value} "
+                f"gives allclose={verdict}, but np.allclose={expected}"
+            )
         print(f"ok  {path.relative_to(HERE)}")
-
-    # The diagnosis has to name the term that actually decided the verdict.
-    for path in (
-        HERE / "scanpy_core" / "_shared.py",
-        HERE / "pertpy" / "_shared.py",
-        HERE / "decoupler" / "decoupler.py",
-    ):
-        diagnose = load(path, "allclose_diagnosis")
-        near_zero = diagnose(np.array([1.0, 1e-9]), np.array([1.0, 3e-9]))
-        assert "absolute floor" in near_zero, f"{path.parent.name}: atol case not identified: {near_zero}"
-        well_scaled = diagnose(np.array([1.0, 500.0]), np.array([1.0, 400.0]))
-        assert "relative disagreement" in well_scaled, f"{path.parent.name}: rtol case not identified: {well_scaled}"
-        print(f"ok  {path.relative_to(HERE)} (diagnosis)")
 
     print(f"\nAll {len(MODULES)} copies agree with numpy.allclose on {len(cases)} cases.")
     return 0

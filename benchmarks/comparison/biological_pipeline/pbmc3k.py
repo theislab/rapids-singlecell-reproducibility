@@ -11,9 +11,8 @@ import numpy as np
 import pandas as pd
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import lower, observed_only, upper, write_report
+from _report import measure, write_report
 from _shared import (
-    BASELINE_SEEDS,
     component_abs_correlations,
     embedding_knn_overlap,
     jaccard,
@@ -149,63 +148,33 @@ cpu_label_nmi = normalized_mutual_info_score(cpu.obs["cell_type"], cpu.obs["clus
 gpu_label_nmi = normalized_mutual_info_score(gpu.obs["cell_type"], gpu.obs["clusters"])
 pca_correlations = component_abs_correlations(cpu.obsm["X_pca"], gpu.obsm["X_pca"])
 
-QUALITY_BASIS = (
-    "An absolute quality score of one implementation against its own input, so it does not test "
-    "CPU/GPU agreement. The paired difference criterion is what gates."
-)
-OVERLAP_DIAGNOSIS = (
-    "UMAP is stochastic, and this threshold asks for more agreement than the CPU reference shows "
-    "against itself. See `umap.cpu_reseeded_knn_overlap`, the same measurement with only the seed "
-    "changed, and `umap.cross_embedding_overlap_vs_cpu_baseline`."
-)
 
 metrics = [
-    lower(
-        "highly_variable_genes.selection_jaccard",
-        jaccard(cpu.var_names, gpu.var_names),
-        0.98,
-    ),
-    lower("pca.minimum_component_abs_correlation", pca_correlations.min(), 0.95),
+    measure("highly_variable_genes.selection_jaccard", jaccard(cpu.var_names, gpu.var_names)),
+    measure("pca.minimum_component_abs_correlation", pca_correlations.min()),
     # Only differences gate. Single-implementation quality scores — trustworthiness,
     # per-backend annotation accuracy, per-backend cell-type NMI — are recorded as evidence
     # beside the paired difference criteria that decide the outcome.
-    observed_only("umap.cpu.trustworthiness", cpu_trustworthiness, basis=QUALITY_BASIS),
-    observed_only("umap.gpu.trustworthiness", gpu_trustworthiness, basis=QUALITY_BASIS),
-    lower("umap.cross_embedding_knn_overlap", cross_overlap, 0.6) | {"diagnosis": OVERLAP_DIAGNOSIS},
-    observed_only(
-        "umap.trustworthiness_difference",
-        abs(cpu_trustworthiness - gpu_trustworthiness),
-        basis="CPU/GPU embedding-quality gap, for comparison against the CPU seed-to-seed spread.",
-    ),
-    observed_only(
-        "umap.cpu_reseeded_knn_overlap",
-        baseline_overlap,
-        basis=f"Weakest CPU-vs-CPU overlap over seeds {BASELINE_SEEDS}; how far the reference is from itself.",
-    ),
-    observed_only(
-        "umap.cross_embedding_overlap_vs_cpu_baseline",
-        cross_overlap - baseline_overlap,
-        basis="CPU-vs-GPU overlap minus the reseeded-CPU baseline; negative means worse than reseeding.",
-    ),
-    lower(
-        "clustering.adjusted_rand_index",
-        adjusted_rand_score(cpu.obs["clusters"], gpu.obs["clusters"]),
-        0.8,
-    ),
-    lower(
+    measure("umap.cpu.trustworthiness", cpu_trustworthiness),
+    measure("umap.gpu.trustworthiness", gpu_trustworthiness),
+    measure("umap.cross_embedding_knn_overlap", cross_overlap),
+    measure("umap.trustworthiness_difference", abs(cpu_trustworthiness - gpu_trustworthiness)),
+    measure("umap.cpu_reseeded_knn_overlap", baseline_overlap),
+    measure("umap.cross_embedding_overlap_vs_cpu_baseline", cross_overlap - baseline_overlap),
+    measure("clustering.adjusted_rand_index", adjusted_rand_score(cpu.obs["clusters"], gpu.obs["clusters"])),
+    measure(
         "clustering.normalized_mutual_information",
         normalized_mutual_info_score(cpu.obs["clusters"], gpu.obs["clusters"]),
-        0.8,
     ),
-    observed_only("clustering.cpu_cell_type_nmi", cpu_label_nmi, basis=QUALITY_BASIS),
-    observed_only("clustering.gpu_cell_type_nmi", gpu_label_nmi, basis=QUALITY_BASIS),
-    upper("clustering.cell_type_nmi_difference", abs(cpu_label_nmi - gpu_label_nmi), 0.05),
-    lower("markers.mean_top50_jaccard", np.mean(marker_overlaps), 0.85),
-    lower("markers.minimum_top50_jaccard", np.min(marker_overlaps), 0.7),
-    observed_only("annotation.cpu_accuracy", cpu_accuracy, basis=QUALITY_BASIS),
-    observed_only("annotation.gpu_accuracy", gpu_accuracy, basis=QUALITY_BASIS),
-    lower("annotation.cpu_gpu_agreement", accuracy_score(cpu_prediction, gpu_prediction), 0.9),
-    upper("annotation.accuracy_difference", abs(cpu_accuracy - gpu_accuracy), 0.05),
+    measure("clustering.cpu_cell_type_nmi", cpu_label_nmi),
+    measure("clustering.gpu_cell_type_nmi", gpu_label_nmi),
+    measure("clustering.cell_type_nmi_difference", abs(cpu_label_nmi - gpu_label_nmi)),
+    measure("markers.mean_top50_jaccard", np.mean(marker_overlaps)),
+    measure("markers.minimum_top50_jaccard", np.min(marker_overlaps)),
+    measure("annotation.cpu_accuracy", cpu_accuracy),
+    measure("annotation.gpu_accuracy", gpu_accuracy),
+    measure("annotation.cpu_gpu_agreement", accuracy_score(cpu_prediction, gpu_prediction)),
+    measure("annotation.accuracy_difference", abs(cpu_accuracy - gpu_accuracy)),
 ]
 
 output_dir = Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", Path(__file__).parent / "results"))

@@ -3,8 +3,8 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import lower, upper, write_report
-from _shared import ALLCLOSE_BASIS, allclose_diagnosis, allclose_excess, component_abs_correlations, jaccard
+from _report import measure, write_report
+from _shared import allclose_excess, component_abs_correlations, jaccard
 
 
 def gpu_copy(adata):
@@ -36,21 +36,17 @@ for flavor, columns in flavor_columns.items():
         sc.pp.highly_variable_genes(cpu, flavor=flavor, n_top_genes=1_000)
     rsc.pp.highly_variable_genes(gpu, flavor=flavor, n_top_genes=1_000)
     metrics.append(
-        lower(
+        measure(
             f"highly_variable_genes.{flavor}.selection_jaccard",
             jaccard(cpu.var_names[cpu.var.highly_variable], gpu.var_names[gpu.var.highly_variable]),
-            0.99,
         )
     )
     for column in columns:
         metrics.append(
-            upper(
+            measure(
                 f"highly_variable_genes.{flavor}.{column}.allclose_excess",
                 allclose_excess(gpu.var[column], cpu.var[column]),
-                1.0,
-                basis=ALLCLOSE_BASIS,
             )
-            | {"diagnosis": allclose_diagnosis(gpu.var[column], cpu.var[column])}
         )
 
 pca_input = counts.copy()
@@ -69,13 +65,11 @@ score_correlations = component_abs_correlations(cpu.obsm["X_pca"], gpu.obsm["X_p
 loading_correlations = component_abs_correlations(cpu.varm["PCs"], gpu.varm["PCs"])
 metrics.extend(
     [
-        lower("pca.scores.minimum_component_abs_correlation", np.min(score_correlations), 0.999),
-        lower("pca.loadings.minimum_component_abs_correlation", np.min(loading_correlations), 0.999),
-        upper(
+        measure("pca.scores.minimum_component_abs_correlation", np.min(score_correlations)),
+        measure("pca.loadings.minimum_component_abs_correlation", np.min(loading_correlations)),
+        measure(
             "pca.explained_variance_ratio.allclose_excess",
             allclose_excess(gpu.uns["pca"]["variance_ratio"], cpu.uns["pca"]["variance_ratio"]),
-            1.0,
-            basis=ALLCLOSE_BASIS,
         ),
     ]
 )

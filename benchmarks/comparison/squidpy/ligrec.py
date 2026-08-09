@@ -7,9 +7,8 @@ import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
 import squidpy as sq
-from _report import lower_bound, upper_bound, write_report
+from _report import measure, write_report
 from _shared import (
-    ALLCLOSE_BASIS,
     allclose_excess,
     dataframe_values,
     mean_abs_error,
@@ -73,23 +72,10 @@ valid = np.isfinite(reference_pvalues) & np.isfinite(candidate_pvalues)
 nan_agreement = np.mean(np.isnan(reference_pvalues) == np.isnan(candidate_pvalues))
 
 metrics = [
-    upper_bound(
-        "means.allclose_excess",
-        allclose_excess(reference_means, candidate_means),
-        1.0,
-        basis=ALLCLOSE_BASIS,
-    ),
-    lower_bound("pvalues.nan_mask_agreement", nan_agreement, 1.0),
-    upper_bound(
-        "pvalues.mean_abs_error",
-        mean_abs_error(reference_pvalues[valid], candidate_pvalues[valid]),
-        0.05,
-    ),
-    lower_bound(
-        "pvalues.pearson_correlation",
-        pearson_correlation(reference_pvalues[valid], candidate_pvalues[valid]),
-        0.90,
-    ),
+    measure("means.allclose_excess", allclose_excess(candidate_means, reference_means)),
+    measure("pvalues.nan_mask_agreement", nan_agreement),
+    measure("pvalues.mean_abs_error", mean_abs_error(reference_pvalues[valid], candidate_pvalues[valid])),
+    measure("pvalues.pearson_correlation", pearson_correlation(reference_pvalues[valid], candidate_pvalues[valid])),
 ]
 
 write_report(

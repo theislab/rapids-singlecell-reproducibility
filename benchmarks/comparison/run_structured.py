@@ -135,27 +135,29 @@ EXECUTION.write_text(
     + "\n"
 )
 
-env["EQUIVALENCE_SUMMARY"] = str(SUMMARY)
-aggregation = subprocess.run([sys.executable, str(HERE / "collect_results.py")], env=env, check=False)
-rendering = subprocess.run(
+# Measuring is done; evaluating is a separate program, so the same records can be
+# re-scored later without a GPU. `failures` above are scripts that did not produce a
+# record at all — an infrastructure problem, distinct from a criterion that was missed.
+evaluation = subprocess.run(
     [
         sys.executable,
-        str(HERE / "render_results.py"),
+        str(HERE / "evaluate.py"),
+        "--results",
+        str(RESULTS),
         "--summary",
         str(SUMMARY),
         "--execution",
         str(EXECUTION),
-        "--output-dir",
+        "--report-dir",
         str(REPORT_DIR),
     ],
+    env=env,
     check=False,
 )
 
 if failures:
-    raise SystemExit(f"Comparison failures: {', '.join(failures)}")
-if aggregation.returncode:
-    raise SystemExit(f"Result aggregation failed with exit {aggregation.returncode}")
-if rendering.returncode:
-    raise SystemExit(f"Result rendering failed with exit {rendering.returncode}")
+    raise SystemExit(f"Comparison scripts did not produce a record: {', '.join(failures)}")
+if evaluation.returncode:
+    raise SystemExit(f"Evaluation failed with exit {evaluation.returncode}")
 
 print(f"\nAll structured comparisons passed. Summary: {SUMMARY}; report: {REPORT_DIR / 'summary.md'}")

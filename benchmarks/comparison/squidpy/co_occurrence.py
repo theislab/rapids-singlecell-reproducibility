@@ -3,9 +3,8 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import squidpy as sq
-from _report import lower_bound, upper_bound, write_report
+from _report import measure, write_report
 from _shared import (
-    ALLCLOSE_BASIS,
     IMC_CLUSTER_KEY,
     allclose_excess,
     load_imc,
@@ -37,28 +36,10 @@ candidate_occ, candidate_interval = rsc.gr.co_occurrence(
 
 np.testing.assert_array_equal(reference_occ.shape, candidate_occ.shape)
 metrics = [
-    upper_bound(
-        "interval.allclose_excess",
-        allclose_excess(reference_interval, candidate_interval),
-        1.0,
-        basis=ALLCLOSE_BASIS,
-    ),
-    upper_bound(
-        "occurrence.allclose_excess",
-        allclose_excess(reference_occ, candidate_occ),
-        1.0,
-        basis=ALLCLOSE_BASIS,
-    ),
-    upper_bound(
-        "occurrence.mean_abs_error",
-        mean_abs_error(reference_occ, candidate_occ),
-        1e-6,
-    ),
-    lower_bound(
-        "occurrence.pearson_correlation",
-        pearson_correlation(reference_occ, candidate_occ),
-        0.99999,
-    ),
+    measure("interval.allclose_excess", allclose_excess(candidate_interval, reference_interval)),
+    measure("occurrence.allclose_excess", allclose_excess(candidate_occ, reference_occ)),
+    measure("occurrence.mean_abs_error", mean_abs_error(reference_occ, candidate_occ)),
+    measure("occurrence.pearson_correlation", pearson_correlation(reference_occ, candidate_occ)),
 ]
 
 write_report(

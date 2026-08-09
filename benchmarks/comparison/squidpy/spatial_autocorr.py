@@ -3,8 +3,8 @@ from __future__ import annotations
 import numpy as np
 import rapids_singlecell as rsc
 import squidpy as sq
-from _report import lower_bound, upper_bound, write_report
-from _shared import ALLCLOSE_BASIS, allclose_excess, load_imc, pearson_correlation
+from _report import measure, write_report
+from _shared import allclose_excess, load_imc, pearson_correlation
 
 adata = load_imc()
 metrics = []
@@ -37,17 +37,8 @@ for mode, statistic in (("moran", "I"), ("geary", "C")):
 
     metrics.extend(
         [
-            upper_bound(
-                f"{mode}.{statistic}.allclose_excess",
-                allclose_excess(ref_values, candidate_values),
-                1.0,
-                basis=ALLCLOSE_BASIS,
-            ),
-            lower_bound(
-                f"{mode}.{statistic}.pearson_correlation",
-                pearson_correlation(ref_values, candidate_values),
-                0.999999,
-            ),
+            measure(f"{mode}.{statistic}.allclose_excess", allclose_excess(candidate_values, ref_values)),
+            measure(f"{mode}.{statistic}.pearson_correlation", pearson_correlation(ref_values, candidate_values)),
         ]
     )
 

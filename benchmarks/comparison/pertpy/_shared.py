@@ -58,13 +58,7 @@ def max_abs(a, b):
     return float(np.nanmax(np.abs(np.asarray(a, dtype=float) - np.asarray(b, dtype=float))))
 
 
-ALLCLOSE_BASIS = (
-    "Manuscript Methods: deterministic operations are validated with numpy.allclose at "
-    "default parameters (rtol=1e-5, atol=1e-8)."
-)
-
-
-def allclose_excess(a, b, *, rtol=1e-5, atol=1e-8):
+def allclose_excess(candidate, reference, *, rtol=1e-5, atol=1e-8):
     """Worst elementwise violation of `numpy.allclose`, as a fraction of its own envelope.
 
     The published validation standard for deterministic operations is `numpy.allclose` at
@@ -74,34 +68,6 @@ def allclose_excess(a, b, *, rtol=1e-5, atol=1e-8):
     element sits. An absolute tolerance cannot express this, because the same disagreement
     is negligible at 1e3 and fatal at 1e-3.
     """
-    a = np.asarray(a, dtype=float)
-    b = np.asarray(b, dtype=float)
-    return float(np.nanmax(np.abs(a - b) / (atol + rtol * np.abs(b))))
-
-
-def allclose_diagnosis(a, b, *, rtol=1e-5, atol=1e-8):
-    """Explain a `numpy.allclose` verdict by locating where its envelope is spent.
-
-    The criterion has two terms, |a - b| <= atol + rtol * |b|, and which one binds depends
-    entirely on the magnitude of the element that fails. For a quantity that crosses zero
-    the absolute floor binds, and at float32 precision that floor is below the noise of any
-    implementation. Reporting the reference magnitude at the worst element says which of
-    the two terms the verdict actually rests on.
-    """
-    left_array = np.asarray(a, dtype=float)
-    right_array = np.asarray(b, dtype=float)
-    envelope = atol + rtol * np.abs(right_array)
-    ratio = (np.abs(left_array - right_array) / envelope).ravel()
-    magnitude = float(np.abs(right_array.ravel()[int(np.nanargmax(ratio))]))
-    if atol >= rtol * magnitude:
-        return (
-            f"The worst element sits at a reference magnitude of {magnitude:.3g}, where "
-            f"numpy.allclose's absolute floor (atol={atol:g}) decides the criterion instead of its "
-            f"relative term. This quantity crosses zero, and float32 cannot resolve a difference "
-            f"below that floor there, so no float32 implementation can meet the default parameters "
-            f"on it. The paired correlation on the same arrays says how the values agree overall."
-        )
-    return (
-        f"The worst element sits at a reference magnitude of {magnitude:.3g}, where the relative "
-        f"term (rtol={rtol:g}) decides the criterion, so this is a genuine relative disagreement."
-    )
+    candidate = np.asarray(candidate, dtype=float)
+    reference = np.asarray(reference, dtype=float)
+    return float(np.max(np.abs(candidate - reference) / (atol + rtol * np.abs(reference))))

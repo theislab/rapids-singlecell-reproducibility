@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import lower, observed_only, upper, write_report
-from _shared import ALLCLOSE_BASIS, allclose_diagnosis, allclose_excess, float32_ulp, max_abs, max_rel, pearson
+from _report import measure, write_report
+from _shared import allclose_excess, float32_ulp, max_abs, max_rel, pearson
 
 
 def gpu_copy(adata):
@@ -19,11 +19,11 @@ cpu = counts.copy()
 gpu = gpu_copy(counts)
 sc.pp.filter_cells(cpu, min_genes=200)
 rsc.pp.filter_cells(gpu, min_genes=200)
-metrics.append(lower("filter_cells.obs_name_agreement", float(cpu.obs_names.equals(gpu.obs_names)), 1.0))
+metrics.append(measure("filter_cells.obs_name_agreement", float(cpu.obs_names.equals(gpu.obs_names))))
 
 sc.pp.filter_genes(cpu, min_cells=3)
 rsc.pp.filter_genes(gpu, min_cells=3)
-metrics.append(lower("filter_genes.var_name_agreement", float(cpu.var_names.equals(gpu.var_names)), 1.0))
+metrics.append(measure("filter_genes.var_name_agreement", float(cpu.var_names.equals(gpu.var_names))))
 
 cpu = counts.copy()
 gpu = gpu_copy(counts)
@@ -33,11 +33,8 @@ sc.pp.calculate_qc_metrics(cpu, qc_vars=["mt"], log1p=True, percent_top=False, i
 rsc.pp.calculate_qc_metrics(gpu, qc_vars=["mt"], log1p=True)
 qc_columns = ["n_genes_by_counts", "total_counts", "total_counts_mt", "pct_counts_mt"]
 metrics.append(
-    upper(
-        "calculate_qc_metrics.allclose_excess",
-        max(allclose_excess(gpu.obs[key], cpu.obs[key]) for key in qc_columns),
-        1.0,
-        basis=ALLCLOSE_BASIS,
+    measure(
+        "calculate_qc_metrics.allclose_excess", max(allclose_excess(gpu.obs[key], cpu.obs[key]) for key in qc_columns)
     )
 )
 
@@ -51,24 +48,11 @@ rsc.get.anndata_to_CPU(gpu)
 # comparison is what made it look like a disagreement.
 metrics.extend(
     [
-        upper("normalize_total.allclose_excess", allclose_excess(gpu.X, cpu.X), 1.0, basis=ALLCLOSE_BASIS)
-        | {"diagnosis": allclose_diagnosis(gpu.X, cpu.X)},
-        observed_only(
-            "normalize_total.max_abs_error",
-            max_abs(cpu.X, gpu.X),
-            basis="Largest absolute difference; recorded for continuity with earlier snapshots.",
-        ),
-        observed_only(
-            "normalize_total.float32_ulp_at_max",
-            float32_ulp(cpu.X),
-            basis="Smallest representable float32 difference at the largest normalized count.",
-        ),
-        observed_only(
-            "normalize_total.max_rel_error",
-            max_rel(cpu.X, gpu.X),
-            basis="Absolute error divided by the largest normalized count, for scale context.",
-        ),
-        lower("normalize_total.pearson_correlation", pearson(cpu.X, gpu.X), 0.999999),
+        measure("normalize_total.allclose_excess", allclose_excess(gpu.X, cpu.X)),
+        measure("normalize_total.max_abs_error", max_abs(cpu.X, gpu.X)),
+        measure("normalize_total.float32_ulp_at_max", float32_ulp(cpu.X)),
+        measure("normalize_total.max_rel_error", max_rel(cpu.X, gpu.X)),
+        measure("normalize_total.pearson_correlation", pearson(cpu.X, gpu.X)),
     ]
 )
 
@@ -78,9 +62,8 @@ rsc.pp.log1p(gpu)
 rsc.get.anndata_to_CPU(gpu)
 metrics.extend(
     [
-        upper("log1p.allclose_excess", allclose_excess(gpu.X, cpu.X), 1.0, basis=ALLCLOSE_BASIS)
-        | {"diagnosis": allclose_diagnosis(gpu.X, cpu.X)},
-        lower("log1p.pearson_correlation", pearson(cpu.X, gpu.X), 0.999999),
+        measure("log1p.allclose_excess", allclose_excess(gpu.X, cpu.X)),
+        measure("log1p.pearson_correlation", pearson(cpu.X, gpu.X)),
     ]
 )
 
@@ -93,9 +76,8 @@ rsc.pp.normalize_pearson_residuals(gpu)
 rsc.get.anndata_to_CPU(gpu)
 metrics.extend(
     [
-        upper("normalize_pearson_residuals.allclose_excess", allclose_excess(gpu.X, cpu.X), 1.0, basis=ALLCLOSE_BASIS)
-        | {"diagnosis": allclose_diagnosis(gpu.X, cpu.X)},
-        lower("normalize_pearson_residuals.pearson_correlation", pearson(cpu.X, gpu.X), 0.99999),
+        measure("normalize_pearson_residuals.allclose_excess", allclose_excess(gpu.X, cpu.X)),
+        measure("normalize_pearson_residuals.pearson_correlation", pearson(cpu.X, gpu.X)),
     ]
 )
 
@@ -114,9 +96,8 @@ rsc.pp.scale(gpu, max_value=10)
 rsc.get.anndata_to_CPU(gpu)
 metrics.extend(
     [
-        upper("scale.allclose_excess", allclose_excess(gpu.X, cpu.X), 1.0, basis=ALLCLOSE_BASIS)
-        | {"diagnosis": allclose_diagnosis(gpu.X, cpu.X)},
-        lower("scale.pearson_correlation", pearson(cpu.X, gpu.X), 0.99999),
+        measure("scale.allclose_excess", allclose_excess(gpu.X, cpu.X)),
+        measure("scale.pearson_correlation", pearson(cpu.X, gpu.X)),
     ]
 )
 
@@ -128,9 +109,8 @@ rsc.pp.regress_out(gpu, keys=["total_counts"])
 rsc.get.anndata_to_CPU(gpu)
 metrics.extend(
     [
-        upper("regress_out.allclose_excess", allclose_excess(gpu.X, cpu.X), 1.0, basis=ALLCLOSE_BASIS)
-        | {"diagnosis": allclose_diagnosis(gpu.X, cpu.X)},
-        lower("regress_out.pearson_correlation", pearson(cpu.X, gpu.X), 0.9999),
+        measure("regress_out.allclose_excess", allclose_excess(gpu.X, cpu.X)),
+        measure("regress_out.pearson_correlation", pearson(cpu.X, gpu.X)),
     ]
 )
 
@@ -145,13 +125,8 @@ sc.tl.score_genes(cpu, gene_list=gene_list, score_name="marker_score", random_st
 rsc.tl.score_genes(gpu, gene_list=gene_list, score_name="marker_score", random_state=0)
 metrics.extend(
     [
-        upper(
-            "score_genes.allclose_excess",
-            allclose_excess(gpu.obs["marker_score"], cpu.obs["marker_score"]),
-            1.0,
-            basis=ALLCLOSE_BASIS,
-        ),
-        lower("score_genes.pearson_correlation", pearson(cpu.obs["marker_score"], gpu.obs["marker_score"]), 0.9999),
+        measure("score_genes.allclose_excess", allclose_excess(gpu.obs["marker_score"], cpu.obs["marker_score"])),
+        measure("score_genes.pearson_correlation", pearson(cpu.obs["marker_score"], gpu.obs["marker_score"])),
     ]
 )
 
@@ -160,9 +135,6 @@ gpu = gpu_copy(counts)
 sc.pp.sqrt(cpu)
 rsc.pp.sqrt(gpu)
 rsc.get.anndata_to_CPU(gpu)
-metrics.append(
-    upper("sqrt.allclose_excess", allclose_excess(gpu.X, cpu.X), 1.0, basis=ALLCLOSE_BASIS)
-    | {"diagnosis": allclose_diagnosis(gpu.X, cpu.X)}
-)
+metrics.append(measure("sqrt.allclose_excess", allclose_excess(gpu.X, cpu.X)))
 
 write_report("scanpy_core_preprocessing", "pbmc3k", "deterministic", metrics)

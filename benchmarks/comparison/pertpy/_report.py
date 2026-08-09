@@ -16,26 +16,14 @@ def package_version(package):
     return "unknown"
 
 
-def upper(name, value, threshold):
-    return {
-        "metric": name,
-        "observed": float(value),
-        "comparison": "<=",
-        "tolerance": float(threshold),
-        "criterion": f"<= {threshold}",
-        "passed": bool(value <= threshold),
-    }
+def measure(metric: str, observed: float) -> dict:
+    """Record one measurement. Nothing here decides anything.
 
-
-def lower(name, value, threshold):
-    return {
-        "metric": name,
-        "observed": float(value),
-        "comparison": ">=",
-        "tolerance": float(threshold),
-        "criterion": f">= {threshold}",
-        "passed": bool(value >= threshold),
-    }
+    Whether this metric gates, and against what threshold, is `criteria.py`'s business and
+    `evaluate.py` applies it. Keeping the two apart is what lets a stored run be re-scored
+    without a GPU.
+    """
+    return {"metric": metric, "observed": float(observed)}
 
 
 def write_report(method, dataset, tier, metrics):
@@ -45,12 +33,11 @@ def write_report(method, dataset, tier, metrics):
         "dataset": dataset,
         "tier": tier,
         "versions": {"rapids-singlecell": package_version("rapids-singlecell"), "pertpy": package_version("pertpy")},
-        "passed": all(item["passed"] for item in metrics),
         "metrics": metrics,
     }
     output_dir = Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", Path(__file__).parent / "results"))
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / f"{method}.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
-    if not report["passed"]:
-        raise AssertionError(f"{method} equivalence thresholds failed")
+    # Measuring is not evaluating: the verdict is formed by evaluate.py from this
+    # record, so a missed threshold here is evidence, not a script failure.

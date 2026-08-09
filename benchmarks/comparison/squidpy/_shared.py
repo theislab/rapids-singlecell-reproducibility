@@ -43,13 +43,7 @@ def pearson_correlation(reference, candidate) -> float:
     return float(np.corrcoef(reference[mask], candidate[mask])[0, 1])
 
 
-ALLCLOSE_BASIS = (
-    "Manuscript Methods: deterministic operations are validated with numpy.allclose at "
-    "default parameters (rtol=1e-5, atol=1e-8)."
-)
-
-
-def allclose_excess(reference, candidate, *, rtol: float = 1e-5, atol: float = 1e-8) -> float:
+def allclose_excess(candidate, reference, *, rtol: float = 1e-5, atol: float = 1e-8) -> float:
     """Worst elementwise violation of `numpy.allclose`, as a fraction of its own envelope.
 
     The published validation standard for deterministic operations is `numpy.allclose` at
@@ -61,4 +55,4 @@ def allclose_excess(reference, candidate, *, rtol: float = 1e-5, atol: float = 1
     """
     reference = np.asarray(reference, dtype=np.float64)
     candidate = np.asarray(candidate, dtype=np.float64)
-    return float(np.nanmax(np.abs(candidate - reference) / (atol + rtol * np.abs(reference))))
+    return float(np.max(np.abs(candidate - reference) / (atol + rtol * np.abs(reference))))
