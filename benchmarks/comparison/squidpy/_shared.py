@@ -24,11 +24,6 @@ def dataframe_values(frame) -> np.ndarray:
     return frame.to_numpy()
 
 
-def max_abs_error(reference, candidate) -> float:
-    reference = np.asarray(reference, dtype=np.float64)
-    candidate = np.asarray(candidate, dtype=np.float64)
-    return float(np.nanmax(np.abs(reference - candidate)))
-
 
 def mean_abs_error(reference, candidate) -> float:
     reference = np.asarray(reference, dtype=np.float64)
