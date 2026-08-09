@@ -4,16 +4,23 @@ What the CPU/GPU equivalence work does **not** yet establish, stated plainly so 
 have to infer it.
 
 **Where the numbers live.** Counts and per-metric values belong to a run, so this document does not
-restate them — the generated `report/summary.md` lists every criterion, its observed value, and the
-measured diagnosis behind each failure, and `equivalence.json` is the machine-readable form. What
-follows is the interpretation: what the suite covers, what it cannot show, and why each red metric is
-red. Only quantities that do not change from run to run are quoted here.
+restate them. The current evidence is
+[`snapshots/2026-08-09-derived`](benchmarks/comparison/snapshots/2026-08-09-derived), which lists
+every criterion, its observed value, and the measured diagnosis behind each failure. It re-scores to
+its own recorded verdicts without a GPU:
 
-For context, what the suite **does** establish: no failure in any complete run so far is attributable
-to a rapids-singlecell defect. The failures come from three causes — criteria the float32 format
-cannot satisfy at all (section 3), genuine relative differences too small to move any downstream
-result (also section 3), and stochastic criteria that ask for more agreement than the CPU reference
-shows against itself (section 4).
+```bash
+python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-08-09-derived/results
+```
+
+What follows is the interpretation: what the suite covers, what it cannot show, and why each red
+metric is red. Only quantities that do not change from run to run are quoted here.
+
+For context, what the suite **does** establish: on that run **16 criteria fail out of 181**, and none
+of the failures is attributable to a rapids-singlecell defect. They come from three causes: four `allclose`
+criteria that float32 cannot satisfy at all, five that are genuine relative differences too small to
+move any downstream result (both in section 3), and seven stochastic criteria that ask for more
+agreement than the CPU reference shows against itself (section 4).
 
 ## 1. Validated at small scale, assumed at large scale
 
@@ -81,7 +88,13 @@ should say is an authors' decision, not something to settle by adjusting a thres
 
 ## 4. What the remaining red criteria rest on
 
-The stochastic failures are unchanged, and every criterion is still in place.
+Seven stochastic criteria fail: the cross-embedding overlap on both UMAP comparisons, and five
+`calculate_niche` criteria. Every one is still in place at its original value.
+
+Two criteria that used to fail here no longer gate. `umap.cpu.trustworthiness` and
+`umap.gpu.trustworthiness` score a single embedding against its own input, so they never tested
+CPU/GPU agreement; they are recorded as evidence instead. That was a deliberate re-specification, not
+a relaxation to reach green — and it does leave a gap, noted at the end of this section.
 
 **`umap.cross_embedding_knn_overlap` has no reference point.** UMAP is stochastic, so a CPU-vs-GPU
 overlap is only interpretable next to how far the CPU reference is from itself. Rerunning the CPU
@@ -120,6 +133,15 @@ have an exact distance tie at the k-th neighbour:
 | `rsc.pp.neighbors` brute                                                 |                      **0** | **0** |   +4.9e-06 |
 
 Recall against ground truth tells the same story: rsc 0.899 versus scanpy 0.858 at k=14.
+
+### The gap left by demoting the quality scores
+
+Nothing now gates UMAP embedding quality, per-backend annotation accuracy, or per-backend cell-type
+NMI. Each was an absolute score of one implementation, so none of them tested equivalence — but their
+removal means an upstream regression that degraded **both** backends equally would leave
+`accuracy_difference` near zero and the suite green while the pipeline produced nonsense. The paired
+difference criteria still gate for accuracy and cell-type NMI; for trustworthiness, the paired
+difference is itself recorded rather than gating, so that one has no backstop at all.
 
 ### Every failure was probed for a GPU-side defect; none was found
 
@@ -175,7 +197,7 @@ failure modes in seconds — it records GPU, compute capability, driver and CUDA
 one real kernel, always writes `gpu-smoke.json`, and exits 90 rather than spending a whole run. It
 distinguishes infrastructure failures from scientific ones; it does not fix either.
 
-Consequently every number in the current snapshots comes from **A100 or H100 only**.
+Consequently every number in the committed snapshots comes from **A100 or H100 only**.
 
 ## 7. No automated validation
 
