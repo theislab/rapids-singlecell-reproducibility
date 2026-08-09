@@ -116,3 +116,52 @@ def ranked_names(adata, key: str, group: str, n_genes: int = 50) -> list[str]:
         return [str(name) for name in names[group][:n_genes]]
     group_index = list(adata.obs[adata.uns[key]["params"]["groupby"]].cat.categories).index(group)
     return [str(name) for name in names[:n_genes, group_index]]
+
+
+ALLCLOSE_BASIS = (
+    "Manuscript Methods: deterministic operations are validated with numpy.allclose at "
+    "default parameters (rtol=1e-5, atol=1e-8)."
+)
+
+
+def allclose_excess(left, right, *, rtol: float = 1e-5, atol: float = 1e-8) -> float:
+    """Worst elementwise violation of `numpy.allclose`, as a fraction of its own envelope.
+
+    The published validation standard for deterministic operations is `numpy.allclose` at
+    its default parameters, which is a *relative* criterion: |a - b| <= atol + rtol * |b|.
+    Dividing the difference by that envelope gives one scale-free number: <= 1 means the
+    two arrays are `allclose`, and the value says how far past the envelope the worst
+    element sits. An absolute tolerance cannot express this, because the same disagreement
+    is negligible at 1e3 and fatal at 1e-3.
+    """
+    left_array = dense(left).astype(float, copy=False)
+    right_array = dense(right).astype(float, copy=False)
+    return float(np.nanmax(np.abs(left_array - right_array) / (atol + rtol * np.abs(right_array))))
+
+
+def allclose_diagnosis(left, right, *, rtol: float = 1e-5, atol: float = 1e-8) -> str:
+    """Explain a `numpy.allclose` verdict by locating where its envelope is spent.
+
+    The criterion has two terms, |a - b| <= atol + rtol * |b|, and which one binds depends
+    entirely on the magnitude of the element that fails. For a quantity that crosses zero
+    the absolute floor binds, and at float32 precision that floor is below the noise of any
+    implementation. Reporting the reference magnitude at the worst element says which of
+    the two terms the verdict actually rests on.
+    """
+    left_array = dense(left).astype(float, copy=False)
+    right_array = dense(right).astype(float, copy=False)
+    envelope = atol + rtol * np.abs(right_array)
+    ratio = (np.abs(left_array - right_array) / envelope).ravel()
+    magnitude = float(np.abs(right_array.ravel()[int(np.nanargmax(ratio))]))
+    if atol >= rtol * magnitude:
+        return (
+            f"The worst element sits at a reference magnitude of {magnitude:.3g}, where "
+            f"numpy.allclose's absolute floor (atol={atol:g}) decides the criterion instead of its "
+            f"relative term. This quantity crosses zero, and float32 cannot resolve a difference "
+            f"below that floor there, so no float32 implementation can meet the default parameters "
+            f"on it. The paired correlation on the same arrays says how the values agree overall."
+        )
+    return (
+        f"The worst element sits at a reference magnitude of {magnitude:.3g}, where the relative "
+        f"term (rtol={rtol:g}) decides the criterion, so this is a genuine relative disagreement."
+    )

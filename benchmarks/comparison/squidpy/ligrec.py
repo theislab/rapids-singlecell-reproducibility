@@ -9,8 +9,9 @@ import scanpy as sc
 import squidpy as sq
 from _report import lower_bound, upper_bound, write_report
 from _shared import (
+    ALLCLOSE_BASIS,
+    allclose_excess,
     dataframe_values,
-    max_abs_error,
     mean_abs_error,
     pearson_correlation,
 )
@@ -73,9 +74,10 @@ nan_agreement = np.mean(np.isnan(reference_pvalues) == np.isnan(candidate_pvalue
 
 metrics = [
     upper_bound(
-        "means.max_abs_error",
-        max_abs_error(reference_means, candidate_means),
-        1e-5,
+        "means.allclose_excess",
+        allclose_excess(reference_means, candidate_means),
+        1.0,
+        basis=ALLCLOSE_BASIS,
     ),
     lower_bound("pvalues.nan_mask_agreement", nan_agreement, 1.0),
     upper_bound(

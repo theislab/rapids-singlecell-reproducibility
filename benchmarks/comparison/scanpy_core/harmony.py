@@ -53,7 +53,12 @@ rsc.get.anndata_to_CPU(candidate)
 
 component_correlations = component_abs_correlations(reference.obsm["X_pca_harmony"], candidate.obsm["X_pca_harmony"])
 metrics = [
-    lower("harmony.minimum_component_abs_correlation", component_correlations.min(), 0.95),
+    lower(
+        "harmony.minimum_component_abs_correlation",
+        component_correlations.min(),
+        0.95,
+        basis="Manuscript Methods: Harmony maintains a Pearson correlation of >95% for all corrected principal components.",
+    ),
     lower("harmony.mean_component_abs_correlation", component_correlations.mean(), 0.98),
     upper(
         "harmony.standard_deviation_max_abs_error",

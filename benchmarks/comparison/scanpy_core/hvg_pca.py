@@ -4,7 +4,7 @@ import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
 from _report import lower, upper, write_report
-from _shared import component_abs_correlations, jaccard, max_abs
+from _shared import ALLCLOSE_BASIS, allclose_diagnosis, allclose_excess, component_abs_correlations, jaccard
 
 
 def gpu_copy(adata):
@@ -45,10 +45,12 @@ for flavor, columns in flavor_columns.items():
     for column in columns:
         metrics.append(
             upper(
-                f"highly_variable_genes.{flavor}.{column}.max_abs_error",
-                max_abs(cpu.var[column], gpu.var[column]),
-                1e-4,
+                f"highly_variable_genes.{flavor}.{column}.allclose_excess",
+                allclose_excess(gpu.var[column], cpu.var[column]),
+                1.0,
+                basis=ALLCLOSE_BASIS,
             )
+            | {"diagnosis": allclose_diagnosis(gpu.var[column], cpu.var[column])}
         )
 
 pca_input = counts.copy()
@@ -70,9 +72,10 @@ metrics.extend(
         lower("pca.scores.minimum_component_abs_correlation", np.min(score_correlations), 0.999),
         lower("pca.loadings.minimum_component_abs_correlation", np.min(loading_correlations), 0.999),
         upper(
-            "pca.explained_variance_ratio.max_abs_error",
-            max_abs(cpu.uns["pca"]["variance_ratio"], gpu.uns["pca"]["variance_ratio"]),
-            1e-4,
+            "pca.explained_variance_ratio.allclose_excess",
+            allclose_excess(gpu.uns["pca"]["variance_ratio"], cpu.uns["pca"]["variance_ratio"]),
+            1.0,
+            basis=ALLCLOSE_BASIS,
         ),
     ]
 )

@@ -4,12 +4,13 @@ What the CPU/GPU equivalence work does **not** yet establish, stated plainly so 
 not have to infer it. Every number below comes from the suite itself; the generated
 `report/summary.md` prints each failing criterion with the diagnosis behind it.
 
-For context, what the suite **does** establish: on the complete 20-group run
-([`snapshots/2026-07-31-expanded`](benchmarks/comparison/snapshots/2026-07-31-expanded)), 200 of 210
-metrics pass, and after six targeted probes none of the 10 failures is attributable to a
-rapids-singlecell defect.
-The deterministic core is clean — `rank_genes_groups` 60/60, decoupler 18/18, pertpy `distance`
-18/18, `hvg_pca` 19/19 — and `normalize_total` agrees with Scanpy to exactly one float32 ULP.
+For context, what the suite **does** establish: on the most recent complete 20-group run, 185 of 202
+gating metrics pass, and no failure is attributable to a rapids-singlecell defect. `rank_genes_groups`
+is 60/60, pertpy `distance` 18/18, and the spatial statistics 8/8. The seventeen failures come from
+three causes: five where the manuscript's own `numpy.allclose` defaults are unreachable in float32,
+four genuine relative differences of 1e-5 to 1e-4 that change no downstream result (both in section
+3), and eight stochastic criteria that ask for more agreement than the CPU reference shows against
+itself (section 4).
 
 ## 1. Validated at small scale, assumed at large scale
 
@@ -31,46 +32,59 @@ where accumulation order and partition boundaries could diverge.
 
 This is the largest gap. Equivalence is demonstrated at 10^3 cells and assumed at 10^6–10^8.
 
-## 2. The thresholds are unreviewed, including the passing ones
+## 2. Most thresholds are still unreviewed
 
-Every threshold in the suite carries an empty `basis` field — the failing ones now carry a
-`diagnosis`, which says what was measured, not that the threshold was agreed. They were all chosen
-before any of this analysis and have not been reviewed with the method owners, so **"200/210
-passing" reads stronger than it is**: a green metric with an arbitrary threshold is weak evidence in
-the same way a red one is. The reds have at least been investigated; the greens have not.
+The deterministic criteria now state the standard the manuscript declares — `numpy.allclose` at
+default parameters (`rtol=1e-5`, `atol=1e-8`) — reported as `allclose_excess`, the worst
+elementwise difference as a fraction of that envelope, where `<= 1` means the two arrays are
+`allclose`. Harmony's per-component correlation floor of 0.95 is likewise the manuscript's own
+Harmony criterion. Those criteria carry a `basis` naming the published standard.
 
-Four criteria were diagnosed as unsatisfiable by any correct implementation and were
-**deliberately left failing** rather than widened. Re-specifying them is a decision for the method
-owners, not something to do to make a run green. Their supporting measurements are in the next
-section.
+**No other threshold does.** The correlation floors, the Jaccard floors, and every ARI/NMI
+threshold were chosen before any of this analysis and have not been reviewed with the method
+owners. For stochastic methods the manuscript names adjusted Rand index and "preservation of local
+neighborhood structure" but states **no threshold at all**, so those numbers have no external
+source. "N of M passing" therefore reads stronger than it is: a green metric with an arbitrary
+threshold is weak evidence in the same way a red one is.
 
-Stochastic comparisons also report a single realization at one fixed seed. A reseeded-CPU baseline
-is now recorded beside the embedding-overlap criteria as evidence, but distributions or confidence
+The suite also gates only on _differences_. Absolute quality scores of a single implementation —
+UMAP trustworthiness, per-backend annotation accuracy, per-backend cell-type NMI — are recorded as
+evidence rather than asserted, because they do not test CPU/GPU agreement at all and the CPU
+reference can fail them on its own.
+
+Stochastic comparisons still report a single realization at one fixed seed. A reseeded-CPU baseline
+is recorded beside the embedding-overlap criteria as evidence, but distributions or confidence
 intervals over several seeds are not yet reported.
 
-## 3. What the four diagnoses rest on
+## 3. The declared validation standard is not met by every operation it names
 
-Each failing criterion carries a one-line diagnosis in the generated report. The measurements
-behind those lines:
+The manuscript Methods state that deterministic operations agree within `numpy.allclose` at default
+parameters. The suite now states that criterion directly, as `allclose_excess`: the worst elementwise
+difference divided by `numpy.allclose`'s own envelope, `atol + rtol * |b|`, so `<= 1` means the two
+arrays are `allclose`. **Of 47 such comparisons, 9 fail**, and they fail for two different reasons.
 
-**`normalize_total.max_abs_error` is unattainable in float32.** Observed 1.220703125e-4 against
-`<= 1e-5`. pbmc3k normalized to `target_sum=10000` reaches 1751.05, where one float32 ULP is
-_exactly_ 1.220703125e-4 — the "error" is the smallest difference float32 can represent there, and
-the two values agree to nine digits. Relative to the data scale the disagreement is 6.9712e-8.
+Each failing criterion records the reference magnitude at its worst element, so which of the two terms
+decided the verdict is measured rather than inferred. **Five** are decided by `atol=1e-8`, an absolute
+floor calibrated for float64, at elements where the quantity passes through zero — no float32
+implementation can satisfy it there. **Four** are decided by the relative term and are genuine
+disagreements above `rtol=1e-5`, including two adjusted-p-value comparisons at |b| ~ 1 where the
+absolute floor is irrelevant.
 
-**`umap.*.trustworthiness` scores one implementation, not agreement.** Trustworthiness compares an
-embedding to its own input. Scanpy never reaches 0.9 on pbmc3k:
+None is a rapids-singlecell defect: the Pearson correlation on the same arrays is `1.00000000`
+wherever one is measured. The genuine relative differences are on the order of 1e-5 to 1e-4 and move
+no downstream result, but they do exceed the tolerance the publication cites.
 
-| CPU seed | Trustworthiness (pbmc3k) |
-| -------: | -----------------------: |
-|        0 |                  0.86958 |
-|        1 |                  0.86811 |
-|        2 |                  0.87050 |
+The full assessment, with the per-comparison table and the cross-architecture drift, is in
+[`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md). Deciding what the Methods should say is an
+authors' decision, not something to settle by adjusting a threshold here.
 
-The GPU value, 0.86983, sits inside that range. On `pbmc68k_reduced` both criteria pass.
+## 4. What the remaining red criteria rest on
 
-**`umap.cross_embedding_knn_overlap` has no reference point.** Rerunning the CPU embedding with
-only the seed changed:
+The stochastic failures are unchanged, and every criterion is still in place.
+
+**`umap.cross_embedding_knn_overlap` has no reference point.** UMAP is stochastic, so a CPU-vs-GPU
+overlap is only interpretable next to how far the CPU reference is from itself. Rerunning the CPU
+embedding with only the seed changed:
 
 | Comparison               |      pbmc3k | `pbmc68k_reduced` |
 | ------------------------ | ----------: | ----------------: |
@@ -78,13 +92,13 @@ only the seed changed:
 | CPU seed 0 vs CPU seed 2 |     0.41878 |           0.55581 |
 | **CPU seed 0 vs GPU**    | **0.40190** |       **0.58848** |
 
-On `pbmc68k_reduced` the GPU embedding is **closer** to the CPU than a reseeded CPU run is, and the
-criterion still fails. The baseline is measured in-run rather than hard-coded because it is
+On `pbmc68k_reduced` the GPU embedding is **closer** to the CPU embedding than a reseeded CPU run is,
+and the criterion still fails. The baseline is measured in-run rather than hard-coded because it is
 platform-dependent: it moved from 0.5558 to 0.5859 between machines.
 
-**`calculate_niche` measures Leiden backend choice, not correctness.** The UTAG features and their
-PCA agree numerically — components 0–20 match at |r| >= 0.9998 and carry 99.997% of the variance,
-and subspace alignment is >= 0.999998 for the first 15 components. What diverges is the clustering:
+**`calculate_niche` measures Leiden backend choice, not correctness.** The UTAG features and their PCA
+agree numerically — components 0–20 match at |r| >= 0.9998 and carry 99.997% of the variance, and
+subspace alignment is >= 0.999998 for the first 15 components. What diverges is the clustering:
 
 | On one identical graph, only the Leiden backend changed |    ARI |    NMI | Clusters |
 | ------------------------------------------------------- | -----: | -----: | -------: |
@@ -94,9 +108,9 @@ and subspace alignment is >= 0.999998 for the first 15 components. What diverges
 | Neighborhood: CPU leidenalg vs GPU cuGraph              | 0.9454 |      — | 41 vs 34 |
 
 Scanpy's own two backends agree no better with each other than the GPU agrees with Scanpy. For the
-`neighborhood` flavor part of the divergence also happens _before_ Leiden, and there
-rapids-singlecell is the accurate side — the profile holds only 755 distinct rows across 4668
-cells, so 89.67% of cells have an exact distance tie at the k-th neighbour:
+`neighborhood` flavor part of the divergence also happens _before_ Leiden, and there rapids-singlecell
+is the accurate side — the profile holds only 755 distinct rows across 4668 cells, so 89.67% of cells
+have an exact distance tie at the k-th neighbour:
 
 | Checked against exact float64 ground truth, first 13 non-self neighbours | Distances materially worse |  Rows | Max excess |
 | ------------------------------------------------------------------------ | -------------------------: | ----: | ---------: |
@@ -117,7 +131,7 @@ Recall against ground truth tells the same story: rsc 0.899 versus scanpy 0.858 
 | `rsc.pp.pca` wrong on the UTAG features     | No. Subspace alignment >= 0.999998 over the components carrying 99.997% of the variance |
 | `rsc.pp.normalize_total` numerically wrong  | No. Agrees with scanpy to exactly one float32 ULP                                       |
 
-## 4. Upstream issues found, not yet filed
+## 5. Upstream issues found, not yet filed
 
 None of these are patched in this repository.
 
@@ -143,7 +157,7 @@ at the k-th neighbour. It also calls `sc.tl.leiden` without passing `flavor`, so
 on which Leiden backend is installed — and those backends disagree substantially here (ARI 0.5041
 between leidenalg and igraph on the UTAG space).
 
-## 5. GPU hardware and portability
+## 6. GPU hardware and portability
 
 **The pinned wheel does not run on every GPU.** `rapids-singlecell-cu12==0.16.1` fails on V100
 (sm_70): two runs reached CUDA and then died inside preprocessing kernels with `named symbol not
@@ -162,7 +176,7 @@ distinguishes infrastructure failures from scientific ones; it does not fix eith
 
 Consequently every number in the current snapshots comes from **A100 or H100 only**.
 
-## 6. No automated validation
+## 7. No automated validation
 
 There is no GPU-backed CI, so all of this is a **point-in-time result rather than a regression
 guard**. Nothing prevents a future change from silently breaking equivalence.
@@ -180,7 +194,7 @@ this automatic needs, in order:
 4. scheduled or release-triggered runs, once the resource cost is understood. Keep pull-request
    execution manual or scoped until then.
 
-## 7. Data provenance is not pinned
+## 8. Data provenance is not pinned
 
 Datasets are downloaded at run time by `scanpy.datasets` and `squidpy.datasets` with no version
 pin or checksum, and the generated report does not record dataset provenance. A silent upstream

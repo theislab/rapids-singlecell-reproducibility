@@ -4,7 +4,7 @@ import numpy as np
 import pertpy as pt
 import rapids_singlecell as rsc
 from _report import lower, upper, write_report
-from _shared import max_abs, pearson, screen_adata
+from _shared import allclose_diagnosis, allclose_excess, pearson, screen_adata
 
 cpu, gpu = screen_adata(), screen_adata()
 pt.tl.Mixscape().perturbation_signature(cpu, pert_key="gene_target", control="NT", n_neighbors=5)
@@ -16,7 +16,8 @@ gpu_signature = rsc.get.X_to_CPU(gpu.layers["X_pert"])
 if hasattr(gpu_signature, "toarray"):
     gpu_signature = gpu_signature.toarray()
 metrics = [
-    upper("perturbation_signature.max_abs_error", max_abs(cpu_signature, gpu_signature), 1e-4),
+    upper("perturbation_signature.allclose_excess", allclose_excess(gpu_signature, cpu_signature), 1.0)
+    | {"diagnosis": allclose_diagnosis(gpu_signature, cpu_signature)},
     lower("perturbation_signature.pearson_correlation", pearson(cpu_signature, gpu_signature), 0.999),
 ]
 

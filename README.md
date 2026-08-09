@@ -77,6 +77,10 @@ the mapping from public methods to evidence scripts, and [`OPEN.md`](OPEN.md) fo
 evidence does **not** establish — scale limits, unreviewed thresholds, upstream issues found,
 GPU portability, and what automated validation would require.
 
+[`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md) assesses the deterministic criteria against
+the `numpy.allclose` standard the publication declares, and records the four operations that do
+not meet it.
+
 ## Container
 
 The suite ships as a container, so reproducing it does not mean rebuilding the environment

@@ -41,3 +41,24 @@ def pearson_correlation(reference, candidate) -> float:
     candidate = np.asarray(candidate, dtype=np.float64).ravel()
     mask = np.isfinite(reference) & np.isfinite(candidate)
     return float(np.corrcoef(reference[mask], candidate[mask])[0, 1])
+
+
+ALLCLOSE_BASIS = (
+    "Manuscript Methods: deterministic operations are validated with numpy.allclose at "
+    "default parameters (rtol=1e-5, atol=1e-8)."
+)
+
+
+def allclose_excess(reference, candidate, *, rtol: float = 1e-5, atol: float = 1e-8) -> float:
+    """Worst elementwise violation of `numpy.allclose`, as a fraction of its own envelope.
+
+    The published validation standard for deterministic operations is `numpy.allclose` at
+    its default parameters, which is a *relative* criterion: |a - b| <= atol + rtol * |b|.
+    Dividing the difference by that envelope gives one scale-free number: <= 1 means the
+    two arrays are `allclose`, and the value says how far past the envelope the worst
+    element sits. An absolute tolerance cannot express this, because the same disagreement
+    is negligible at 1e3 and fatal at 1e-3.
+    """
+    reference = np.asarray(reference, dtype=np.float64)
+    candidate = np.asarray(candidate, dtype=np.float64)
+    return float(np.nanmax(np.abs(candidate - reference) / (atol + rtol * np.abs(reference))))

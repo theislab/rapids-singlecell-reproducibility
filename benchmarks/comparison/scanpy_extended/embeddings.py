@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import numpy as np
 import rapids_singlecell as rsc
 import scanpy as sc
 from _report import lower, write_report

@@ -17,7 +17,7 @@ def package_version(package: str) -> str:
     return "unknown"
 
 
-def upper_bound(metric: str, observed: float, threshold: float) -> dict[str, Any]:
+def upper_bound(metric: str, observed: float, threshold: float, *, basis: str = "") -> dict[str, Any]:
     return {
         "metric": metric,
         "observed": float(observed),
@@ -25,10 +25,11 @@ def upper_bound(metric: str, observed: float, threshold: float) -> dict[str, Any
         "tolerance": float(threshold),
         "criterion": f"<= {threshold}",
         "passed": bool(observed <= threshold),
+        "basis": basis,
     }
 
 
-def lower_bound(metric: str, observed: float, threshold: float) -> dict[str, Any]:
+def lower_bound(metric: str, observed: float, threshold: float, *, basis: str = "") -> dict[str, Any]:
     return {
         "metric": metric,
         "observed": float(observed),
@@ -36,6 +37,7 @@ def lower_bound(metric: str, observed: float, threshold: float) -> dict[str, Any
         "tolerance": float(threshold),
         "criterion": f">= {threshold}",
         "passed": bool(observed >= threshold),
+        "basis": basis,
     }
 
 
