@@ -121,9 +121,23 @@ hardware-specific. It is **not** a claim about same-hardware reproducibility, wh
   authors' decision, and it depends on which standard reviewers are asked to accept.
 
 The choice is between three: state the defaults as written and acknowledge the operations that do not
-meet them; state a relative-only criterion appropriate to float32, which would resolve five of the
-nine and leave four standing; or make a per-operation statement saying which operations are exact,
-which agree within a stated envelope, and which are equivalent in distribution rather than elementwise.
+meet them; state a relative-only criterion appropriate to float32; or make a per-operation statement
+saying which operations are exact, which agree within a stated envelope, and which are equivalent in
+distribution rather than elementwise.
+
+**The relative-only option does not work, at least for `regress_out`.** With the raw outputs now
+stored, this is checkable rather than assumed. Dropping `atol` makes that comparison _worse_, not
+better — worst excess rises from 167 to 6480 — because residuals that sit near zero have a large
+relative error precisely where the absolute floor was protecting them. The single worst element is
+`atol`-dominated, but only 31.8% of the 1,828 violating elements are, so "an artefact of `atol`" is
+not the whole story for this operation either.
+
+What the distribution does show is that the two implementations agree almost everywhere: 1,828 of
+5,400,000 elements (0.034%) fall outside the envelope, the median excess is 0.021, and the 99.99th
+percentile is 2.18. The criterion is decided by a very thin tail.
+
+This was measured from the stored arrays on a laptop, with no GPU and no rerun. The same check has
+not yet been done for the other eight failures.
 
 ## Reproducing this
 

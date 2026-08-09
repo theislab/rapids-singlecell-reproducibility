@@ -25,6 +25,7 @@ different thresholds in different method groups:
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import math
 import os
@@ -34,7 +35,9 @@ import tomllib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from criteria import criterion_for, diagnosis_for
+from arrays import captured_points, load_pair
+from comparisons import COMPARISONS
+from criteria import CRITERIA, criterion_for, diagnosis_for
 
 HERE = Path(__file__).parent
 
@@ -54,6 +57,12 @@ def parse_args() -> argparse.Namespace:
         help="Where to write the aggregated evaluation.",
     )
     parser.add_argument("--criteria", type=Path, help='TOML file overriding thresholds, keyed "<method>.<metric>".')
+    parser.add_argument(
+        "--arrays",
+        type=Path,
+        help="Directory of per-method Zarr stores holding the raw outputs. Comparisons are computed "
+        "from these when present; otherwise the scalar the script recorded is used.",
+    )
     parser.add_argument("--execution", type=Path, help="Execution record; enables report rendering.")
     parser.add_argument("--report-dir", type=Path, help="Render the reviewer report here.")
     return parser.parse_args()
@@ -103,9 +112,46 @@ def validate(record: dict) -> str | None:
     return None
 
 
+def derive_from_arrays(method: str) -> dict[str, float]:
+    """Compute every comparison the stored arrays support for one method group.
+
+    A criterion named `<point>.<suffix>` is computed when `<point>` was captured and
+    `<suffix>` is a known comparison. The evidence quantities that explain an
+    `allclose_excess` failure are derived alongside it, so nothing has to be anticipated
+    at measurement time.
+    """
+    points = captured_points(method)
+    if not points:
+        return {}
+    wanted: dict[str, str] = {}
+    for pattern, *_ in CRITERIA.get(method, []):
+        head, _, suffix = pattern.rpartition(".")
+        if suffix not in COMPARISONS:
+            continue
+        for point in points:
+            if head in (point, "*") or fnmatch.fnmatchcase(point, head):
+                wanted[f"{point}.{suffix}"] = suffix
+                if suffix.endswith("allclose_excess"):
+                    for evidence in ("allclose_worst_magnitude", "max_abs_error", "max_rel_error"):
+                        wanted[f"{point}.{evidence}"] = evidence
+
+    derived: dict[str, float] = {}
+    for name, suffix in wanted.items():
+        point = name[: -(len(suffix) + 1)]
+        pair = load_pair(method, point)
+        if pair is None:
+            continue
+        reference, candidate = pair
+        derived[name] = COMPARISONS[suffix](candidate, reference)
+    return derived
+
+
 def main() -> int:
     args = parse_args()
     overrides = load_overrides(args.criteria)
+
+    if args.arrays:
+        os.environ["EQUIVALENCE_ARRAY_DIR"] = str(args.arrays)
 
     records, invalid, seen_methods, ungated = [], [], set(), []
     for path in sorted(args.results.rglob("*.json")):
@@ -122,6 +168,16 @@ def main() -> int:
         if error:
             invalid.append({"path": str(path), "error": error})
             continue
+
+        # Comparisons the stored arrays can answer are computed here rather than trusted
+        # from the record, which is what makes a new comparison free of a GPU run.
+        for name, observed in derive_from_arrays(record["method"]).items():
+            existing = next((m for m in record["metrics"] if m["metric"] == name), None)
+            if existing is None:
+                record["metrics"].append({"metric": name, "observed": observed})
+            else:
+                existing["observed"] = observed
+            record.setdefault("derived_metrics", []).append(name)
 
         for metric in record["metrics"]:
             # criteria.py decides what gates. Whatever the record says about thresholds is

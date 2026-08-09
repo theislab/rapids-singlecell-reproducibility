@@ -13,6 +13,7 @@ RESULTS = Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", HERE / "results"))
 SUMMARY = Path(os.environ.get("EQUIVALENCE_SUMMARY", HERE / "equivalence.json"))
 EXECUTION = Path(os.environ.get("EQUIVALENCE_EXECUTION", HERE / "execution.json"))
 REPORT_DIR = Path(os.environ.get("EQUIVALENCE_REPORT_DIR", HERE / "report"))
+ARRAYS = Path(os.environ.get("EQUIVALENCE_ARRAY_DIR", HERE / "arrays"))
 SCRIPTS = [
     # Prioritize the Squidpy comparisons requested by the reviewers. The more
     # expensive niche comparison intentionally runs last.
@@ -78,6 +79,7 @@ else:
 
 env = os.environ.copy()
 env["EQUIVALENCE_OUTPUT_DIR"] = str(RESULTS)
+env["EQUIVALENCE_ARRAY_DIR"] = str(ARRAYS)
 env.setdefault("EQUIVALENCE_ARTIFACT_DIR", str(REPORT_DIR / "artifacts"))
 failures = []
 executions = []
@@ -150,6 +152,8 @@ evaluation = subprocess.run(
         str(EXECUTION),
         "--report-dir",
         str(REPORT_DIR),
+        "--arrays",
+        str(ARRAYS),
     ],
     env=env,
     check=False,

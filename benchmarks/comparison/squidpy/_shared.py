@@ -24,7 +24,6 @@ def dataframe_values(frame) -> np.ndarray:
     return frame.to_numpy()
 
 
-
 def mean_abs_error(reference, candidate) -> float:
     reference = np.asarray(reference, dtype=np.float64)
     candidate = np.asarray(candidate, dtype=np.float64)

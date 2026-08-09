@@ -26,6 +26,7 @@ COPY . .
 # compilation caches. Mount it and the image itself stays read-only.
 WORKDIR /out
 ENV EQUIVALENCE_OUTPUT_DIR=/out/results \
+    EQUIVALENCE_ARRAY_DIR=/out/arrays \
     EQUIVALENCE_SUMMARY=/out/equivalence.json \
     EQUIVALENCE_EXECUTION=/out/execution.json \
     EQUIVALENCE_REPORT_DIR=/out/report \

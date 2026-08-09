@@ -146,7 +146,7 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
     "scanpy_core_preprocessing": [
         ("filter_cells.obs_name_agreement", ">=", 1.0, ""),
         ("filter_genes.var_name_agreement", ">=", 1.0, ""),
-        ("calculate_qc_metrics.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
+        ("calculate_qc_metrics.*.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("normalize_total.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("normalize_total.pearson_correlation", ">=", 0.999999, ""),
         ("log1p.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
