@@ -277,8 +277,13 @@ def main() -> int:
     if overrides:
         print(f"### criteria overridden for: {', '.join(sorted(overrides))}")
     if ungated:
-        # Recorded as evidence by design, but listed so a new metric cannot slip in ungated.
-        print(f"### {len(ungated)} measurement(s) recorded without a criterion: {', '.join(ungated)}")
+        # Evidence derived beside an allclose criterion is ungated by design and there is a
+        # lot of it; name only the rest, so a metric that should gate cannot hide in the noise.
+        expected = tuple(f".{name}" for name in ALLCLOSE_EVIDENCE)
+        notable = [name for name in ungated if not name.endswith(expected)]
+        print(f"### {len(ungated)} measurement(s) recorded without a criterion, {len(notable)} of them not allclose evidence")
+        for name in notable:
+            print(f"###   {name}")
 
     if args.report_dir and args.execution:
         subprocess.run(

@@ -1,0 +1,25 @@
+{
+  "method": "guide_assignment",
+  "reference_package": "pertpy",
+  "dataset": "seeded Poisson guide-count mixture",
+  "tier": "near-deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "pertpy": "1.1.1"
+  },
+  "metrics": [
+    {
+      "metric": "assign_by_threshold.exact_agreement",
+      "observed": 1.0
+    },
+    {
+      "metric": "assign_to_max_guide.exact_agreement",
+      "observed": 1.0
+    },
+    {
+      "metric": "assign_mixture_model.exact_agreement",
+      "observed": 1.0
+    }
+  ],
+  "passed": true
+}

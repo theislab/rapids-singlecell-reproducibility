@@ -1,0 +1,265 @@
+{
+  "method": "scanpy_core_preprocessing",
+  "reference_package": "scanpy",
+  "dataset": "pbmc3k",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "metrics": [
+    {
+      "metric": "filter_cells.index_agreement",
+      "observed": 1.0
+    },
+    {
+      "metric": "filter_genes.index_agreement",
+      "observed": 1.0
+    },
+    {
+      "metric": "calculate_qc_metrics.n_genes_by_counts.allclose_excess",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.n_genes_by_counts.allclose_worst_magnitude",
+      "observed": 781.0
+    },
+    {
+      "metric": "calculate_qc_metrics.n_genes_by_counts.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.n_genes_by_counts.max_abs_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.n_genes_by_counts.max_rel_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.pct_counts_mt.allclose_excess",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.pct_counts_mt.allclose_worst_magnitude",
+      "observed": 3.0152828693389893
+    },
+    {
+      "metric": "calculate_qc_metrics.pct_counts_mt.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.pct_counts_mt.max_abs_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.pct_counts_mt.max_rel_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts.allclose_excess",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts.allclose_worst_magnitude",
+      "observed": 2421.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts.max_abs_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts.max_rel_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts_mt.allclose_excess",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts_mt.allclose_worst_magnitude",
+      "observed": 73.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts_mt.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts_mt.max_abs_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "calculate_qc_metrics.total_counts_mt.max_rel_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "normalize_total.allclose_excess",
+      "observed": 0.014920841723690683
+    },
+    {
+      "metric": "normalize_total.allclose_worst_magnitude",
+      "observed": 204.52886962890625
+    },
+    {
+      "metric": "normalize_total.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "normalize_total.max_abs_error",
+      "observed": 0.0001220703125
+    },
+    {
+      "metric": "normalize_total.max_rel_error",
+      "observed": 6.971244522606038e-08
+    },
+    {
+      "metric": "normalize_total.pearson_correlation",
+      "observed": 0.9999999999999994
+    },
+    {
+      "metric": "log1p.allclose_excess",
+      "observed": 0.014473540933135791
+    },
+    {
+      "metric": "log1p.allclose_worst_magnitude",
+      "observed": 1.6462719440460205
+    },
+    {
+      "metric": "log1p.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "log1p.max_abs_error",
+      "observed": 4.76837158203125e-07
+    },
+    {
+      "metric": "log1p.max_rel_error",
+      "observed": 6.384606254628441e-08
+    },
+    {
+      "metric": "log1p.pearson_correlation",
+      "observed": 0.9999999999999369
+    },
+    {
+      "metric": "normalize_pearson_residuals.allclose_excess",
+      "observed": 30.626772867822197
+    },
+    {
+      "metric": "normalize_pearson_residuals.allclose_worst_magnitude",
+      "observed": 0.0003513848641887307
+    },
+    {
+      "metric": "normalize_pearson_residuals.allclose_violating_fraction",
+      "observed": 1.501574492678474e-05
+    },
+    {
+      "metric": "normalize_pearson_residuals.max_abs_error",
+      "observed": 7.62939453125e-06
+    },
+    {
+      "metric": "normalize_pearson_residuals.max_rel_error",
+      "observed": 1.468277662123682e-07
+    },
+    {
+      "metric": "normalize_pearson_residuals.pearson_correlation",
+      "observed": 0.9999999999999971
+    },
+    {
+      "metric": "scale.allclose_excess",
+      "observed": 1.7870378674187586
+    },
+    {
+      "metric": "scale.allclose_worst_magnitude",
+      "observed": 0.000722956030742845
+    },
+    {
+      "metric": "scale.allclose_violating_fraction",
+      "observed": 1.2962962962962962e-06
+    },
+    {
+      "metric": "scale.max_abs_error",
+      "observed": 1.3282611934783972e-06
+    },
+    {
+      "metric": "scale.max_rel_error",
+      "observed": 1.3282611934783973e-07
+    },
+    {
+      "metric": "scale.pearson_correlation",
+      "observed": 0.9999999999999993
+    },
+    {
+      "metric": "regress_out.allclose_excess",
+      "observed": 67.43914846257626
+    },
+    {
+      "metric": "regress_out.allclose_worst_magnitude",
+      "observed": 0.00012159482866991311
+    },
+    {
+      "metric": "regress_out.allclose_violating_fraction",
+      "observed": 0.0003668518518518519
+    },
+    {
+      "metric": "regress_out.max_abs_error",
+      "observed": 5.7220458984375e-06
+    },
+    {
+      "metric": "regress_out.max_rel_error",
+      "observed": 8.457153102379759e-07
+    },
+    {
+      "metric": "regress_out.pearson_correlation",
+      "observed": 0.9999999999999853
+    },
+    {
+      "metric": "score_genes.allclose_excess",
+      "observed": 0.0
+    },
+    {
+      "metric": "score_genes.allclose_worst_magnitude",
+      "observed": 0.5649533065160115
+    },
+    {
+      "metric": "score_genes.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "score_genes.max_abs_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "score_genes.max_rel_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "score_genes.pearson_correlation",
+      "observed": 0.9999999999999999
+    },
+    {
+      "metric": "sqrt.allclose_excess",
+      "observed": 0.0
+    },
+    {
+      "metric": "sqrt.allclose_worst_magnitude",
+      "observed": 0.0
+    },
+    {
+      "metric": "sqrt.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "sqrt.max_abs_error",
+      "observed": 0.0
+    },
+    {
+      "metric": "sqrt.max_rel_error",
+      "observed": 0.0
+    }
+  ],
+  "passed": false
+}

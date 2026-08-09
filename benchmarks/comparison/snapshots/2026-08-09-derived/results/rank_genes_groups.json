@@ -1,0 +1,157 @@
+{
+  "method": "rank_genes_groups",
+  "reference_package": "scanpy",
+  "dataset": "scanpy.datasets.pbmc68k_reduced",
+  "tier": "near-deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "metrics": [
+    {
+      "metric": "logreg.CD14+ Monocyte.score.pearson_correlation",
+      "observed": 0.9969856839557061
+    },
+    {
+      "metric": "logreg.CD19+ B.score.pearson_correlation",
+      "observed": 0.9931838761275241
+    },
+    {
+      "metric": "logreg.CD34+.score.pearson_correlation",
+      "observed": 0.9891495351966094
+    },
+    {
+      "metric": "logreg.CD56+ NK.score.pearson_correlation",
+      "observed": 0.997618759647884
+    },
+    {
+      "metric": "logreg.CD8+ Cytotoxic T.score.pearson_correlation",
+      "observed": 0.9954014596899088
+    },
+    {
+      "metric": "logreg.Dendritic.score.pearson_correlation",
+      "observed": 0.995349213614133
+    },
+    {
+      "metric": "t-test.CD14+ Monocyte.score.pearson_correlation",
+      "observed": 0.9999999999999998
+    },
+    {
+      "metric": "t-test.CD19+ B.score.pearson_correlation",
+      "observed": 0.9999999999999998
+    },
+    {
+      "metric": "t-test.CD34+.score.pearson_correlation",
+      "observed": 0.9999999999999999
+    },
+    {
+      "metric": "t-test.CD56+ NK.score.pearson_correlation",
+      "observed": 1.0
+    },
+    {
+      "metric": "t-test.CD8+ Cytotoxic T.score.pearson_correlation",
+      "observed": 1.0
+    },
+    {
+      "metric": "t-test.Dendritic.score.pearson_correlation",
+      "observed": 0.9999999999999999
+    },
+    {
+      "metric": "wilcoxon.CD14+ Monocyte.score.pearson_correlation",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD19+ B.score.pearson_correlation",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD34+.score.pearson_correlation",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD56+ NK.score.pearson_correlation",
+      "observed": 0.9999999999999999
+    },
+    {
+      "metric": "wilcoxon.CD8+ Cytotoxic T.score.pearson_correlation",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.Dendritic.score.pearson_correlation",
+      "observed": 0.9999999999999998
+    },
+    {
+      "metric": "logreg.CD14+ Monocyte.markers.set_jaccard",
+      "observed": 0.9607843137254902
+    },
+    {
+      "metric": "logreg.CD19+ B.markers.set_jaccard",
+      "observed": 0.8867924528301887
+    },
+    {
+      "metric": "logreg.CD34+.markers.set_jaccard",
+      "observed": 0.8867924528301887
+    },
+    {
+      "metric": "logreg.CD56+ NK.markers.set_jaccard",
+      "observed": 0.8867924528301887
+    },
+    {
+      "metric": "logreg.CD8+ Cytotoxic T.markers.set_jaccard",
+      "observed": 0.8518518518518519
+    },
+    {
+      "metric": "logreg.Dendritic.markers.set_jaccard",
+      "observed": 0.9230769230769231
+    },
+    {
+      "metric": "t-test.CD14+ Monocyte.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "t-test.CD19+ B.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "t-test.CD34+.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "t-test.CD56+ NK.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "t-test.CD8+ Cytotoxic T.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "t-test.Dendritic.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD14+ Monocyte.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD19+ B.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD34+.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD56+ NK.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.CD8+ Cytotoxic T.markers.set_jaccard",
+      "observed": 1.0
+    },
+    {
+      "metric": "wilcoxon.Dendritic.markers.set_jaccard",
+      "observed": 1.0
+    }
+  ],
+  "passed": true
+}

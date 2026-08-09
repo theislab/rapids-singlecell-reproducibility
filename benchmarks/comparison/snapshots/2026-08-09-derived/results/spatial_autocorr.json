@@ -1,0 +1,61 @@
+{
+  "method": "spatial_autocorr",
+  "reference_package": "squidpy",
+  "dataset": "squidpy.datasets.imc",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "squidpy": "1.8.3"
+  },
+  "metrics": [
+    {
+      "metric": "moran.I.allclose_excess",
+      "observed": 0.0011057476041992265
+    },
+    {
+      "metric": "moran.I.allclose_worst_magnitude",
+      "observed": 0.03143050311252896
+    },
+    {
+      "metric": "moran.I.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "moran.I.max_abs_error",
+      "observed": 2.0231722963615084e-09
+    },
+    {
+      "metric": "moran.I.max_rel_error",
+      "observed": 2.8538125951174367e-09
+    },
+    {
+      "metric": "moran.I.pearson_correlation",
+      "observed": 1.0
+    },
+    {
+      "metric": "geary.C.allclose_excess",
+      "observed": 0.00131723781853509
+    },
+    {
+      "metric": "geary.C.allclose_worst_magnitude",
+      "observed": 1.1349174948049512
+    },
+    {
+      "metric": "geary.C.allclose_violating_fraction",
+      "observed": 0.0
+    },
+    {
+      "metric": "geary.C.max_abs_error",
+      "observed": 1.4962734828927182e-08
+    },
+    {
+      "metric": "geary.C.max_rel_error",
+      "observed": 1.318398464859219e-08
+    },
+    {
+      "metric": "geary.C.pearson_correlation",
+      "observed": 1.0
+    }
+  ],
+  "passed": true
+}
