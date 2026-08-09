@@ -1,16 +1,19 @@
 # Open questions and known limitations
 
-What the CPU/GPU equivalence work does **not** yet establish, stated plainly so a reviewer does
-not have to infer it. Every number below comes from the suite itself; the generated
-`report/summary.md` prints each failing criterion with the diagnosis behind it.
+What the CPU/GPU equivalence work does **not** yet establish, stated plainly so a reviewer does not
+have to infer it.
 
-For context, what the suite **does** establish: on the most recent complete 20-group run, 185 of 202
-gating metrics pass, and no failure is attributable to a rapids-singlecell defect. `rank_genes_groups`
-is 60/60, pertpy `distance` 18/18, and the spatial statistics 8/8. The seventeen failures come from
-three causes: five where the manuscript's own `numpy.allclose` defaults are unreachable in float32,
-four genuine relative differences of 1e-5 to 1e-4 that change no downstream result (both in section
-3), and eight stochastic criteria that ask for more agreement than the CPU reference shows against
-itself (section 4).
+**Where the numbers live.** Counts and per-metric values belong to a run, so this document does not
+restate them — the generated `report/summary.md` lists every criterion, its observed value, and the
+measured diagnosis behind each failure, and `equivalence.json` is the machine-readable form. What
+follows is the interpretation: what the suite covers, what it cannot show, and why each red metric is
+red. Only quantities that do not change from run to run are quoted here.
+
+For context, what the suite **does** establish: no failure in any complete run so far is attributable
+to a rapids-singlecell defect. The failures come from three causes — criteria the float32 format
+cannot satisfy at all (section 3), genuine relative differences too small to move any downstream
+result (also section 3), and stochastic criteria that ask for more agreement than the CPU reference
+shows against itself (section 4).
 
 ## 1. Validated at small scale, assumed at large scale
 
@@ -59,24 +62,22 @@ intervals over several seeds are not yet reported.
 ## 3. The declared validation standard is not met by every operation it names
 
 The manuscript Methods state that deterministic operations agree within `numpy.allclose` at default
-parameters. The suite now states that criterion directly, as `allclose_excess`: the worst elementwise
+parameters. The suite states that criterion directly, as `allclose_excess`: the worst elementwise
 difference divided by `numpy.allclose`'s own envelope, `atol + rtol * |b|`, so `<= 1` means the two
-arrays are `allclose`. **Of 47 such comparisons, 9 fail**, and they fail for two different reasons.
+arrays are `allclose`. Some comparisons fail it, for two different reasons, and each failing
+criterion records the reference magnitude at its worst element so that which of the two terms decided
+the verdict is measured rather than inferred.
 
-Each failing criterion records the reference magnitude at its worst element, so which of the two terms
-decided the verdict is measured rather than inferred. **Five** are decided by `atol=1e-8`, an absolute
-floor calibrated for float64, at elements where the quantity passes through zero — no float32
-implementation can satisfy it there. **Four** are decided by the relative term and are genuine
-disagreements above `rtol=1e-5`, including two adjusted-p-value comparisons at |b| ~ 1 where the
-absolute floor is irrelevant.
+Some are decided by `atol=1e-8`, an absolute floor calibrated for float64, at elements where the
+quantity passes through zero — **no float32 implementation can satisfy it there**, whatever the
+implementation. The rest are decided by the relative term and are genuine disagreements above
+`rtol=1e-5`, small enough to move no downstream result but larger than the tolerance the publication
+cites. None is a rapids-singlecell defect: where a paired Pearson correlation is measured on the same
+arrays, it is perfect.
 
-None is a rapids-singlecell defect: the Pearson correlation on the same arrays is `1.00000000`
-wherever one is measured. The genuine relative differences are on the order of 1e-5 to 1e-4 and move
-no downstream result, but they do exceed the tolerance the publication cites.
-
-The full assessment, with the per-comparison table and the cross-architecture drift, is in
-[`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md). Deciding what the Methods should say is an
-authors' decision, not something to settle by adjusting a threshold here.
+**[`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md) is the assessment**, with the per-comparison
+table, the split between the two causes, and the cross-architecture drift. Deciding what the Methods
+should say is an authors' decision, not something to settle by adjusting a threshold here.
 
 ## 4. What the remaining red criteria rest on
 

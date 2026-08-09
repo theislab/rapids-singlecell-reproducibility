@@ -26,8 +26,12 @@ previously used hand-picked absolute tolerances that appear nowhere in the manus
 Each failing criterion also records the reference magnitude at its worst element, which says which of
 the two terms decided the verdict rather than leaving it to be inferred.
 
-Run: complete 20-group suite, NVIDIA H100 80GB, rapids-singlecell 0.16.1, scanpy 1.12.3, squidpy
-1.8.3, pertpy 1.1.1, decoupler 2.2.0. 202 gating metrics, of which 47 are `allclose` comparisons.
+**These figures are one dated measurement, not a live claim.** They come from a single complete
+20-group run: NVIDIA H100 80GB, rapids-singlecell 0.16.1, scanpy 1.12.3, squidpy 1.8.3, pertpy 1.1.1,
+decoupler 2.2.0, 202 gating metrics of which 47 are `allclose` comparisons. This document is the only
+place the assessment is written down; the current state of any run is in its own generated
+`report/summary.md`, which lists every criterion with the measured diagnosis behind each failure. If
+the two disagree, the report is right and this document is out of date.
 
 ## Result: 9 of 47 fail, for two different reasons
 
