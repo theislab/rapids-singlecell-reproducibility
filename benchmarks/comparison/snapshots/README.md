@@ -14,4 +14,11 @@ rerun marks `execution.json` with `"partial": true` and must not be promoted; us
 on one method, then take a full run for the snapshot.
 
 Each snapshot's `report/summary.md` lists every failing criterion with the diagnosis behind it.
-[`OPEN.md`](../../../OPEN.md) carries the supporting measurements and the limits of the evidence.
+[`OPEN.md`](../../../OPEN.md) carries the limits of the evidence, and
+[`NUMERICAL_VALIDATION.md`](../../../NUMERICAL_VALIDATION.md) the assessment of the `allclose`
+criteria against the standard the publication declares.
+
+**Only the current snapshot re-scores.** `evaluate.py` joins records to `criteria.py` by metric
+name, and the superseded snapshots predate the systematic naming, so pointing it at them reports
+that no criterion applies rather than producing a verdict. Their own recorded numbers, in the table
+above and in each directory, remain the citable form.

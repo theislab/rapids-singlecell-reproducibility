@@ -1,5 +1,9 @@
 # Expanded equivalence suite — 2026-07-31
 
+> **Superseded** by [`../2026-08-09-derived`](../2026-08-09-derived). Its metric names predate the
+> systematic `<comparison point>.<comparison>` naming, so `evaluate.py` cannot re-score it against
+> today's criteria; the numbers recorded here are the citable form.
+
 First complete run of the expanded 20-group suite: every script produced a result record, so
 this is the reviewer-facing snapshot of measured CPU/GPU agreement. It supersedes
 [`../../temp-results/2026-07-31-initial`](../../temp-results/2026-07-31-initial), which covers

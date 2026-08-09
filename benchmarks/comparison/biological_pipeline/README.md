@@ -7,7 +7,8 @@ graph construction, UMAP, Leiden clustering, and marker ranking.
 The comparison reports:
 
 - HVG overlap and PCA component agreement;
-- UMAP trustworthiness and cross-embedding neighborhood preservation;
+- cross-embedding neighborhood preservation, gated against a reseeded-CPU baseline, with
+  UMAP trustworthiness recorded as evidence rather than asserted;
 - CPU/GPU clustering ARI and NMI, plus agreement with the published cell types;
 - mean and worst-case top-50 marker overlap per cell type; and
 - held-out kNN annotation accuracy, CPU/GPU prediction agreement, and accuracy difference.

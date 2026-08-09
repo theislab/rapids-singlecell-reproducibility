@@ -12,6 +12,8 @@ records for the primary methods discussed in the manuscript:
   Harmonypy directly because Scanpy 1.12's wrapper assumes the output orientation of
   Harmonypy 0.0.x.
 
-Every script writes observed metrics and explicit thresholds to `$EQUIVALENCE_OUTPUT_DIR`
-before raising for a failed threshold. Run them through `../run_structured.py` so failures,
-logs, software versions, and manuscript-ready tables are collected consistently.
+Every script stores the CPU and GPU outputs to `$EQUIVALENCE_ARRAY_DIR` and its record to
+`$EQUIVALENCE_OUTPUT_DIR`. None of them compares anything or decides anything: a missed
+criterion is reported by `../evaluate.py`, so a script exiting non-zero means it failed to
+produce a record at all. Run them through `../run_structured.py` so logs, software versions,
+and manuscript-ready tables are collected consistently.

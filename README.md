@@ -34,7 +34,7 @@ says something else — is answered from the stored arrays instead of costing an
 Measuring needs a GPU and about ten minutes; evaluating needs neither:
 
 ```bash
-python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-07-31-expanded/results
+python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-08-09-derived/results
 ```
 
 Criteria are keyed by `(method group, metric)`, because a metric name is only unique within a
