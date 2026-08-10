@@ -28,6 +28,7 @@ import argparse
 import fnmatch
 import json
 import math
+import operator
 import os
 import subprocess
 import sys
@@ -37,7 +38,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from arrays import captured_points, load_arrays
 from comparisons import AGGREGATIONS, ALLCLOSE_EVIDENCE, COMPARISONS
-from criteria import CRITERIA, criterion_for, diagnosis_for
+from criteria import CRITERIA, EVIDENCE, criterion_for, diagnosis_for
 
 HERE = Path(__file__).parent
 
@@ -65,6 +66,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--execution", type=Path, help="Execution record; enables report rendering.")
     parser.add_argument("--report-dir", type=Path, help="Render the reviewer report here.")
+    parser.add_argument(
+        "--write-enriched",
+        action="store_true",
+        help="Rewrite each result record with the comparisons derived from the arrays inlined. "
+        "This is the form a snapshot is promoted in, so it re-scores without the Zarr stores.",
+    )
     return parser.parse_args()
 
 
@@ -78,18 +85,41 @@ def load_overrides(path: Path | None) -> dict:
     return overrides
 
 
+COMPARATORS = {"<=": operator.le, "<": operator.lt, ">=": operator.ge, ">": operator.gt}
+
+
 def decide(metric: dict) -> bool:
     """Apply the metric's criterion. The single place a verdict is formed.
 
     A non-finite measurement fails. NaN is not close to anything, and an unrepresentable
     result is not evidence of agreement — treating it as a bad record instead would throw
     away the whole method group over one metric.
+
+    An unknown comparison is an error rather than a default, because a criterion written
+    as `>` and silently evaluated as `>=` would be a threshold nobody chose.
     """
     if not math.isfinite(float(metric["observed"])):
         return False
-    if metric["comparison"] == "<=":
-        return float(metric["observed"]) <= float(metric["tolerance"])
-    return float(metric["observed"]) >= float(metric["tolerance"])
+    compare = COMPARATORS.get(metric["comparison"])
+    if compare is None:
+        raise SystemExit(f"Unknown comparison {metric['comparison']!r} for metric {metric['metric']!r}")
+    return compare(float(metric["observed"]), float(metric["tolerance"]))
+
+
+def enriched(record: dict) -> dict:
+    """The record in the form a snapshot keeps it: derived comparisons inlined as scalars.
+
+    A snapshot has to re-score without the Zarr stores, which stay with the run — so what
+    was computed from the arrays is written back beside what the script measured. Only
+    measurements and the record's own verdict: the criterion each was judged against is
+    deliberately left out, because `criteria.py` is the authority and a stored copy of a
+    threshold would rot the moment one is revised.
+    """
+    return {
+        **{key: value for key, value in record.items() if key not in ("metrics", "derived_metrics", "passed")},
+        "metrics": [{"metric": m["metric"], "observed": m["observed"]} for m in record["metrics"]],
+        "passed": record["passed"],
+    }
 
 
 def validate(record: dict) -> str | None:
@@ -130,7 +160,9 @@ def derive_from_arrays(method: str) -> dict[str, float]:
         return {}
 
     wanted: dict[str, str] = {}
-    for pattern, *_ in CRITERIA.get(method, []):
+    # Evidence patterns are derived exactly like criteria; they simply resolve to no rule
+    # later, so they are reported without a verdict.
+    for pattern in [rule[0] for rule in CRITERIA.get(method, [])] + EVIDENCE.get(method, []):
         head, _, suffix = pattern.rpartition(".")
         # `markers.mean_set_jaccard` is a reduction over `markers.<group>.set_jaccard`, so
         # the members have to be computed even though no criterion names them directly.
@@ -187,7 +219,8 @@ def main() -> int:
     if args.arrays:
         os.environ["EQUIVALENCE_ARRAY_DIR"] = str(args.arrays)
 
-    records, invalid, seen_methods, ungated = [], [], set(), []
+    records, invalid, seen_methods, ungated, sources = [], [], set(), [], {}
+    declared_evidence: set[str] = set()
     for path in sorted(args.results.rglob("*.json")):
         if path.resolve() == args.summary.resolve():
             continue
@@ -226,7 +259,10 @@ def main() -> int:
                 metric.update(
                     comparison="observed", tolerance=None, criterion="recorded, not gating", gating=False, passed=True
                 )
-                ungated.append(f"{record['method']}.{metric['metric']}")
+                name = f"{record['method']}.{metric['metric']}"
+                ungated.append(name)
+                if any(fnmatch.fnmatchcase(metric["metric"], p) for p in EVIDENCE.get(record["method"], [])):
+                    declared_evidence.add(name)
                 continue
             comparison, tolerance, basis = resolved
             metric.update(
@@ -251,6 +287,11 @@ def main() -> int:
 
         seen_methods.add(record["method"])
         records.append(record)
+        sources[record["method"]] = path
+
+    if args.write_enriched:
+        for record in records:
+            sources[record["method"]].write_text(json.dumps(enriched(record), indent=2) + "\n")
 
     metrics = [m for r in records for m in r["metrics"]]
     gating = [m for m in metrics if bool(m.get("gating", True))]
@@ -277,10 +318,11 @@ def main() -> int:
     if overrides:
         print(f"### criteria overridden for: {', '.join(sorted(overrides))}")
     if ungated:
-        # Evidence derived beside an allclose criterion is ungated by design and there is a
-        # lot of it; name only the rest, so a metric that should gate cannot hide in the noise.
+        # Evidence derived beside an allclose criterion, and comparisons criteria.py declares
+        # as evidence outright, are ungated by design and there is a lot of both; name only
+        # the rest, so a metric that should gate cannot hide in the noise.
         expected = tuple(f".{name}" for name in ALLCLOSE_EVIDENCE)
-        notable = [name for name in ungated if not name.endswith(expected)]
+        notable = [name for name in ungated if not name.endswith(expected) and name not in declared_evidence]
         print(f"### {len(ungated)} measurement(s) recorded without a criterion, {len(notable)} of them not allclose evidence")
         for name in notable:
             print(f"###   {name}")

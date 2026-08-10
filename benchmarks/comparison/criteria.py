@@ -13,6 +13,10 @@ fnmatch glob for families generated in a loop. Exact names win over globs. **A m
 with no matching rule is recorded as evidence and does not gate** — `evaluate.py` lists
 those, so a new metric cannot slip in ungated unnoticed.
 
+`EVIDENCE` at the bottom of this file names comparisons that should be computed from the
+stored arrays and reported without a verdict. Being derived and being gated are separate
+decisions: a measurement worth having is not always a claim the publication makes.
+
 Thresholds are never widened to make a run green. A criterion that fails stays as it is
 and carries its diagnosis.
 """
@@ -24,6 +28,11 @@ import fnmatch
 ALLCLOSE_BASIS = (
     "Manuscript Methods: deterministic operations are validated with numpy.allclose at "
     "default parameters (rtol=1e-5, atol=1e-8)."
+)
+
+HARMONY_BASIS = (
+    "Manuscript Methods, Batch correction with Harmony: the implementation maintains a "
+    "Pearson correlation of >95% for all corrected principal components."
 )
 
 # method -> [(metric pattern, comparison, tolerance, basis)]
@@ -69,11 +78,9 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("occurrence.pearson_correlation", ">=", 0.99999, ""),
     ],
     "decoupler_methods": [
-        ("*.allclose_excess", "<=", 1.0, ""),
         ("*.pearson_correlation", ">=", 0.999, ""),
     ],
     "distance": [
-        ("*.pairwise.allclose_excess", "<=", 1.0, ""),
         ("*.pairwise.pearson_correlation", ">=", 0.9999, ""),
     ],
     "embeddings_extended": [
@@ -104,11 +111,9 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("pvalues.pearson_correlation", ">=", 0.9, ""),
     ],
     "mixscale": [
-        ("mixscale.score.allclose_excess", "<=", 1.0, ""),
         ("mixscale.score.pearson_correlation", ">=", 0.9999, ""),
     ],
     "mixscape": [
-        ("perturbation_signature.allclose_excess", "<=", 1.0, ""),
         ("perturbation_signature.pearson_correlation", ">=", 0.999, ""),
         ("mixscape.global_class.exact_agreement", ">=", 0.95, ""),
         ("mixscape.p_ko.pearson_correlation", ">=", 0.95, ""),
@@ -126,7 +131,8 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("leiden.normalized_mutual_information", ">=", 0.9, ""),
     ],
     "scanpy_core_harmony": [
-        ("harmony.minimum_component_abs_correlation", ">=", 0.95, ALLCLOSE_BASIS),
+        # Strictly greater: the manuscript says >95%, not at least 95%.
+        ("harmony.minimum_component_abs_correlation", ">", 0.95, HARMONY_BASIS),
         ("harmony.mean_component_abs_correlation", ">=", 0.98, ""),
         ("harmony.standard_deviation_max_abs_error", "<=", 0.1, ""),
     ],
@@ -176,8 +182,21 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("geary.C.pearson_correlation", ">=", 0.999999, ""),
     ],
     "sqrt": [
-        ("X.allclose_excess", "<=", 1.0, ""),
+        ("X.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
     ],
+}
+
+# Comparisons that are computed and reported but do not gate. The manuscript declares the
+# `numpy.allclose` standard for normalization, HVG selection and PCA; applying it to
+# activity inference or a perturbation signature would be the suite inventing a standard
+# for an operation the publication makes no claim about. The measurement is still derived
+# from the stored arrays, so the evidence stays in the record and in NUMERICAL_VALIDATION.md
+# — what is removed is the verdict, not the number.
+EVIDENCE: dict[str, list[str]] = {
+    "decoupler_methods": ["*.allclose_excess"],
+    "distance": ["*.pairwise.allclose_excess"],
+    "mixscale": ["mixscale.score.allclose_excess"],
+    "mixscape": ["perturbation_signature.allclose_excess"],
 }
 
 
