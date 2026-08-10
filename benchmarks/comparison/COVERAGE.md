@@ -12,7 +12,7 @@ denotes the scripts that store their outputs for `evaluate.py` to compare and sc
 | Additional Scanpy tools              | `louvain`, `kmeans`, `tsne`, `diffmap`, `draw_graph`, `embedding_density`, `ingest`, `rank_genes_groups` (t-test, Wilcoxon, logistic regression), `score_genes_cell_cycle`                                              | `scanpy_extended` structured scripts                                      |
 | Squidpy                              | `spatial_autocorr` (Moran and Geary), `co_occurrence`, `ligrec`, `calculate_niche` (neighborhood, UTAG, CellCharter)                                                                                                    | `squidpy` structured scripts                                              |
 | Decoupler                            | `mlm`, `ulm`, `aucell`, `waggr`, `zscore`                                                                                                                                                                               | `decoupler` structured script                                             |
-| Pertpy Distance                      | All nine supported metrics through `pairwise`                                                                                                                                                                           | `pertpy/distance.py`                                                      |
+| Pertpy Distance                      | All nine supported metrics through `pairwise` and `onesided_distances`                                                                                                                                                  | `pertpy/distance.py`                                                      |
 | Pertpy GuideAssignment               | Threshold, maximum-guide, and mixture-model assignment                                                                                                                                                                  | `pertpy/guide_assignment.py`                                              |
 | Pertpy Mixscape                      | Perturbation signature, classification, and LDA                                                                                                                                                                         | `pertpy/mixscape.py`                                                      |
 | Pertpy Mixscale                      | Perturbation signature (shared with Mixscape) and continuous Mixscale score                                                                                                                                             | `pertpy/mixscale.py`                                                      |
@@ -21,6 +21,11 @@ denotes the scripts that store their outputs for `evaluate.py` to compare and sc
 `kmeans` is included because it is exported by `rapids_singlecell.tl`, although it is
 not currently listed in `docs/api/scanpy_gpu.md`. Squidpy's `spatialleiden` flavor is
 not listed because rapids-singlecell does not implement it.
+
+Not covered on `ptg.Distance`: `bootstrap`, whose output is stochastic and has no stated
+agreement criterion, `create_contrasts`/`validate_contrasts`/`contrast_distances`, and
+multi-GPU execution — every comparison here runs `multi_gpu=False`, so the device-splitting
+and cross-device aggregation paths described in the Methods are untested.
 
 The structured scripts store their outputs; `python benchmarks/comparison/evaluate.py`
 compares and scores them into `equivalence.json`. Only the scripts need a GPU — evaluation

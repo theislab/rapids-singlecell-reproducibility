@@ -231,7 +231,20 @@ Making it automatic needs, in order:
 Evaluation is cheaper than measurement and needs no GPU, so re-scoring a committed snapshot against
 changed criteria is the one part of this that could be automated today.
 
-## 8. Data provenance is not pinned
+## 8. One Methods statement is out of date
+
+The Methods say `rapids_singlecell.ptg.Distance` "currently supports the E-distance metric".
+Version 0.16.1 — the version pinned here and benchmarked in the manuscript — declares nine in
+`SUPPORTED_METRICS`, each with its own GPU implementation: `edistance` through a CUDA kernel,
+`wasserstein` through Sinkhorn, and seven pseudobulk metrics computed from group mean vectors.
+All nine are compared against pertpy here and agree. The sentence understates the package.
+
+The same paragraph describes `bootstrap`, `onesided_distances` and multi-GPU aggregation.
+`onesided_distances` is now covered; `bootstrap` and the multi-GPU path are not, and
+`create_contrasts`/`validate_contrasts`/`contrast_distances` are not mentioned in the Methods at
+all. See [`COVERAGE.md`](benchmarks/comparison/COVERAGE.md).
+
+## 9. Data provenance is not pinned
 
 Datasets are downloaded at run time by `scanpy.datasets` and `squidpy.datasets` with no version
 pin or checksum, and the generated report does not record dataset provenance. A silent upstream

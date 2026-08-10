@@ -80,6 +80,7 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
     ],
     "distance": [
         ("*.pairwise.pearson_correlation", ">=", 0.9999, ""),
+        ("*.onesided.pearson_correlation", ">=", 0.9999, ""),
     ],
     "embeddings_extended": [
         ("tsne.cpu.trustworthiness", ">=", 0.9, ""),
@@ -192,7 +193,7 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
 EVIDENCE: dict[str, list[str]] = {
     "co_occurrence": ["interval.allclose_excess", "occurrence.allclose_excess"],
     "decoupler_methods": ["*.allclose_excess"],
-    "distance": ["*.pairwise.allclose_excess"],
+    "distance": ["*.pairwise.allclose_excess", "*.onesided.allclose_excess"],
     "ligrec": ["means.allclose_excess"],
     "mixscale": ["mixscale.score.allclose_excess"],
     "mixscape": ["perturbation_signature.allclose_excess"],
