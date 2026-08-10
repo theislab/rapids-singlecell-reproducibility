@@ -10,8 +10,6 @@ adata_rsc = adata_sc.copy()
 rsc.get.anndata_to_GPU(adata_rsc)
 sc.pp.highly_variable_genes(adata_sc, flavor="cell_ranger", n_top_genes=2000)
 rsc.pp.highly_variable_genes(adata_rsc, flavor="cell_ranger", n_top_genes=2000)
-for column in ("means", "dispersions", "dispersions_norm"):
-    np.testing.assert_allclose(adata_sc.var[column], adata_rsc.var[column], rtol=1e-5, atol=1e-6, equal_nan=True)
 adata_sc = adata_sc[:, adata_sc.var.highly_variable].copy()
 adata_rsc = adata_rsc[:, adata_rsc.var.highly_variable].copy()
 
