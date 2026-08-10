@@ -46,28 +46,3 @@ def screen_adata():
     obs = pd.DataFrame({"gene_target": ["NT"] * 10 + ["target_gene_a"] * 20}, index=[str(i) for i in range(30)])
     var = pd.DataFrame(index=[f"gene{i}" for i in range(20)])
     return ad.AnnData(sparse.csr_matrix(x), obs=obs, var=var)
-
-
-def pearson(a, b):
-    a, b = np.asarray(a, dtype=float).ravel(), np.asarray(b, dtype=float).ravel()
-    mask = np.isfinite(a) & np.isfinite(b)
-    return float(np.corrcoef(a[mask], b[mask])[0, 1])
-
-
-def max_abs(a, b):
-    return float(np.nanmax(np.abs(np.asarray(a, dtype=float) - np.asarray(b, dtype=float))))
-
-
-def allclose_excess(candidate, reference, *, rtol=1e-5, atol=1e-8):
-    """Worst elementwise violation of `numpy.allclose`, as a fraction of its own envelope.
-
-    The published validation standard for deterministic operations is `numpy.allclose` at
-    its default parameters, which is a *relative* criterion: |a - b| <= atol + rtol * |b|.
-    Dividing the difference by that envelope gives one scale-free number: <= 1 means the
-    two arrays are `allclose`, and the value says how far past the envelope the worst
-    element sits. An absolute tolerance cannot express this, because the same disagreement
-    is negligible at 1e3 and fatal at 1e-3.
-    """
-    candidate = np.asarray(candidate, dtype=float)
-    reference = np.asarray(reference, dtype=float)
-    return float(np.max(np.abs(candidate - reference) / (atol + rtol * np.abs(reference))))

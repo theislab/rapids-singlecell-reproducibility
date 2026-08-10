@@ -1,71 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy import sparse
 from sklearn.neighbors import NearestNeighbors
-
-
-def dense(value) -> np.ndarray:
-    if sparse.issparse(value):
-        return value.toarray()
-    return np.asarray(value)
-
-
-def max_abs(left, right) -> float:
-    left_array = dense(left).astype(float, copy=False)
-    right_array = dense(right).astype(float, copy=False)
-    return float(np.nanmax(np.abs(left_array - right_array)))
-
-
-def max_rel(left, right) -> float:
-    """Largest absolute difference expressed relative to the reference scale.
-
-    An absolute tolerance is not a meaningful criterion when the compared values
-    span several orders of magnitude: in float32 the reference itself cannot be
-    represented more precisely than one ULP at its largest value. Normalizing by
-    that largest value gives a criterion that a correct float32 implementation
-    can actually satisfy.
-    """
-    left_array = dense(left).astype(float, copy=False)
-    right_array = dense(right).astype(float, copy=False)
-    scale = float(np.nanmax(np.abs(left_array)))
-    if scale == 0.0:
-        return 0.0
-    return float(np.nanmax(np.abs(left_array - right_array)) / scale)
-
-
-def float32_ulp(left) -> float:
-    """One float32 ULP at the largest magnitude present in the reference."""
-    scale = float(np.nanmax(np.abs(dense(left).astype(float, copy=False))))
-    return float(np.spacing(np.float32(scale)))
-
-
-def pearson(left, right) -> float:
-    left_array = dense(left).astype(float, copy=False).ravel()
-    right_array = dense(right).astype(float, copy=False).ravel()
-    mask = np.isfinite(left_array) & np.isfinite(right_array)
-    if mask.sum() < 2 or np.std(left_array[mask]) == 0 or np.std(right_array[mask]) == 0:
-        return float(
-            left_array[mask].shape == right_array[mask].shape and np.allclose(left_array[mask], right_array[mask])
-        )
-    return float(np.corrcoef(left_array[mask], right_array[mask])[0, 1])
-
-
-def jaccard(left, right) -> float:
-    left_set = set(left)
-    right_set = set(right)
-    return len(left_set & right_set) / max(1, len(left_set | right_set))
-
-
-def graph_jaccard(left, right) -> float:
-    left = left.tocsr()
-    right = right.tocsr()
-    scores = []
-    for index in range(left.shape[0]):
-        left_neighbors = set(left.indices[left.indptr[index] : left.indptr[index + 1]]) - {index}
-        right_neighbors = set(right.indices[right.indptr[index] : right.indptr[index + 1]]) - {index}
-        scores.append(len(left_neighbors & right_neighbors) / max(1, len(left_neighbors | right_neighbors)))
-    return float(np.mean(scores))
 
 
 def embedding_knn_overlap(left, right, n_neighbors: int = 15) -> float:
@@ -103,31 +39,9 @@ def reseeded_umap_overlap(adata, reference_embedding, umap, *, n_neighbors: int 
     return float(min(overlaps))
 
 
-def component_abs_correlations(left, right) -> np.ndarray:
-    left = np.asarray(left, dtype=float)
-    right = np.asarray(right, dtype=float)
-    n_components = min(left.shape[1], right.shape[1])
-    return np.asarray([abs(pearson(left[:, index], right[:, index])) for index in range(n_components)])
-
-
 def ranked_names(adata, key: str, group: str, n_genes: int = 50) -> list[str]:
     names = adata.uns[key]["names"]
     if getattr(names.dtype, "names", None):
         return [str(name) for name in names[group][:n_genes]]
     group_index = list(adata.obs[adata.uns[key]["params"]["groupby"]].cat.categories).index(group)
     return [str(name) for name in names[:n_genes, group_index]]
-
-
-def allclose_excess(candidate, reference, *, rtol: float = 1e-5, atol: float = 1e-8) -> float:
-    """Worst elementwise violation of `numpy.allclose`, as a fraction of its own envelope.
-
-    The published validation standard for deterministic operations is `numpy.allclose` at
-    its default parameters, which is a *relative* criterion: |a - b| <= atol + rtol * |b|.
-    Dividing the difference by that envelope gives one scale-free number: <= 1 means the
-    two arrays are `allclose`, and the value says how far past the envelope the worst
-    element sits. An absolute tolerance cannot express this, because the same disagreement
-    is negligible at 1e3 and fatal at 1e-3.
-    """
-    candidate_array = dense(candidate).astype(float, copy=False)
-    reference_array = dense(reference).astype(float, copy=False)
-    return float(np.max(np.abs(candidate_array - reference_array) / (atol + rtol * np.abs(reference_array))))
