@@ -189,6 +189,6 @@ benchmarks/comparison/equivalence.json
 benchmarks/comparison/execution.json
 
 # ... but a snapshot is evidence, including the per-script logs that *.log above would eat.
-# Only container runs, whose paths are all /repro; the 2026-07-31 logs were written outside
-# the container and carry local absolute paths, so they stay out.
+# Listed per snapshot rather than globbed, so promoting a run stays a deliberate act: logs from
+# outside the container carry local absolute paths and must not be committed.
 !benchmarks/comparison/snapshots/2026-08-09-derived/report/logs/*.log

@@ -71,9 +71,9 @@ implementation can satisfy the default parameters on those.
 relative — on the order of 10² to 10³ float32 ULPs, larger than rounding alone. They are small in
 absolute terms and move no downstream result, but they exceed the tolerance the manuscript cites.
 
-**The atol/rtol attribution is itself not stable.** `perturbation_signature` was `atol`-decided on an
-earlier run and is `rtol`-decided here, because the deciding element moved. The split above describes
-this run, not a fixed property of each operation.
+**The atol/rtol attribution is itself not stable.** Which term decides depends on which element
+happens to be worst, and that element moves between runs — `perturbation_signature` has been seen
+decided both ways. The split above describes this run, not a fixed property of each operation.
 
 ## Per operation, against the sentence as written
 
