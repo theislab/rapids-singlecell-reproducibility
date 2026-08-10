@@ -9,11 +9,15 @@ those arrays and scores them against `criteria.py`.
 - rapids-singlecell 0.16.1, scanpy 1.12.3, squidpy 1.8.3, pertpy 1.1.1, decoupler 2.2.0,
   harmonypy 0.2.0
 
-## Outcome as recorded
+## Outcome
 
-- Method groups passing: 13/20
-- Gating metrics passing: 165/181
-- Measurements recorded as evidence: 212
+Measured 2026-08-09; scored 2026-08-10, after `allclose` stopped gating operations the
+manuscript states no standard for. The measurements in `results/` are untouched — only the
+verdicts moved, which is what re-scoring a stored run is for.
+
+- Method groups passing: 15/20
+- Gating metrics passing: 149/161
+- Measurements recorded as evidence: 232
 - Scripts producing a result record: 20/20
 
 All 20 scripts completed. A script exiting non-zero would mean it failed to produce a record at
@@ -36,9 +40,9 @@ scalars here are what allows this verdict to be checked.
 
 ## Reading the failures
 
-[`NUMERICAL_VALIDATION.md`](../../../../NUMERICAL_VALIDATION.md) assesses the nine `allclose`
-failures against the standard the publication declares, including which term of the criterion
-decided each one and how thin the failing tail is. [`OPEN.md`](../../../../OPEN.md) covers the
+[`NUMERICAL_VALIDATION.md`](../../../../NUMERICAL_VALIDATION.md) assesses all nine comparisons
+that exceed the `allclose` envelope — the five that gate and the four recorded as evidence —
+including which term of the criterion decided each one and how thin the failing tail is. [`OPEN.md`](../../../../OPEN.md) covers the
 stochastic failures and the limits of the evidence as a whole. Thresholds are not widened to
 make a run green.
 

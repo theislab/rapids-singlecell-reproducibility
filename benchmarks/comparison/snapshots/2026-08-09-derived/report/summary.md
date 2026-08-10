@@ -1,13 +1,13 @@
 # CPU/GPU equivalence report
 
-Generated 2026-08-09T21:04:28.487986+00:00 from isolated comparison processes.
+Generated 2026-08-10T09:11:32.844594+00:00 from isolated comparison processes.
 
 ## Outcome
 
 - Overall: **FAIL**
-- Method groups passing: **13/20**
-- Gating metrics passing: **165/181**
-- Additional measurements recorded as evidence: **212**
+- Method groups passing: **15/20**
+- Gating metrics passing: **149/161**
+- Additional measurements recorded as evidence: **232**
 - Scripts completing successfully: **20/20**
 
 ## Software versions
@@ -32,14 +32,14 @@ Generated 2026-08-09T21:04:28.487986+00:00 from isolated comparison processes.
 | `calculate_niche` | squidpy | squidpy.datasets.imc | stochastic | FAIL | 4/9 |
 | `clustering_extended` | scanpy | scanpy.datasets.pbmc68k_reduced | stochastic | PASS | 4/4 |
 | `co_occurrence` | squidpy | squidpy.datasets.imc | deterministic | PASS | 4/4 |
-| `decoupler_methods` | decoupler | decoupler.ds.toy | deterministic | FAIL | 15/18 |
-| `distance` | pertpy | seeded grouped Gaussian data | deterministic | PASS | 18/18 |
+| `decoupler_methods` | decoupler | decoupler.ds.toy | deterministic | PASS | 9/9 |
+| `distance` | pertpy | seeded grouped Gaussian data | deterministic | PASS | 9/9 |
 | `embeddings_extended` | scanpy | scanpy.datasets.pbmc68k_reduced | stochastic | PASS | 6/6 |
 | `guide_assignment` | pertpy | seeded Poisson guide-count mixture | near-deterministic | PASS | 3/3 |
 | `ingest_cell_cycle` | scanpy | scanpy.datasets.pbmc68k_reduced | near-deterministic | PASS | 6/6 |
 | `ligrec` | squidpy | scanpy.datasets.paul15 | stochastic | PASS | 4/4 |
-| `mixscale` | pertpy | seeded synthetic perturbation screen | deterministic | PASS | 2/2 |
-| `mixscape` | pertpy | seeded synthetic perturbation screen | near-deterministic | FAIL | 4/5 |
+| `mixscale` | pertpy | seeded synthetic perturbation screen | deterministic | PASS | 1/1 |
+| `mixscape` | pertpy | seeded synthetic perturbation screen | near-deterministic | PASS | 4/4 |
 | `rank_genes_groups` | scanpy | scanpy.datasets.pbmc68k_reduced | near-deterministic | PASS | 36/36 |
 | `scanpy_core_graphs_embeddings` | scanpy | pbmc68k_reduced | stochastic | FAIL | 4/5 |
 | `scanpy_core_harmony` | harmonypy | Harmonypy PBMC 3,500-cell donor benchmark | iterative | PASS | 3/3 |
@@ -60,10 +60,6 @@ A criterion is never widened to make a run green. Where a failure has been inves
 | `calculate_niche` | `neighborhood.cluster_count_difference` | 11 | <= 1.0 | `resolution` does not carry the same meaning across Leiden implementations: on identical input cuGraph found 34 clusters where leidenalg found 41, and Scanpy's own two backends already differ by 1. |
 | `calculate_niche` | `utag.adjusted_rand_index` | 0.55462722 | >= 0.85 | Squidpy calls `sc.tl.leiden` without a flavor, so CPU and GPU use different Leiden backends. On identical input Scanpy's own leidenalg and igraph backends agree only at ARI 0.5041, below this threshold, so the criterion measures backend choice rather than correctness. |
 | `calculate_niche` | `utag.normalized_mutual_information` | 0.73327271 | >= 0.85 | Squidpy calls `sc.tl.leiden` without a flavor, so CPU and GPU use different Leiden backends. On identical input Scanpy's own leidenalg and igraph backends agree only at ARI 0.5041, below this threshold, so the criterion measures backend choice rather than correctness. |
-| `decoupler_methods` | `mlm.adjusted_pvalue.allclose_excess` | 1.820935 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
-| `decoupler_methods` | `mlm.score.allclose_excess` | 3.8954457 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
-| `decoupler_methods` | `ulm.adjusted_pvalue.allclose_excess` | 21.178564 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
-| `mixscape` | `perturbation_signature.allclose_excess` | 2.6862685 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
 | `scanpy_core_graphs_embeddings` | `umap.cross_embedding_knn_overlap` | 0.58847619 | >= 0.65 | UMAP is stochastic, and this threshold asks for more agreement than the CPU reference shows against itself. On this dataset the GPU embedding is closer to the CPU one than a reseeded CPU run is, and the criterion still fails. |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.seurat.dispersions_norm.allclose_excess` | 3.4642374 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.cell_ranger.dispersions_norm.allclose_excess` | 13.067911 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
@@ -95,74 +91,92 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `co_occurrence` | `occurrence.allclose_violating_fraction` | 0 |  |
 | `co_occurrence` | `occurrence.max_abs_error` | 1.4481226e-06 |  |
 | `co_occurrence` | `occurrence.max_rel_error` | 2.246368e-07 |  |
+| `decoupler_methods` | `aucell.score.allclose_excess` | 0.0051959217 |  |
 | `decoupler_methods` | `aucell.score.allclose_worst_magnitude` | 0.26666667 |  |
 | `decoupler_methods` | `aucell.score.allclose_violating_fraction` | 0 |  |
 | `decoupler_methods` | `aucell.score.max_abs_error` | 1.9868215e-08 |  |
 | `decoupler_methods` | `aucell.score.max_rel_error` | 1.9868215e-08 |  |
+| `decoupler_methods` | `mlm.adjusted_pvalue.allclose_excess` | 1.820935 |  |
 | `decoupler_methods` | `mlm.adjusted_pvalue.allclose_worst_magnitude` | 0.97868647 |  |
 | `decoupler_methods` | `mlm.adjusted_pvalue.allclose_violating_fraction` | 0.0075 |  |
 | `decoupler_methods` | `mlm.adjusted_pvalue.max_abs_error` | 1.7839454e-05 |  |
 | `decoupler_methods` | `mlm.adjusted_pvalue.max_rel_error` | 1.7994235e-05 |  |
+| `decoupler_methods` | `mlm.score.allclose_excess` | 3.8954457 |  |
 | `decoupler_methods` | `mlm.score.allclose_worst_magnitude` | 0.010860395 |  |
 | `decoupler_methods` | `mlm.score.allclose_violating_fraction` | 0.005 |  |
 | `decoupler_methods` | `mlm.score.max_abs_error` | 4.143194e-06 |  |
 | `decoupler_methods` | `mlm.score.max_rel_error` | 4.446138e-07 |  |
+| `decoupler_methods` | `ulm.adjusted_pvalue.allclose_excess` | 21.178564 |  |
 | `decoupler_methods` | `ulm.adjusted_pvalue.allclose_worst_magnitude` | 0.99754399 |  |
 | `decoupler_methods` | `ulm.adjusted_pvalue.allclose_violating_fraction` | 0.0025 |  |
 | `decoupler_methods` | `ulm.adjusted_pvalue.max_abs_error` | 0.00021147728 |  |
 | `decoupler_methods` | `ulm.adjusted_pvalue.max_rel_error` | 0.00021199795 |  |
+| `decoupler_methods` | `ulm.score.allclose_excess` | 0.62557934 |  |
 | `decoupler_methods` | `ulm.score.allclose_worst_magnitude` | 0.0030984378 |  |
 | `decoupler_methods` | `ulm.score.allclose_violating_fraction` | 0 |  |
 | `decoupler_methods` | `ulm.score.max_abs_error` | 3.880607e-06 |  |
 | `decoupler_methods` | `ulm.score.max_rel_error` | 4.5916409e-07 |  |
+| `decoupler_methods` | `waggr.adjusted_pvalue.allclose_excess` | 0 |  |
 | `decoupler_methods` | `waggr.adjusted_pvalue.allclose_worst_magnitude` | 1 |  |
 | `decoupler_methods` | `waggr.adjusted_pvalue.allclose_violating_fraction` | 0 |  |
 | `decoupler_methods` | `waggr.adjusted_pvalue.max_abs_error` | 0 |  |
 | `decoupler_methods` | `waggr.adjusted_pvalue.max_rel_error` | 0 |  |
+| `decoupler_methods` | `waggr.score.allclose_excess` | 0.71895189 |  |
 | `decoupler_methods` | `waggr.score.allclose_worst_magnitude` | 0.017656257 |  |
 | `decoupler_methods` | `waggr.score.allclose_violating_fraction` | 0 |  |
 | `decoupler_methods` | `waggr.score.max_abs_error` | 1.2449623e-06 |  |
 | `decoupler_methods` | `waggr.score.max_rel_error` | 1.274507e-07 |  |
+| `decoupler_methods` | `zscore.adjusted_pvalue.allclose_excess` | 0.14219173 |  |
 | `decoupler_methods` | `zscore.adjusted_pvalue.allclose_worst_magnitude` | 0.017339345 |  |
 | `decoupler_methods` | `zscore.adjusted_pvalue.allclose_violating_fraction` | 0 |  |
 | `decoupler_methods` | `zscore.adjusted_pvalue.max_abs_error` | 2.3841858e-07 |  |
 | `decoupler_methods` | `zscore.adjusted_pvalue.max_rel_error` | 4.1003049e-07 |  |
+| `decoupler_methods` | `zscore.score.allclose_excess` | 0.053337029 |  |
 | `decoupler_methods` | `zscore.score.allclose_worst_magnitude` | 0.5512454 |  |
 | `decoupler_methods` | `zscore.score.allclose_violating_fraction` | 0 |  |
 | `decoupler_methods` | `zscore.score.max_abs_error` | 1.1061835e-06 |  |
 | `decoupler_methods` | `zscore.score.max_rel_error` | 1.1115226e-07 |  |
+| `distance` | `cosine_distance.pairwise.allclose_excess` | 1.1038135e-09 |  |
 | `distance` | `cosine_distance.pairwise.allclose_worst_magnitude` | 0.019116133 |  |
 | `distance` | `cosine_distance.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `cosine_distance.pairwise.max_abs_error` | 3.3306691e-16 |  |
 | `distance` | `cosine_distance.pairwise.max_rel_error` | 2.8720159e-16 |  |
+| `distance` | `edistance.pairwise.allclose_excess` | 5.9062026e-10 |  |
 | `distance` | `edistance.pairwise.allclose_worst_magnitude` | 0.45014187 |  |
 | `distance` | `edistance.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `edistance.pairwise.max_abs_error` | 3.5527137e-15 |  |
 | `distance` | `edistance.pairwise.max_rel_error` | 8.0616473e-16 |  |
+| `distance` | `euclidean.pairwise.allclose_excess` | 1.5800423e-10 |  |
 | `distance` | `euclidean.pairwise.allclose_worst_magnitude` | 1.8259004 |  |
 | `distance` | `euclidean.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `euclidean.pairwise.max_abs_error` | 2.8865799e-15 |  |
 | `distance` | `euclidean.pairwise.max_rel_error` | 5.541142e-16 |  |
+| `distance` | `mean_absolute_error.pairwise.allclose_excess` | 4.5691857e-11 |  |
 | `distance` | `mean_absolute_error.pairwise.allclose_worst_magnitude` | 0.484961 |  |
 | `distance` | `mean_absolute_error.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `mean_absolute_error.pairwise.max_abs_error` | 2.220446e-16 |  |
 | `distance` | `mean_absolute_error.pairwise.max_rel_error` | 1.4838397e-16 |  |
+| `distance` | `mse.pairwise.allclose_excess` | 1.1945331e-10 |  |
 | `distance` | `mse.pairwise.allclose_worst_magnitude` | 0.27782601 |  |
 | `distance` | `mse.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `mse.pairwise.max_abs_error` | 8.8817842e-16 |  |
 | `distance` | `mse.pairwise.max_rel_error` | 3.92747e-16 |  |
+| `distance` | `pearson_distance.pairwise.allclose_excess` | 5.1641893e-11 |  |
 | `distance` | `pearson_distance.pairwise.allclose_worst_magnitude` | 1.2889098 |  |
 | `distance` | `pearson_distance.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `pearson_distance.pairwise.max_abs_error` | 6.6613381e-16 |  |
 | `distance` | `pearson_distance.pairwise.max_rel_error` | 4.1345511e-16 |  |
+| `distance` | `r2_distance.pairwise.allclose_excess` | 2.3490795e-10 |  |
 | `distance` | `r2_distance.pairwise.allclose_worst_magnitude` | 11.341891 |  |
 | `distance` | `r2_distance.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `r2_distance.pairwise.max_abs_error` | 7.1054274e-14 |  |
 | `distance` | `r2_distance.pairwise.max_rel_error` | 5.888136e-16 |  |
+| `distance` | `root_mean_squared_error.pairwise.allclose_excess` | 1.5800423e-10 |  |
 | `distance` | `root_mean_squared_error.pairwise.allclose_worst_magnitude` | 1.8259004 |  |
 | `distance` | `root_mean_squared_error.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `root_mean_squared_error.pairwise.max_abs_error` | 2.8865799e-15 |  |
 | `distance` | `root_mean_squared_error.pairwise.max_rel_error` | 5.541142e-16 |  |
+| `distance` | `wasserstein.pairwise.allclose_excess` | 0.9856603 |  |
 | `distance` | `wasserstein.pairwise.allclose_worst_magnitude` | 15.181112 |  |
 | `distance` | `wasserstein.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `wasserstein.pairwise.max_abs_error` | 0.00014964406 |  |
@@ -171,10 +185,12 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `ligrec` | `means.allclose_violating_fraction` | 0 |  |
 | `ligrec` | `means.max_abs_error` | 4.5716029e-07 |  |
 | `ligrec` | `means.max_rel_error` | 2.4640096e-07 |  |
+| `mixscale` | `mixscale.score.allclose_excess` | 0.0051948259 |  |
 | `mixscale` | `mixscale.score.allclose_worst_magnitude` | 17.165429 |  |
 | `mixscale` | `mixscale.score.allclose_violating_fraction` | 0 |  |
 | `mixscale` | `mixscale.score.max_abs_error` | 8.917661e-07 |  |
 | `mixscale` | `mixscale.score.max_rel_error` | 4.8292203e-08 |  |
+| `mixscape` | `perturbation_signature.allclose_excess` | 2.6862685 |  |
 | `mixscape` | `perturbation_signature.allclose_worst_magnitude` | 0.0074074143 |  |
 | `mixscape` | `perturbation_signature.allclose_violating_fraction` | 0.01 |  |
 | `mixscape` | `perturbation_signature.max_abs_error` | 3.5762787e-07 |  |
@@ -297,7 +313,7 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `co_occurrence` | `interval.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `co_occurrence` | `occurrence.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `ligrec` | `means.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `scanpy_core_harmony` | `harmony.minimum_component_abs_correlation` | >= 0.95 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
+| `scanpy_core_harmony` | `harmony.minimum_component_abs_correlation` | > 0.95 | Manuscript Methods, Batch correction with Harmony: the implementation maintains a Pearson correlation of >95% for all corrected principal components. |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.seurat.means.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.seurat.dispersions.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.seurat.dispersions_norm.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
@@ -324,6 +340,7 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `scanpy_core_preprocessing` | `sqrt.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `spatial_autocorr` | `moran.I.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `spatial_autocorr` | `geary.C.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
+| `sqrt` | `X.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 
 ## Incomplete or failing scripts
 

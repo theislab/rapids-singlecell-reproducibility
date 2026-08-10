@@ -42,6 +42,11 @@ group. A measurement with no matching rule is recorded as evidence and does not 
 `evaluate.py` lists those on every run so a new metric cannot slip in ungated. **Thresholds are
 never widened to make a run green** — a criterion that fails keeps its value.
 
+Measuring and gating are separate decisions. The `numpy.allclose` standard gates only the
+operations the publication states it for; applied to the rest it is still computed and reported,
+as `EVIDENCE` in `criteria.py`, but carries no verdict — a red row traceable to no published
+claim would not be evidence of anything.
+
 To run the complete structured suite in isolated processes and aggregate it
 automatically:
 

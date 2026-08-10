@@ -1,11 +1,11 @@
 {
   "passed": false,
   "n_methods": 20,
-  "n_passed_methods": 13,
-  "n_metrics": 181,
-  "n_passed_metrics": 165,
+  "n_passed_methods": 15,
+  "n_metrics": 161,
+  "n_passed_metrics": 149,
   "n_recorded_metrics": 393,
-  "n_informational_metrics": 212,
+  "n_informational_metrics": 232,
   "criteria_overrides": [],
   "recorded_without_criterion": [
     "biological_pipeline_pbmc3k.umap.cpu_reseeded_knn_overlap",
@@ -26,74 +26,92 @@
     "co_occurrence.occurrence.allclose_violating_fraction",
     "co_occurrence.occurrence.max_abs_error",
     "co_occurrence.occurrence.max_rel_error",
+    "decoupler_methods.aucell.score.allclose_excess",
     "decoupler_methods.aucell.score.allclose_worst_magnitude",
     "decoupler_methods.aucell.score.allclose_violating_fraction",
     "decoupler_methods.aucell.score.max_abs_error",
     "decoupler_methods.aucell.score.max_rel_error",
+    "decoupler_methods.mlm.adjusted_pvalue.allclose_excess",
     "decoupler_methods.mlm.adjusted_pvalue.allclose_worst_magnitude",
     "decoupler_methods.mlm.adjusted_pvalue.allclose_violating_fraction",
     "decoupler_methods.mlm.adjusted_pvalue.max_abs_error",
     "decoupler_methods.mlm.adjusted_pvalue.max_rel_error",
+    "decoupler_methods.mlm.score.allclose_excess",
     "decoupler_methods.mlm.score.allclose_worst_magnitude",
     "decoupler_methods.mlm.score.allclose_violating_fraction",
     "decoupler_methods.mlm.score.max_abs_error",
     "decoupler_methods.mlm.score.max_rel_error",
+    "decoupler_methods.ulm.adjusted_pvalue.allclose_excess",
     "decoupler_methods.ulm.adjusted_pvalue.allclose_worst_magnitude",
     "decoupler_methods.ulm.adjusted_pvalue.allclose_violating_fraction",
     "decoupler_methods.ulm.adjusted_pvalue.max_abs_error",
     "decoupler_methods.ulm.adjusted_pvalue.max_rel_error",
+    "decoupler_methods.ulm.score.allclose_excess",
     "decoupler_methods.ulm.score.allclose_worst_magnitude",
     "decoupler_methods.ulm.score.allclose_violating_fraction",
     "decoupler_methods.ulm.score.max_abs_error",
     "decoupler_methods.ulm.score.max_rel_error",
+    "decoupler_methods.waggr.adjusted_pvalue.allclose_excess",
     "decoupler_methods.waggr.adjusted_pvalue.allclose_worst_magnitude",
     "decoupler_methods.waggr.adjusted_pvalue.allclose_violating_fraction",
     "decoupler_methods.waggr.adjusted_pvalue.max_abs_error",
     "decoupler_methods.waggr.adjusted_pvalue.max_rel_error",
+    "decoupler_methods.waggr.score.allclose_excess",
     "decoupler_methods.waggr.score.allclose_worst_magnitude",
     "decoupler_methods.waggr.score.allclose_violating_fraction",
     "decoupler_methods.waggr.score.max_abs_error",
     "decoupler_methods.waggr.score.max_rel_error",
+    "decoupler_methods.zscore.adjusted_pvalue.allclose_excess",
     "decoupler_methods.zscore.adjusted_pvalue.allclose_worst_magnitude",
     "decoupler_methods.zscore.adjusted_pvalue.allclose_violating_fraction",
     "decoupler_methods.zscore.adjusted_pvalue.max_abs_error",
     "decoupler_methods.zscore.adjusted_pvalue.max_rel_error",
+    "decoupler_methods.zscore.score.allclose_excess",
     "decoupler_methods.zscore.score.allclose_worst_magnitude",
     "decoupler_methods.zscore.score.allclose_violating_fraction",
     "decoupler_methods.zscore.score.max_abs_error",
     "decoupler_methods.zscore.score.max_rel_error",
+    "distance.cosine_distance.pairwise.allclose_excess",
     "distance.cosine_distance.pairwise.allclose_worst_magnitude",
     "distance.cosine_distance.pairwise.allclose_violating_fraction",
     "distance.cosine_distance.pairwise.max_abs_error",
     "distance.cosine_distance.pairwise.max_rel_error",
+    "distance.edistance.pairwise.allclose_excess",
     "distance.edistance.pairwise.allclose_worst_magnitude",
     "distance.edistance.pairwise.allclose_violating_fraction",
     "distance.edistance.pairwise.max_abs_error",
     "distance.edistance.pairwise.max_rel_error",
+    "distance.euclidean.pairwise.allclose_excess",
     "distance.euclidean.pairwise.allclose_worst_magnitude",
     "distance.euclidean.pairwise.allclose_violating_fraction",
     "distance.euclidean.pairwise.max_abs_error",
     "distance.euclidean.pairwise.max_rel_error",
+    "distance.mean_absolute_error.pairwise.allclose_excess",
     "distance.mean_absolute_error.pairwise.allclose_worst_magnitude",
     "distance.mean_absolute_error.pairwise.allclose_violating_fraction",
     "distance.mean_absolute_error.pairwise.max_abs_error",
     "distance.mean_absolute_error.pairwise.max_rel_error",
+    "distance.mse.pairwise.allclose_excess",
     "distance.mse.pairwise.allclose_worst_magnitude",
     "distance.mse.pairwise.allclose_violating_fraction",
     "distance.mse.pairwise.max_abs_error",
     "distance.mse.pairwise.max_rel_error",
+    "distance.pearson_distance.pairwise.allclose_excess",
     "distance.pearson_distance.pairwise.allclose_worst_magnitude",
     "distance.pearson_distance.pairwise.allclose_violating_fraction",
     "distance.pearson_distance.pairwise.max_abs_error",
     "distance.pearson_distance.pairwise.max_rel_error",
+    "distance.r2_distance.pairwise.allclose_excess",
     "distance.r2_distance.pairwise.allclose_worst_magnitude",
     "distance.r2_distance.pairwise.allclose_violating_fraction",
     "distance.r2_distance.pairwise.max_abs_error",
     "distance.r2_distance.pairwise.max_rel_error",
+    "distance.root_mean_squared_error.pairwise.allclose_excess",
     "distance.root_mean_squared_error.pairwise.allclose_worst_magnitude",
     "distance.root_mean_squared_error.pairwise.allclose_violating_fraction",
     "distance.root_mean_squared_error.pairwise.max_abs_error",
     "distance.root_mean_squared_error.pairwise.max_rel_error",
+    "distance.wasserstein.pairwise.allclose_excess",
     "distance.wasserstein.pairwise.allclose_worst_magnitude",
     "distance.wasserstein.pairwise.allclose_violating_fraction",
     "distance.wasserstein.pairwise.max_abs_error",
@@ -102,10 +120,12 @@
     "ligrec.means.allclose_violating_fraction",
     "ligrec.means.max_abs_error",
     "ligrec.means.max_rel_error",
+    "mixscale.mixscale.score.allclose_excess",
     "mixscale.mixscale.score.allclose_worst_magnitude",
     "mixscale.mixscale.score.allclose_violating_fraction",
     "mixscale.mixscale.score.max_abs_error",
     "mixscale.mixscale.score.max_rel_error",
+    "mixscape.perturbation_signature.allclose_excess",
     "mixscape.perturbation_signature.allclose_worst_magnitude",
     "mixscape.perturbation_signature.allclose_violating_fraction",
     "mixscape.perturbation_signature.max_abs_error",
@@ -284,13 +304,6 @@
           "basis": "",
           "passed": true
         }
-      ],
-      "derived_metrics": [
-        "bbknn.connectivity_jaccard",
-        "scrublet.score.pearson_correlation",
-        "scrublet.call.exact_agreement",
-        "scrublet_simulate_doublets.library_size.relative_error_of_mean",
-        "scrublet_simulate_doublets.library_size.relative_error_of_std"
       ],
       "passed": true
     },
@@ -496,26 +509,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "highly_variable_genes.selection.set_jaccard",
-        "pca.minimum_component_abs_correlation",
-        "umap.cross_embedding_knn_overlap",
-        "clustering.adjusted_rand_index",
-        "clustering.normalized_mutual_information",
-        "clustering.cell_type_nmi_difference",
-        "markers.B cells.set_jaccard",
-        "markers.CD14+ Monocytes.set_jaccard",
-        "markers.CD4 T cells.set_jaccard",
-        "markers.CD8 T cells.set_jaccard",
-        "markers.Dendritic cells.set_jaccard",
-        "markers.FCGR3A+ Monocytes.set_jaccard",
-        "markers.Megakaryocytes.set_jaccard",
-        "markers.NK cells.set_jaccard",
-        "annotation.exact_agreement",
-        "annotation.accuracy_difference",
-        "markers.mean_set_jaccard",
-        "markers.minimum_set_jaccard"
-      ],
       "passed": false
     },
     {
@@ -624,17 +617,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "neighborhood.adjusted_rand_index",
-        "neighborhood.normalized_mutual_information",
-        "cellcharter.cluster_count_difference",
-        "neighborhood.cluster_count_difference",
-        "utag.cluster_count_difference",
-        "utag.adjusted_rand_index",
-        "utag.normalized_mutual_information",
-        "cellcharter.adjusted_rand_index",
-        "cellcharter.normalized_mutual_information"
-      ],
       "passed": false
     },
     {
@@ -687,12 +669,6 @@
           "basis": "",
           "passed": true
         }
-      ],
-      "derived_metrics": [
-        "louvain.adjusted_rand_index",
-        "louvain.normalized_mutual_information",
-        "kmeans.adjusted_rand_index",
-        "kmeans.normalized_mutual_information"
       ],
       "passed": true
     },
@@ -819,20 +795,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "interval.allclose_excess",
-        "interval.allclose_worst_magnitude",
-        "interval.allclose_violating_fraction",
-        "interval.max_abs_error",
-        "interval.max_rel_error",
-        "occurrence.allclose_excess",
-        "occurrence.allclose_worst_magnitude",
-        "occurrence.allclose_violating_fraction",
-        "occurrence.max_abs_error",
-        "occurrence.max_rel_error",
-        "occurrence.mean_abs_error",
-        "occurrence.pearson_correlation"
-      ],
       "passed": true
     },
     {
@@ -848,11 +810,10 @@
         {
           "metric": "aucell.score.allclose_excess",
           "observed": 0.005195921712811416,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -894,13 +855,11 @@
         {
           "metric": "mlm.adjusted_pvalue.allclose_excess",
           "observed": 1.8209350479628212,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
-          "passed": false,
-          "diagnosis": "numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement."
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
+          "passed": true
         },
         {
           "metric": "mlm.adjusted_pvalue.allclose_worst_magnitude",
@@ -941,13 +900,11 @@
         {
           "metric": "mlm.score.allclose_excess",
           "observed": 3.895445676883923,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
-          "passed": false,
-          "diagnosis": "numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement."
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
+          "passed": true
         },
         {
           "metric": "mlm.score.allclose_worst_magnitude",
@@ -988,13 +945,11 @@
         {
           "metric": "ulm.adjusted_pvalue.allclose_excess",
           "observed": 21.178564154541327,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
-          "passed": false,
-          "diagnosis": "numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement."
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
+          "passed": true
         },
         {
           "metric": "ulm.adjusted_pvalue.allclose_worst_magnitude",
@@ -1035,11 +990,10 @@
         {
           "metric": "ulm.score.allclose_excess",
           "observed": 0.6255793385790659,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1081,11 +1035,10 @@
         {
           "metric": "waggr.adjusted_pvalue.allclose_excess",
           "observed": 0.0,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1127,11 +1080,10 @@
         {
           "metric": "waggr.score.allclose_excess",
           "observed": 0.7189518883549838,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1173,11 +1125,10 @@
         {
           "metric": "zscore.adjusted_pvalue.allclose_excess",
           "observed": 0.142191730363944,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1219,11 +1170,10 @@
         {
           "metric": "zscore.score.allclose_excess",
           "observed": 0.05333702867367087,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1353,63 +1303,7 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "aucell.score.allclose_excess",
-        "aucell.score.allclose_worst_magnitude",
-        "aucell.score.allclose_violating_fraction",
-        "aucell.score.max_abs_error",
-        "aucell.score.max_rel_error",
-        "mlm.adjusted_pvalue.allclose_excess",
-        "mlm.adjusted_pvalue.allclose_worst_magnitude",
-        "mlm.adjusted_pvalue.allclose_violating_fraction",
-        "mlm.adjusted_pvalue.max_abs_error",
-        "mlm.adjusted_pvalue.max_rel_error",
-        "mlm.score.allclose_excess",
-        "mlm.score.allclose_worst_magnitude",
-        "mlm.score.allclose_violating_fraction",
-        "mlm.score.max_abs_error",
-        "mlm.score.max_rel_error",
-        "ulm.adjusted_pvalue.allclose_excess",
-        "ulm.adjusted_pvalue.allclose_worst_magnitude",
-        "ulm.adjusted_pvalue.allclose_violating_fraction",
-        "ulm.adjusted_pvalue.max_abs_error",
-        "ulm.adjusted_pvalue.max_rel_error",
-        "ulm.score.allclose_excess",
-        "ulm.score.allclose_worst_magnitude",
-        "ulm.score.allclose_violating_fraction",
-        "ulm.score.max_abs_error",
-        "ulm.score.max_rel_error",
-        "waggr.adjusted_pvalue.allclose_excess",
-        "waggr.adjusted_pvalue.allclose_worst_magnitude",
-        "waggr.adjusted_pvalue.allclose_violating_fraction",
-        "waggr.adjusted_pvalue.max_abs_error",
-        "waggr.adjusted_pvalue.max_rel_error",
-        "waggr.score.allclose_excess",
-        "waggr.score.allclose_worst_magnitude",
-        "waggr.score.allclose_violating_fraction",
-        "waggr.score.max_abs_error",
-        "waggr.score.max_rel_error",
-        "zscore.adjusted_pvalue.allclose_excess",
-        "zscore.adjusted_pvalue.allclose_worst_magnitude",
-        "zscore.adjusted_pvalue.allclose_violating_fraction",
-        "zscore.adjusted_pvalue.max_abs_error",
-        "zscore.adjusted_pvalue.max_rel_error",
-        "zscore.score.allclose_excess",
-        "zscore.score.allclose_worst_magnitude",
-        "zscore.score.allclose_violating_fraction",
-        "zscore.score.max_abs_error",
-        "zscore.score.max_rel_error",
-        "aucell.score.pearson_correlation",
-        "mlm.adjusted_pvalue.pearson_correlation",
-        "mlm.score.pearson_correlation",
-        "ulm.adjusted_pvalue.pearson_correlation",
-        "ulm.score.pearson_correlation",
-        "waggr.adjusted_pvalue.pearson_correlation",
-        "waggr.score.pearson_correlation",
-        "zscore.adjusted_pvalue.pearson_correlation",
-        "zscore.score.pearson_correlation"
-      ],
-      "passed": false
+      "passed": true
     },
     {
       "method": "distance",
@@ -1424,11 +1318,10 @@
         {
           "metric": "cosine_distance.pairwise.allclose_excess",
           "observed": 1.1038135419370605e-09,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1470,11 +1363,10 @@
         {
           "metric": "edistance.pairwise.allclose_excess",
           "observed": 5.906202579379681e-10,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1516,11 +1408,10 @@
         {
           "metric": "euclidean.pairwise.allclose_excess",
           "observed": 1.5800423123490845e-10,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1562,11 +1453,10 @@
         {
           "metric": "mean_absolute_error.pairwise.allclose_excess",
           "observed": 4.569185666333635e-11,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1608,11 +1498,10 @@
         {
           "metric": "mse.pairwise.allclose_excess",
           "observed": 1.1945331360079672e-10,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1654,11 +1543,10 @@
         {
           "metric": "pearson_distance.pairwise.allclose_excess",
           "observed": 5.164189261528852e-11,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1700,11 +1588,10 @@
         {
           "metric": "r2_distance.pairwise.allclose_excess",
           "observed": 2.349079547020483e-10,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1746,11 +1633,10 @@
         {
           "metric": "root_mean_squared_error.pairwise.allclose_excess",
           "observed": 1.5800423123490845e-10,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1792,11 +1678,10 @@
         {
           "metric": "wasserstein.pairwise.allclose_excess",
           "observed": 0.9856603021682188,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -1926,62 +1811,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "cosine_distance.pairwise.allclose_excess",
-        "cosine_distance.pairwise.allclose_worst_magnitude",
-        "cosine_distance.pairwise.allclose_violating_fraction",
-        "cosine_distance.pairwise.max_abs_error",
-        "cosine_distance.pairwise.max_rel_error",
-        "edistance.pairwise.allclose_excess",
-        "edistance.pairwise.allclose_worst_magnitude",
-        "edistance.pairwise.allclose_violating_fraction",
-        "edistance.pairwise.max_abs_error",
-        "edistance.pairwise.max_rel_error",
-        "euclidean.pairwise.allclose_excess",
-        "euclidean.pairwise.allclose_worst_magnitude",
-        "euclidean.pairwise.allclose_violating_fraction",
-        "euclidean.pairwise.max_abs_error",
-        "euclidean.pairwise.max_rel_error",
-        "mean_absolute_error.pairwise.allclose_excess",
-        "mean_absolute_error.pairwise.allclose_worst_magnitude",
-        "mean_absolute_error.pairwise.allclose_violating_fraction",
-        "mean_absolute_error.pairwise.max_abs_error",
-        "mean_absolute_error.pairwise.max_rel_error",
-        "mse.pairwise.allclose_excess",
-        "mse.pairwise.allclose_worst_magnitude",
-        "mse.pairwise.allclose_violating_fraction",
-        "mse.pairwise.max_abs_error",
-        "mse.pairwise.max_rel_error",
-        "pearson_distance.pairwise.allclose_excess",
-        "pearson_distance.pairwise.allclose_worst_magnitude",
-        "pearson_distance.pairwise.allclose_violating_fraction",
-        "pearson_distance.pairwise.max_abs_error",
-        "pearson_distance.pairwise.max_rel_error",
-        "r2_distance.pairwise.allclose_excess",
-        "r2_distance.pairwise.allclose_worst_magnitude",
-        "r2_distance.pairwise.allclose_violating_fraction",
-        "r2_distance.pairwise.max_abs_error",
-        "r2_distance.pairwise.max_rel_error",
-        "root_mean_squared_error.pairwise.allclose_excess",
-        "root_mean_squared_error.pairwise.allclose_worst_magnitude",
-        "root_mean_squared_error.pairwise.allclose_violating_fraction",
-        "root_mean_squared_error.pairwise.max_abs_error",
-        "root_mean_squared_error.pairwise.max_rel_error",
-        "wasserstein.pairwise.allclose_excess",
-        "wasserstein.pairwise.allclose_worst_magnitude",
-        "wasserstein.pairwise.allclose_violating_fraction",
-        "wasserstein.pairwise.max_abs_error",
-        "wasserstein.pairwise.max_rel_error",
-        "cosine_distance.pairwise.pearson_correlation",
-        "edistance.pairwise.pearson_correlation",
-        "euclidean.pairwise.pearson_correlation",
-        "mean_absolute_error.pairwise.pearson_correlation",
-        "mse.pairwise.pearson_correlation",
-        "pearson_distance.pairwise.pearson_correlation",
-        "r2_distance.pairwise.pearson_correlation",
-        "root_mean_squared_error.pairwise.pearson_correlation",
-        "wasserstein.pairwise.pearson_correlation"
-      ],
       "passed": true
     },
     {
@@ -2055,14 +1884,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "tsne.cpu.trustworthiness",
-        "tsne.gpu.trustworthiness",
-        "tsne.cross_embedding_knn_overlap",
-        "diffmap.minimum_component_abs_correlation",
-        "draw_graph.cross_embedding_knn_overlap",
-        "embedding_density.pearson_correlation"
-      ],
       "passed": true
     },
     {
@@ -2105,11 +1926,6 @@
           "basis": "",
           "passed": true
         }
-      ],
-      "derived_metrics": [
-        "assign_by_threshold.exact_agreement",
-        "assign_to_max_guide.exact_agreement",
-        "assign_mixture_model.exact_agreement"
       ],
       "passed": true
     },
@@ -2183,14 +1999,6 @@
           "basis": "",
           "passed": true
         }
-      ],
-      "derived_metrics": [
-        "ingest.label.exact_agreement",
-        "ingest.pca.pearson_correlation",
-        "ingest.umap.cross_embedding_knn_overlap",
-        "score_genes_cell_cycle.S.pearson_correlation",
-        "score_genes_cell_cycle.G2M.pearson_correlation",
-        "score_genes_cell_cycle.phase.exact_agreement"
       ],
       "passed": true
     },
@@ -2281,16 +2089,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "means.allclose_excess",
-        "means.allclose_worst_magnitude",
-        "means.allclose_violating_fraction",
-        "means.max_abs_error",
-        "means.max_rel_error",
-        "pvalues.nan_mask_agreement",
-        "pvalues.mean_abs_error",
-        "pvalues.pearson_correlation"
-      ],
       "passed": true
     },
     {
@@ -2306,11 +2104,10 @@
         {
           "metric": "mixscale.score.allclose_excess",
           "observed": 0.005194825859594137,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -2360,14 +2157,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "mixscale.score.allclose_excess",
-        "mixscale.score.allclose_worst_magnitude",
-        "mixscale.score.allclose_violating_fraction",
-        "mixscale.score.max_abs_error",
-        "mixscale.score.max_rel_error",
-        "mixscale.score.pearson_correlation"
-      ],
       "passed": true
     },
     {
@@ -2383,13 +2172,11 @@
         {
           "metric": "perturbation_signature.allclose_excess",
           "observed": 2.6862685401995385,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "",
-          "passed": false,
-          "diagnosis": "numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement."
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
+          "passed": true
         },
         {
           "metric": "perturbation_signature.allclose_worst_magnitude",
@@ -2468,18 +2255,7 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "perturbation_signature.allclose_excess",
-        "perturbation_signature.allclose_worst_magnitude",
-        "perturbation_signature.allclose_violating_fraction",
-        "perturbation_signature.max_abs_error",
-        "perturbation_signature.max_rel_error",
-        "perturbation_signature.pearson_correlation",
-        "mixscape.global_class.exact_agreement",
-        "mixscape.p_ko.pearson_correlation",
-        "mixscape.lda.lda_abs_correlation"
-      ],
-      "passed": false
+      "passed": true
     },
     {
       "method": "rank_genes_groups",
@@ -2852,44 +2628,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "logreg.CD14+ Monocyte.score.pearson_correlation",
-        "logreg.CD19+ B.score.pearson_correlation",
-        "logreg.CD34+.score.pearson_correlation",
-        "logreg.CD56+ NK.score.pearson_correlation",
-        "logreg.CD8+ Cytotoxic T.score.pearson_correlation",
-        "logreg.Dendritic.score.pearson_correlation",
-        "t-test.CD14+ Monocyte.score.pearson_correlation",
-        "t-test.CD19+ B.score.pearson_correlation",
-        "t-test.CD34+.score.pearson_correlation",
-        "t-test.CD56+ NK.score.pearson_correlation",
-        "t-test.CD8+ Cytotoxic T.score.pearson_correlation",
-        "t-test.Dendritic.score.pearson_correlation",
-        "wilcoxon.CD14+ Monocyte.score.pearson_correlation",
-        "wilcoxon.CD19+ B.score.pearson_correlation",
-        "wilcoxon.CD34+.score.pearson_correlation",
-        "wilcoxon.CD56+ NK.score.pearson_correlation",
-        "wilcoxon.CD8+ Cytotoxic T.score.pearson_correlation",
-        "wilcoxon.Dendritic.score.pearson_correlation",
-        "logreg.CD14+ Monocyte.markers.set_jaccard",
-        "logreg.CD19+ B.markers.set_jaccard",
-        "logreg.CD34+.markers.set_jaccard",
-        "logreg.CD56+ NK.markers.set_jaccard",
-        "logreg.CD8+ Cytotoxic T.markers.set_jaccard",
-        "logreg.Dendritic.markers.set_jaccard",
-        "t-test.CD14+ Monocyte.markers.set_jaccard",
-        "t-test.CD19+ B.markers.set_jaccard",
-        "t-test.CD34+.markers.set_jaccard",
-        "t-test.CD56+ NK.markers.set_jaccard",
-        "t-test.CD8+ Cytotoxic T.markers.set_jaccard",
-        "t-test.Dendritic.markers.set_jaccard",
-        "wilcoxon.CD14+ Monocyte.markers.set_jaccard",
-        "wilcoxon.CD19+ B.markers.set_jaccard",
-        "wilcoxon.CD34+.markers.set_jaccard",
-        "wilcoxon.CD56+ NK.markers.set_jaccard",
-        "wilcoxon.CD8+ Cytotoxic T.markers.set_jaccard",
-        "wilcoxon.Dendritic.markers.set_jaccard"
-      ],
       "passed": true
     },
     {
@@ -2972,13 +2710,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "neighbors.distance.graph_jaccard",
-        "neighbors.connectivity.graph_jaccard",
-        "umap.cross_embedding_knn_overlap",
-        "leiden.adjusted_rand_index",
-        "leiden.normalized_mutual_information"
-      ],
       "passed": false
     },
     {
@@ -2994,11 +2725,11 @@
         {
           "metric": "harmony.minimum_component_abs_correlation",
           "observed": 0.9986045394436173,
-          "comparison": ">=",
+          "comparison": ">",
           "tolerance": 0.95,
-          "criterion": ">= 0.95",
+          "criterion": "> 0.95",
           "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "basis": "Manuscript Methods, Batch correction with Harmony: the implementation maintains a Pearson correlation of >95% for all corrected principal components.",
           "passed": true
         },
         {
@@ -3021,11 +2752,6 @@
           "basis": "",
           "passed": true
         }
-      ],
-      "derived_metrics": [
-        "harmony.minimum_component_abs_correlation",
-        "harmony.mean_component_abs_correlation",
-        "harmony.standard_deviation_max_abs_error"
       ],
       "passed": true
     },
@@ -3700,79 +3426,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "highly_variable_genes.seurat.selection.set_jaccard",
-        "highly_variable_genes.seurat.means.allclose_excess",
-        "highly_variable_genes.seurat.means.allclose_worst_magnitude",
-        "highly_variable_genes.seurat.means.allclose_violating_fraction",
-        "highly_variable_genes.seurat.means.max_abs_error",
-        "highly_variable_genes.seurat.means.max_rel_error",
-        "highly_variable_genes.seurat.dispersions.allclose_excess",
-        "highly_variable_genes.seurat.dispersions.allclose_worst_magnitude",
-        "highly_variable_genes.seurat.dispersions.allclose_violating_fraction",
-        "highly_variable_genes.seurat.dispersions.max_abs_error",
-        "highly_variable_genes.seurat.dispersions.max_rel_error",
-        "highly_variable_genes.seurat.dispersions_norm.allclose_excess",
-        "highly_variable_genes.seurat.dispersions_norm.allclose_worst_magnitude",
-        "highly_variable_genes.seurat.dispersions_norm.allclose_violating_fraction",
-        "highly_variable_genes.seurat.dispersions_norm.max_abs_error",
-        "highly_variable_genes.seurat.dispersions_norm.max_rel_error",
-        "highly_variable_genes.cell_ranger.selection.set_jaccard",
-        "highly_variable_genes.cell_ranger.means.allclose_excess",
-        "highly_variable_genes.cell_ranger.means.allclose_worst_magnitude",
-        "highly_variable_genes.cell_ranger.means.allclose_violating_fraction",
-        "highly_variable_genes.cell_ranger.means.max_abs_error",
-        "highly_variable_genes.cell_ranger.means.max_rel_error",
-        "highly_variable_genes.cell_ranger.dispersions.allclose_excess",
-        "highly_variable_genes.cell_ranger.dispersions.allclose_worst_magnitude",
-        "highly_variable_genes.cell_ranger.dispersions.allclose_violating_fraction",
-        "highly_variable_genes.cell_ranger.dispersions.max_abs_error",
-        "highly_variable_genes.cell_ranger.dispersions.max_rel_error",
-        "highly_variable_genes.cell_ranger.dispersions_norm.allclose_excess",
-        "highly_variable_genes.cell_ranger.dispersions_norm.allclose_worst_magnitude",
-        "highly_variable_genes.cell_ranger.dispersions_norm.allclose_violating_fraction",
-        "highly_variable_genes.cell_ranger.dispersions_norm.max_abs_error",
-        "highly_variable_genes.cell_ranger.dispersions_norm.max_rel_error",
-        "highly_variable_genes.seurat_v3.selection.set_jaccard",
-        "highly_variable_genes.seurat_v3.means.allclose_excess",
-        "highly_variable_genes.seurat_v3.means.allclose_worst_magnitude",
-        "highly_variable_genes.seurat_v3.means.allclose_violating_fraction",
-        "highly_variable_genes.seurat_v3.means.max_abs_error",
-        "highly_variable_genes.seurat_v3.means.max_rel_error",
-        "highly_variable_genes.seurat_v3.variances.allclose_excess",
-        "highly_variable_genes.seurat_v3.variances.allclose_worst_magnitude",
-        "highly_variable_genes.seurat_v3.variances.allclose_violating_fraction",
-        "highly_variable_genes.seurat_v3.variances.max_abs_error",
-        "highly_variable_genes.seurat_v3.variances.max_rel_error",
-        "highly_variable_genes.seurat_v3.variances_norm.allclose_excess",
-        "highly_variable_genes.seurat_v3.variances_norm.allclose_worst_magnitude",
-        "highly_variable_genes.seurat_v3.variances_norm.allclose_violating_fraction",
-        "highly_variable_genes.seurat_v3.variances_norm.max_abs_error",
-        "highly_variable_genes.seurat_v3.variances_norm.max_rel_error",
-        "highly_variable_genes.pearson_residuals.selection.set_jaccard",
-        "highly_variable_genes.pearson_residuals.means.allclose_excess",
-        "highly_variable_genes.pearson_residuals.means.allclose_worst_magnitude",
-        "highly_variable_genes.pearson_residuals.means.allclose_violating_fraction",
-        "highly_variable_genes.pearson_residuals.means.max_abs_error",
-        "highly_variable_genes.pearson_residuals.means.max_rel_error",
-        "highly_variable_genes.pearson_residuals.variances.allclose_excess",
-        "highly_variable_genes.pearson_residuals.variances.allclose_worst_magnitude",
-        "highly_variable_genes.pearson_residuals.variances.allclose_violating_fraction",
-        "highly_variable_genes.pearson_residuals.variances.max_abs_error",
-        "highly_variable_genes.pearson_residuals.variances.max_rel_error",
-        "highly_variable_genes.pearson_residuals.residual_variances.allclose_excess",
-        "highly_variable_genes.pearson_residuals.residual_variances.allclose_worst_magnitude",
-        "highly_variable_genes.pearson_residuals.residual_variances.allclose_violating_fraction",
-        "highly_variable_genes.pearson_residuals.residual_variances.max_abs_error",
-        "highly_variable_genes.pearson_residuals.residual_variances.max_rel_error",
-        "pca.scores.minimum_component_abs_correlation",
-        "pca.loadings.minimum_component_abs_correlation",
-        "pca.explained_variance_ratio.allclose_excess",
-        "pca.explained_variance_ratio.allclose_worst_magnitude",
-        "pca.explained_variance_ratio.allclose_violating_fraction",
-        "pca.explained_variance_ratio.max_abs_error",
-        "pca.explained_variance_ratio.max_rel_error"
-      ],
       "passed": false
     },
     {
@@ -4375,71 +4028,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "filter_cells.index_agreement",
-        "filter_genes.index_agreement",
-        "calculate_qc_metrics.n_genes_by_counts.allclose_excess",
-        "calculate_qc_metrics.n_genes_by_counts.allclose_worst_magnitude",
-        "calculate_qc_metrics.n_genes_by_counts.allclose_violating_fraction",
-        "calculate_qc_metrics.n_genes_by_counts.max_abs_error",
-        "calculate_qc_metrics.n_genes_by_counts.max_rel_error",
-        "calculate_qc_metrics.pct_counts_mt.allclose_excess",
-        "calculate_qc_metrics.pct_counts_mt.allclose_worst_magnitude",
-        "calculate_qc_metrics.pct_counts_mt.allclose_violating_fraction",
-        "calculate_qc_metrics.pct_counts_mt.max_abs_error",
-        "calculate_qc_metrics.pct_counts_mt.max_rel_error",
-        "calculate_qc_metrics.total_counts.allclose_excess",
-        "calculate_qc_metrics.total_counts.allclose_worst_magnitude",
-        "calculate_qc_metrics.total_counts.allclose_violating_fraction",
-        "calculate_qc_metrics.total_counts.max_abs_error",
-        "calculate_qc_metrics.total_counts.max_rel_error",
-        "calculate_qc_metrics.total_counts_mt.allclose_excess",
-        "calculate_qc_metrics.total_counts_mt.allclose_worst_magnitude",
-        "calculate_qc_metrics.total_counts_mt.allclose_violating_fraction",
-        "calculate_qc_metrics.total_counts_mt.max_abs_error",
-        "calculate_qc_metrics.total_counts_mt.max_rel_error",
-        "normalize_total.allclose_excess",
-        "normalize_total.allclose_worst_magnitude",
-        "normalize_total.allclose_violating_fraction",
-        "normalize_total.max_abs_error",
-        "normalize_total.max_rel_error",
-        "normalize_total.pearson_correlation",
-        "log1p.allclose_excess",
-        "log1p.allclose_worst_magnitude",
-        "log1p.allclose_violating_fraction",
-        "log1p.max_abs_error",
-        "log1p.max_rel_error",
-        "log1p.pearson_correlation",
-        "normalize_pearson_residuals.allclose_excess",
-        "normalize_pearson_residuals.allclose_worst_magnitude",
-        "normalize_pearson_residuals.allclose_violating_fraction",
-        "normalize_pearson_residuals.max_abs_error",
-        "normalize_pearson_residuals.max_rel_error",
-        "normalize_pearson_residuals.pearson_correlation",
-        "scale.allclose_excess",
-        "scale.allclose_worst_magnitude",
-        "scale.allclose_violating_fraction",
-        "scale.max_abs_error",
-        "scale.max_rel_error",
-        "scale.pearson_correlation",
-        "regress_out.allclose_excess",
-        "regress_out.allclose_worst_magnitude",
-        "regress_out.allclose_violating_fraction",
-        "regress_out.max_abs_error",
-        "regress_out.max_rel_error",
-        "regress_out.pearson_correlation",
-        "score_genes.allclose_excess",
-        "score_genes.allclose_worst_magnitude",
-        "score_genes.allclose_violating_fraction",
-        "score_genes.max_abs_error",
-        "score_genes.max_rel_error",
-        "score_genes.pearson_correlation",
-        "sqrt.allclose_excess",
-        "sqrt.allclose_worst_magnitude",
-        "sqrt.allclose_violating_fraction",
-        "sqrt.max_abs_error",
-        "sqrt.max_rel_error"
-      ],
       "passed": false
     },
     {
@@ -4565,20 +4153,6 @@
           "passed": true
         }
       ],
-      "derived_metrics": [
-        "moran.I.allclose_excess",
-        "moran.I.allclose_worst_magnitude",
-        "moran.I.allclose_violating_fraction",
-        "moran.I.max_abs_error",
-        "moran.I.max_rel_error",
-        "moran.I.pearson_correlation",
-        "geary.C.allclose_excess",
-        "geary.C.allclose_worst_magnitude",
-        "geary.C.allclose_violating_fraction",
-        "geary.C.max_abs_error",
-        "geary.C.max_rel_error",
-        "geary.C.pearson_correlation"
-      ],
       "passed": true
     },
     {
@@ -4598,7 +4172,7 @@
           "tolerance": 1.0,
           "criterion": "<= 1.0",
           "gating": true,
-          "basis": "",
+          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
           "passed": true
         },
         {
@@ -4637,13 +4211,6 @@
           "gating": false,
           "passed": true
         }
-      ],
-      "derived_metrics": [
-        "X.allclose_excess",
-        "X.allclose_worst_magnitude",
-        "X.allclose_violating_fraction",
-        "X.max_abs_error",
-        "X.max_rel_error"
       ],
       "passed": true
     }

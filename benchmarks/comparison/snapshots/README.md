@@ -5,7 +5,7 @@ never rewritten, so a cited number stays citable.
 
 | Snapshot                                   | Suite                                  | Node                 | Outcome                       | Status  |
 | ------------------------------------------ | -------------------------------------- | -------------------- | ----------------------------- | ------- |
-| [`2026-08-09-derived`](2026-08-09-derived) | Comparisons derived from stored arrays | A100-PCIE-40GB (MIG) | 13/20 groups, 165/181 metrics | Current |
+| [`2026-08-09-derived`](2026-08-09-derived) | Comparisons derived from stored arrays | A100-PCIE-40GB (MIG) | 15/20 groups, 149/161 metrics | Current |
 
 Only a complete run — every script producing a result record — is promoted here. A partial
 rerun marks `execution.json` with `"partial": true` and must not be promoted; use it to iterate
