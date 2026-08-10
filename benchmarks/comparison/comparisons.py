@@ -103,11 +103,20 @@ def float32_ulp_at_max(candidate, reference) -> float:
 
 
 def pearson_correlation(candidate, reference) -> float:
+    """Correlation over the elements finite on both sides.
+
+    Fewer than two such elements is not agreement, it is an absent measurement: NaN, which
+    `evaluate.decide` fails. Returning a number there would score an all-NaN candidate as
+    perfectly correlated with a finite reference. A constant pair is different — the
+    correlation is undefined but the question "do they agree" still has an answer.
+    """
     a, b = _floats(candidate, reference)
     a, b = a.ravel(), b.ravel()
     mask = np.isfinite(a) & np.isfinite(b)
-    if mask.sum() < 2 or np.std(a[mask]) == 0 or np.std(b[mask]) == 0:
-        return float(a[mask].shape == b[mask].shape and np.allclose(a[mask], b[mask]))
+    if mask.sum() < 2:
+        return float("nan")
+    if np.std(a[mask]) == 0 or np.std(b[mask]) == 0:
+        return float(np.allclose(a[mask], b[mask]))
     return float(np.corrcoef(a[mask], b[mask])[0, 1])
 
 
