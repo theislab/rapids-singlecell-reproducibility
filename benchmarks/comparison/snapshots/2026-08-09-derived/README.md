@@ -16,8 +16,8 @@ manuscript states no standard for. The measurements in `results/` are untouched 
 verdicts moved, which is what re-scoring a stored run is for.
 
 - Method groups passing: 15/20
-- Gating metrics passing: 149/161
-- Measurements recorded as evidence: 232
+- Gating metrics passing: 139/150
+- Measurements recorded as evidence: 243
 - Scripts producing a result record: 20/20
 
 All 20 scripts completed. A script exiting non-zero would mean it failed to produce a record at
@@ -41,7 +41,7 @@ scalars here are what allows this verdict to be checked.
 ## Reading the failures
 
 [`NUMERICAL_VALIDATION.md`](../../../../NUMERICAL_VALIDATION.md) assesses all nine comparisons
-that exceed the `allclose` envelope — the five that gate and the four recorded as evidence —
+that exceed the `allclose` envelope — the four that gate and the five recorded as evidence —
 including which term of the criterion decided each one and how thin the failing tail is. [`OPEN.md`](../../../../OPEN.md) covers the
 stochastic failures and the limits of the evidence as a whole. Thresholds are not widened to
 make a run green.

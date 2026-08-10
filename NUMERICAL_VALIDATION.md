@@ -12,11 +12,12 @@ and PCA, and fails for scaling, regression, Pearson residuals, normalized disper
 activity-inference outputs**. Nine of 50 such comparisons fail. The sentence needs qualifying before
 publication.
 
-The suite gates on this standard only where the publication asserts it — the operations the Methods
-and abstract name. Activity inference, perturbation signatures and the pertpy distances are measured
-against it and reported, but carry no verdict, because a threshold there would be the suite's
-invention rather than the paper's claim. Both kinds appear below: what follows is an assessment of
-the sentence, not a pass list.
+The suite gates on this standard only where the publication asserts it — normalization, log
+transformation, scaling, HVG selection, PCA. Everything else measured against the same envelope
+(spatial statistics, activity inference, perturbation signatures, pertpy distances, `regress_out`,
+`score_genes`, QC metrics) is reported without a verdict, because a threshold there would be the
+suite's invention rather than the paper's claim. Both kinds appear below: what follows is an
+assessment of the sentence, not a pass list.
 
 ## How it was measured
 
@@ -44,8 +45,8 @@ python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapsho
 
 **These figures are one dated measurement, not a live claim.** Complete 20-group run on an NVIDIA
 A100-PCIE-40GB (MIG 3g.20gb, driver 12.9), rapids-singlecell 0.16.1, scanpy 1.12.3, squidpy 1.8.3,
-pertpy 1.1.1, decoupler 2.2.0. 161 gating metrics; 50 comparisons are measured against `allclose`,
-of which 30 gate and 20 are recorded as evidence on operations the paper does not name. The
+pertpy 1.1.1, decoupler 2.2.0. 150 gating metrics; 50 comparisons are measured against `allclose`,
+of which 19 gate and 31 are recorded as evidence on operations the paper does not name. The
 current state of any run is in its own generated `report/summary.md`; if the two disagree, the
 report is right and this document is out of date.
 
@@ -53,7 +54,7 @@ report is right and this document is out of date.
 
 | Comparison                         | Gates? | Excess | \|b\| at deciding element | Elements outside envelope | Decided by | Pearson, same arrays |
 | ---------------------------------- | ------ | -----: | ------------------------: | ------------------------: | ---------- | -------------------: |
-| `regress_out`                      | yes    |  67.44 |                  1.22e-04 |                   0.0367% | `atol`     |           1.00000000 |
+| `regress_out`                      | no     |  67.44 |                  1.22e-04 |                   0.0367% | `atol`     |           1.00000000 |
 | `normalize_pearson_residuals`      | yes    |  30.63 |                  3.51e-04 |                  0.00150% | `atol`     |           1.00000000 |
 | `ulm.adjusted_pvalue`              | no     |  21.18 |                     0.998 |                    0.250% | **`rtol`** |           1.00000000 |
 | `hvg.cell_ranger.dispersions_norm` | yes    |  13.07 |                  1.44e-03 |                    0.751% | **`rtol`** |                    — |
@@ -63,10 +64,12 @@ report is right and this document is out of date.
 | `mlm.adjusted_pvalue`              | no     |  1.821 |                     0.979 |                    0.750% | **`rtol`** |           1.00000000 |
 | `scale`                            | yes    |  1.787 |                  7.23e-04 |                 0.000130% | `atol`     |           1.00000000 |
 
-The four marked *no* are the operations the publication states no tolerance for. They are measured
+The five marked *no* are operations the publication states no tolerance for — regression among them,
+which the Methods do not name and the abstract's list does not include. They are measured anyway,
 because the alternative is worse: those method groups are otherwise covered by a correlation floor,
 and correlation reads `1.00000000` on the very arrays sitting 21x outside the `allclose` envelope. The
-number is kept; only the verdict is dropped.
+number is kept; only the verdict is dropped. That is affordable only because the raw outputs are
+stored — the assessment below is computed from them, not from whatever the run happened to gate on.
 
 **Every failure is decided by a thin tail.** The largest violating fraction is 1% and most are far
 below that; `scale` fails on roughly one element in 770,000. Where a paired correlation exists it is
@@ -105,6 +108,11 @@ selection holds for means and variances but not for normalized dispersions, so t
 part of a named operation and false for another part of it. The abstract's broader statement that
 preprocessing functions were "confirmed numerically equivalent within floating-point tolerance"
 covers scaling, which does not hold under the stated standard.
+
+The last two rows are neither named nor implied — regression and activity inference appear in no
+tolerance claim — and are listed only because a reader could take the abstract's "preprocessing
+functions" broadly. They are the rows to drop if the Methods are made explicit about scope; they are
+also the reason the suite does not gate them.
 
 The nearest miss among the comparisons inside the envelope is `wasserstein` at 0.986 — within 1.5% of
 exceeding it.

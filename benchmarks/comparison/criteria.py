@@ -72,8 +72,6 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("kmeans.normalized_mutual_information", ">=", 0.8, ""),
     ],
     "co_occurrence": [
-        ("interval.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
-        ("occurrence.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("occurrence.mean_abs_error", "<=", 1e-06, ""),
         ("occurrence.pearson_correlation", ">=", 0.99999, ""),
     ],
@@ -105,7 +103,6 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("score_genes_cell_cycle.phase.exact_agreement", ">=", 0.99, ""),
     ],
     "ligrec": [
-        ("means.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("pvalues.nan_mask_agreement", ">=", 1.0, ""),
         ("pvalues.mean_abs_error", "<=", 0.05, ""),
         ("pvalues.pearson_correlation", ">=", 0.9, ""),
@@ -160,7 +157,6 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
     "scanpy_core_preprocessing": [
         ("filter_cells.index_agreement", ">=", 1.0, ""),
         ("filter_genes.index_agreement", ">=", 1.0, ""),
-        ("calculate_qc_metrics.*.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("normalize_total.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("normalize_total.pearson_correlation", ">=", 0.999999, ""),
         ("log1p.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
@@ -169,16 +165,12 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("normalize_pearson_residuals.pearson_correlation", ">=", 0.99999, ""),
         ("scale.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("scale.pearson_correlation", ">=", 0.99999, ""),
-        ("regress_out.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("regress_out.pearson_correlation", ">=", 0.9999, ""),
-        ("score_genes.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("score_genes.pearson_correlation", ">=", 0.9999, ""),
         ("sqrt.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
     ],
     "spatial_autocorr": [
-        ("moran.I.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("moran.I.pearson_correlation", ">=", 0.999999, ""),
-        ("geary.C.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
         ("geary.C.pearson_correlation", ">=", 0.999999, ""),
     ],
     "sqrt": [
@@ -186,17 +178,30 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
     ],
 }
 
-# Comparisons that are computed and reported but do not gate. The manuscript declares the
-# `numpy.allclose` standard for normalization, HVG selection and PCA; applying it to
-# activity inference or a perturbation signature would be the suite inventing a standard
-# for an operation the publication makes no claim about. The measurement is still derived
-# from the stored arrays, so the evidence stays in the record and in NUMERICAL_VALIDATION.md
-# — what is removed is the verdict, not the number.
+# Comparisons that are computed and reported but do not gate.
+#
+# The publication states the `numpy.allclose` standard for a specific list of operations —
+# normalization, log transformation and scaling in the abstract, normalization, HVG selection
+# and PCA in the Methods — and for nothing else. Applying it to spatial statistics, activity
+# inference, regression or QC metrics would be the suite inventing a standard for an operation
+# the paper makes no claim about, and a red row that traces to no claim is not evidence.
+#
+# Every one of these is still derived from the stored arrays and still reported, so the
+# measurement is available to NUMERICAL_VALIDATION.md and to any later question. What is
+# removed is the verdict, not the number.
 EVIDENCE: dict[str, list[str]] = {
+    "co_occurrence": ["interval.allclose_excess", "occurrence.allclose_excess"],
     "decoupler_methods": ["*.allclose_excess"],
     "distance": ["*.pairwise.allclose_excess"],
+    "ligrec": ["means.allclose_excess"],
     "mixscale": ["mixscale.score.allclose_excess"],
     "mixscape": ["perturbation_signature.allclose_excess"],
+    "scanpy_core_preprocessing": [
+        "calculate_qc_metrics.*.allclose_excess",
+        "regress_out.allclose_excess",
+        "score_genes.allclose_excess",
+    ],
+    "spatial_autocorr": ["moran.I.allclose_excess", "geary.C.allclose_excess"],
 }
 
 

@@ -16,8 +16,8 @@ python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapsho
 What follows is the interpretation: what the suite covers, what it cannot show, and why each red
 metric is red. Only quantities that do not change from run to run are quoted here.
 
-For context, what the suite **does** establish: on that run **12 criteria fail out of 161**, and none
-of the failures is attributable to a rapids-singlecell defect. They come from three causes: four `allclose`
+For context, what the suite **does** establish: on that run **11 criteria fail out of 150**, and none
+of the failures is attributable to a rapids-singlecell defect. They come from three causes: three `allclose`
 criteria that float32 cannot satisfy at all, one that is a genuine relative difference too small to
 move any downstream result (both in section 3), and seven stochastic criteria that ask for more
 agreement than the CPU reference shows against itself (section 4).
@@ -51,13 +51,15 @@ elementwise difference as a fraction of that envelope, where `<= 1` means the tw
 Harmony criterion. Those criteria carry a `basis` naming the published standard.
 
 That standard gates only where the publication actually asserts it. The Methods name
-normalization, HVG selection and PCA, and the abstract adds scaling; applying the same
-elementwise criterion to activity inference or a perturbation signature would be the suite
-inventing a standard for an operation nobody claimed it for, and a red row traceable to no
-published claim is not evidence of anything. Those 20 comparisons are still computed from the
-stored arrays and still reported — `criteria.py` lists them as `EVIDENCE` — they simply carry no
-verdict. Four of them sit outside the envelope and are assessed in
-[`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md) alongside the ones that gate.
+normalization, HVG selection and PCA; the abstract adds log transformation and scaling. Nothing
+else is claimed, so nothing else is judged: spatial statistics, activity inference, perturbation
+signatures, pertpy distances, `regress_out`, `score_genes` and the QC metrics are measured
+against the same envelope and reported without a verdict, because a red row traceable to no
+published claim is not evidence of anything. Those 31 comparisons are still computed from the
+stored arrays — `criteria.py` lists them as `EVIDENCE` — and five of them sit outside the
+envelope, assessed in [`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md) alongside the four
+that gate. Storing the arrays is what makes this cheap: demoting a criterion costs no
+information, because the number is still there to be argued about later.
 
 **No other threshold does.** The correlation floors, the Jaccard floors, and every ARI/NMI
 threshold were chosen before any of this analysis and have not been reviewed with the method
@@ -80,8 +82,8 @@ intervals over several seeds are not yet reported.
 The manuscript Methods state that deterministic operations agree within `numpy.allclose` at default
 parameters. The suite states that criterion directly, as `allclose_excess`: the worst elementwise
 difference divided by `numpy.allclose`'s own envelope, `atol + rtol * |b|`, so `<= 1` means the two
-arrays are `allclose`. Of the 50 comparisons measured this way, nine exceed the envelope — five of
-them under a criterion that gates, four on operations the publication makes no claim about. Each
+arrays are `allclose`. Of the 50 comparisons measured this way, nine exceed the envelope — four of
+them under a criterion that gates, five on operations the publication makes no claim about. Each
 records the reference magnitude at its worst element, so which of the criterion's two terms decided
 the verdict is measured rather than inferred.
 

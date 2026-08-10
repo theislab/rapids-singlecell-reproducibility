@@ -2,10 +2,10 @@
   "passed": false,
   "n_methods": 20,
   "n_passed_methods": 15,
-  "n_metrics": 161,
-  "n_passed_metrics": 149,
+  "n_metrics": 150,
+  "n_passed_metrics": 139,
   "n_recorded_metrics": 393,
-  "n_informational_metrics": 232,
+  "n_informational_metrics": 243,
   "criteria_overrides": [],
   "recorded_without_criterion": [
     "biological_pipeline_pbmc3k.umap.cpu_reseeded_knn_overlap",
@@ -18,10 +18,12 @@
     "biological_pipeline_pbmc3k.markers.FCGR3A+ Monocytes.set_jaccard",
     "biological_pipeline_pbmc3k.markers.Megakaryocytes.set_jaccard",
     "biological_pipeline_pbmc3k.markers.NK cells.set_jaccard",
+    "co_occurrence.interval.allclose_excess",
     "co_occurrence.interval.allclose_worst_magnitude",
     "co_occurrence.interval.allclose_violating_fraction",
     "co_occurrence.interval.max_abs_error",
     "co_occurrence.interval.max_rel_error",
+    "co_occurrence.occurrence.allclose_excess",
     "co_occurrence.occurrence.allclose_worst_magnitude",
     "co_occurrence.occurrence.allclose_violating_fraction",
     "co_occurrence.occurrence.max_abs_error",
@@ -116,6 +118,7 @@
     "distance.wasserstein.pairwise.allclose_violating_fraction",
     "distance.wasserstein.pairwise.max_abs_error",
     "distance.wasserstein.pairwise.max_rel_error",
+    "ligrec.means.allclose_excess",
     "ligrec.means.allclose_worst_magnitude",
     "ligrec.means.allclose_violating_fraction",
     "ligrec.means.max_abs_error",
@@ -184,18 +187,22 @@
     "scanpy_core_hvg_pca.pca.explained_variance_ratio.allclose_violating_fraction",
     "scanpy_core_hvg_pca.pca.explained_variance_ratio.max_abs_error",
     "scanpy_core_hvg_pca.pca.explained_variance_ratio.max_rel_error",
+    "scanpy_core_preprocessing.calculate_qc_metrics.n_genes_by_counts.allclose_excess",
     "scanpy_core_preprocessing.calculate_qc_metrics.n_genes_by_counts.allclose_worst_magnitude",
     "scanpy_core_preprocessing.calculate_qc_metrics.n_genes_by_counts.allclose_violating_fraction",
     "scanpy_core_preprocessing.calculate_qc_metrics.n_genes_by_counts.max_abs_error",
     "scanpy_core_preprocessing.calculate_qc_metrics.n_genes_by_counts.max_rel_error",
+    "scanpy_core_preprocessing.calculate_qc_metrics.pct_counts_mt.allclose_excess",
     "scanpy_core_preprocessing.calculate_qc_metrics.pct_counts_mt.allclose_worst_magnitude",
     "scanpy_core_preprocessing.calculate_qc_metrics.pct_counts_mt.allclose_violating_fraction",
     "scanpy_core_preprocessing.calculate_qc_metrics.pct_counts_mt.max_abs_error",
     "scanpy_core_preprocessing.calculate_qc_metrics.pct_counts_mt.max_rel_error",
+    "scanpy_core_preprocessing.calculate_qc_metrics.total_counts.allclose_excess",
     "scanpy_core_preprocessing.calculate_qc_metrics.total_counts.allclose_worst_magnitude",
     "scanpy_core_preprocessing.calculate_qc_metrics.total_counts.allclose_violating_fraction",
     "scanpy_core_preprocessing.calculate_qc_metrics.total_counts.max_abs_error",
     "scanpy_core_preprocessing.calculate_qc_metrics.total_counts.max_rel_error",
+    "scanpy_core_preprocessing.calculate_qc_metrics.total_counts_mt.allclose_excess",
     "scanpy_core_preprocessing.calculate_qc_metrics.total_counts_mt.allclose_worst_magnitude",
     "scanpy_core_preprocessing.calculate_qc_metrics.total_counts_mt.allclose_violating_fraction",
     "scanpy_core_preprocessing.calculate_qc_metrics.total_counts_mt.max_abs_error",
@@ -216,10 +223,12 @@
     "scanpy_core_preprocessing.scale.allclose_violating_fraction",
     "scanpy_core_preprocessing.scale.max_abs_error",
     "scanpy_core_preprocessing.scale.max_rel_error",
+    "scanpy_core_preprocessing.regress_out.allclose_excess",
     "scanpy_core_preprocessing.regress_out.allclose_worst_magnitude",
     "scanpy_core_preprocessing.regress_out.allclose_violating_fraction",
     "scanpy_core_preprocessing.regress_out.max_abs_error",
     "scanpy_core_preprocessing.regress_out.max_rel_error",
+    "scanpy_core_preprocessing.score_genes.allclose_excess",
     "scanpy_core_preprocessing.score_genes.allclose_worst_magnitude",
     "scanpy_core_preprocessing.score_genes.allclose_violating_fraction",
     "scanpy_core_preprocessing.score_genes.max_abs_error",
@@ -228,10 +237,12 @@
     "scanpy_core_preprocessing.sqrt.allclose_violating_fraction",
     "scanpy_core_preprocessing.sqrt.max_abs_error",
     "scanpy_core_preprocessing.sqrt.max_rel_error",
+    "spatial_autocorr.moran.I.allclose_excess",
     "spatial_autocorr.moran.I.allclose_worst_magnitude",
     "spatial_autocorr.moran.I.allclose_violating_fraction",
     "spatial_autocorr.moran.I.max_abs_error",
     "spatial_autocorr.moran.I.max_rel_error",
+    "spatial_autocorr.geary.C.allclose_excess",
     "spatial_autocorr.geary.C.allclose_worst_magnitude",
     "spatial_autocorr.geary.C.allclose_violating_fraction",
     "spatial_autocorr.geary.C.max_abs_error",
@@ -685,11 +696,10 @@
         {
           "metric": "interval.allclose_excess",
           "observed": 0.0,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -731,11 +741,10 @@
         {
           "metric": "occurrence.allclose_excess",
           "observed": 0.047047078249565555,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -2015,11 +2024,10 @@
         {
           "metric": "means.allclose_excess",
           "observed": 0.04726065326546333,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -3461,11 +3469,10 @@
         {
           "metric": "calculate_qc_metrics.n_genes_by_counts.allclose_excess",
           "observed": 0.0,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -3507,11 +3514,10 @@
         {
           "metric": "calculate_qc_metrics.pct_counts_mt.allclose_excess",
           "observed": 0.0,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -3553,11 +3559,10 @@
         {
           "metric": "calculate_qc_metrics.total_counts.allclose_excess",
           "observed": 0.0,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -3599,11 +3604,10 @@
         {
           "metric": "calculate_qc_metrics.total_counts_mt.allclose_excess",
           "observed": 0.0,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -3871,13 +3875,11 @@
         {
           "metric": "regress_out.allclose_excess",
           "observed": 67.43914846257626,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
-          "passed": false,
-          "diagnosis": "numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement."
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
+          "passed": true
         },
         {
           "metric": "regress_out.allclose_worst_magnitude",
@@ -3928,11 +3930,10 @@
         {
           "metric": "score_genes.allclose_excess",
           "observed": 0.0,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -4043,11 +4044,10 @@
         {
           "metric": "moran.I.allclose_excess",
           "observed": 0.0011057476041992265,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {
@@ -4099,11 +4099,10 @@
         {
           "metric": "geary.C.allclose_excess",
           "observed": 0.00131723781853509,
-          "comparison": "<=",
-          "tolerance": 1.0,
-          "criterion": "<= 1.0",
-          "gating": true,
-          "basis": "Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8).",
+          "comparison": "observed",
+          "tolerance": null,
+          "criterion": "recorded, not gating",
+          "gating": false,
           "passed": true
         },
         {

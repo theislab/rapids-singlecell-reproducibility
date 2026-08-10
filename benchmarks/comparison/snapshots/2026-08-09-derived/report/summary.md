@@ -1,13 +1,13 @@
 # CPU/GPU equivalence report
 
-Generated 2026-08-10T09:11:32.844594+00:00 from isolated comparison processes.
+Generated 2026-08-10T09:15:00.785686+00:00 from isolated comparison processes.
 
 ## Outcome
 
 - Overall: **FAIL**
 - Method groups passing: **15/20**
-- Gating metrics passing: **149/161**
-- Additional measurements recorded as evidence: **232**
+- Gating metrics passing: **139/150**
+- Additional measurements recorded as evidence: **243**
 - Scripts completing successfully: **20/20**
 
 ## Software versions
@@ -31,21 +31,21 @@ Generated 2026-08-10T09:11:32.844594+00:00 from isolated comparison processes.
 | `biological_pipeline_pbmc3k` | scanpy | pbmc3k_processed raw log-expression with published cell-type labels | biological | FAIL | 9/10 |
 | `calculate_niche` | squidpy | squidpy.datasets.imc | stochastic | FAIL | 4/9 |
 | `clustering_extended` | scanpy | scanpy.datasets.pbmc68k_reduced | stochastic | PASS | 4/4 |
-| `co_occurrence` | squidpy | squidpy.datasets.imc | deterministic | PASS | 4/4 |
+| `co_occurrence` | squidpy | squidpy.datasets.imc | deterministic | PASS | 2/2 |
 | `decoupler_methods` | decoupler | decoupler.ds.toy | deterministic | PASS | 9/9 |
 | `distance` | pertpy | seeded grouped Gaussian data | deterministic | PASS | 9/9 |
 | `embeddings_extended` | scanpy | scanpy.datasets.pbmc68k_reduced | stochastic | PASS | 6/6 |
 | `guide_assignment` | pertpy | seeded Poisson guide-count mixture | near-deterministic | PASS | 3/3 |
 | `ingest_cell_cycle` | scanpy | scanpy.datasets.pbmc68k_reduced | near-deterministic | PASS | 6/6 |
-| `ligrec` | squidpy | scanpy.datasets.paul15 | stochastic | PASS | 4/4 |
+| `ligrec` | squidpy | scanpy.datasets.paul15 | stochastic | PASS | 3/3 |
 | `mixscale` | pertpy | seeded synthetic perturbation screen | deterministic | PASS | 1/1 |
 | `mixscape` | pertpy | seeded synthetic perturbation screen | near-deterministic | PASS | 4/4 |
 | `rank_genes_groups` | scanpy | scanpy.datasets.pbmc68k_reduced | near-deterministic | PASS | 36/36 |
 | `scanpy_core_graphs_embeddings` | scanpy | pbmc68k_reduced | stochastic | FAIL | 4/5 |
 | `scanpy_core_harmony` | harmonypy | Harmonypy PBMC 3,500-cell donor benchmark | iterative | PASS | 3/3 |
 | `scanpy_core_hvg_pca` | scanpy | pbmc3k | deterministic | FAIL | 17/19 |
-| `scanpy_core_preprocessing` | scanpy | pbmc3k | deterministic | FAIL | 16/19 |
-| `spatial_autocorr` | squidpy | squidpy.datasets.imc | deterministic | PASS | 4/4 |
+| `scanpy_core_preprocessing` | scanpy | pbmc3k | deterministic | FAIL | 11/13 |
+| `spatial_autocorr` | squidpy | squidpy.datasets.imc | deterministic | PASS | 2/2 |
 | `sqrt` | scanpy | scanpy.datasets.pbmc3k | deterministic | PASS | 1/1 |
 
 ## Failed metrics
@@ -65,7 +65,6 @@ A criterion is never widened to make a run green. Where a failure has been inves
 | `scanpy_core_hvg_pca` | `highly_variable_genes.cell_ranger.dispersions_norm.allclose_excess` | 13.067911 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
 | `scanpy_core_preprocessing` | `normalize_pearson_residuals.allclose_excess` | 30.626773 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
 | `scanpy_core_preprocessing` | `scale.allclose_excess` | 1.7870379 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
-| `scanpy_core_preprocessing` | `regress_out.allclose_excess` | 67.439148 | <= 1.0 | numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude of the element that fails. Where a quantity passes through zero the absolute floor binds, and at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for the per-comparison split between that case and a genuine relative disagreement. |
 
 ## Recorded measurements (not gating)
 
@@ -83,10 +82,12 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `biological_pipeline_pbmc3k` | `markers.FCGR3A+ Monocytes.set_jaccard` | 1 |  |
 | `biological_pipeline_pbmc3k` | `markers.Megakaryocytes.set_jaccard` | 1 |  |
 | `biological_pipeline_pbmc3k` | `markers.NK cells.set_jaccard` | 1 |  |
+| `co_occurrence` | `interval.allclose_excess` | 0 |  |
 | `co_occurrence` | `interval.allclose_worst_magnitude` | 20.911736 |  |
 | `co_occurrence` | `interval.allclose_violating_fraction` | 0 |  |
 | `co_occurrence` | `interval.max_abs_error` | 0 |  |
 | `co_occurrence` | `interval.max_rel_error` | 0 |  |
+| `co_occurrence` | `occurrence.allclose_excess` | 0.047047078 |  |
 | `co_occurrence` | `occurrence.allclose_worst_magnitude` | 0.98842989 |  |
 | `co_occurrence` | `occurrence.allclose_violating_fraction` | 0 |  |
 | `co_occurrence` | `occurrence.max_abs_error` | 1.4481226e-06 |  |
@@ -181,6 +182,7 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `distance` | `wasserstein.pairwise.allclose_violating_fraction` | 0 |  |
 | `distance` | `wasserstein.pairwise.max_abs_error` | 0.00014964406 |  |
 | `distance` | `wasserstein.pairwise.max_rel_error` | 3.6405663e-06 |  |
+| `ligrec` | `means.allclose_excess` | 0.047260653 |  |
 | `ligrec` | `means.allclose_worst_magnitude` | 0.31918499 |  |
 | `ligrec` | `means.allclose_violating_fraction` | 0 |  |
 | `ligrec` | `means.max_abs_error` | 4.5716029e-07 |  |
@@ -249,18 +251,22 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `scanpy_core_hvg_pca` | `pca.explained_variance_ratio.allclose_violating_fraction` | 0 |  |
 | `scanpy_core_hvg_pca` | `pca.explained_variance_ratio.max_abs_error` | 6.5919492e-17 |  |
 | `scanpy_core_hvg_pca` | `pca.explained_variance_ratio.max_rel_error` | 1.5984538e-15 |  |
+| `scanpy_core_preprocessing` | `calculate_qc_metrics.n_genes_by_counts.allclose_excess` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.n_genes_by_counts.allclose_worst_magnitude` | 781 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.n_genes_by_counts.allclose_violating_fraction` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.n_genes_by_counts.max_abs_error` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.n_genes_by_counts.max_rel_error` | 0 |  |
+| `scanpy_core_preprocessing` | `calculate_qc_metrics.pct_counts_mt.allclose_excess` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.pct_counts_mt.allclose_worst_magnitude` | 3.0152829 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.pct_counts_mt.allclose_violating_fraction` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.pct_counts_mt.max_abs_error` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.pct_counts_mt.max_rel_error` | 0 |  |
+| `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts.allclose_excess` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts.allclose_worst_magnitude` | 2421 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts.allclose_violating_fraction` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts.max_abs_error` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts.max_rel_error` | 0 |  |
+| `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts_mt.allclose_excess` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts_mt.allclose_worst_magnitude` | 73 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts_mt.allclose_violating_fraction` | 0 |  |
 | `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts_mt.max_abs_error` | 0 |  |
@@ -281,10 +287,12 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `scanpy_core_preprocessing` | `scale.allclose_violating_fraction` | 1.2962963e-06 |  |
 | `scanpy_core_preprocessing` | `scale.max_abs_error` | 1.3282612e-06 |  |
 | `scanpy_core_preprocessing` | `scale.max_rel_error` | 1.3282612e-07 |  |
+| `scanpy_core_preprocessing` | `regress_out.allclose_excess` | 67.439148 |  |
 | `scanpy_core_preprocessing` | `regress_out.allclose_worst_magnitude` | 0.00012159483 |  |
 | `scanpy_core_preprocessing` | `regress_out.allclose_violating_fraction` | 0.00036685185 |  |
 | `scanpy_core_preprocessing` | `regress_out.max_abs_error` | 5.7220459e-06 |  |
 | `scanpy_core_preprocessing` | `regress_out.max_rel_error` | 8.4571531e-07 |  |
+| `scanpy_core_preprocessing` | `score_genes.allclose_excess` | 0 |  |
 | `scanpy_core_preprocessing` | `score_genes.allclose_worst_magnitude` | 0.56495331 |  |
 | `scanpy_core_preprocessing` | `score_genes.allclose_violating_fraction` | 0 |  |
 | `scanpy_core_preprocessing` | `score_genes.max_abs_error` | 0 |  |
@@ -293,10 +301,12 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `scanpy_core_preprocessing` | `sqrt.allclose_violating_fraction` | 0 |  |
 | `scanpy_core_preprocessing` | `sqrt.max_abs_error` | 0 |  |
 | `scanpy_core_preprocessing` | `sqrt.max_rel_error` | 0 |  |
+| `spatial_autocorr` | `moran.I.allclose_excess` | 0.0011057476 |  |
 | `spatial_autocorr` | `moran.I.allclose_worst_magnitude` | 0.031430503 |  |
 | `spatial_autocorr` | `moran.I.allclose_violating_fraction` | 0 |  |
 | `spatial_autocorr` | `moran.I.max_abs_error` | 2.0231723e-09 |  |
 | `spatial_autocorr` | `moran.I.max_rel_error` | 2.8538126e-09 |  |
+| `spatial_autocorr` | `geary.C.allclose_excess` | 0.0013172378 |  |
 | `spatial_autocorr` | `geary.C.allclose_worst_magnitude` | 1.1349175 |  |
 | `spatial_autocorr` | `geary.C.allclose_violating_fraction` | 0 |  |
 | `spatial_autocorr` | `geary.C.max_abs_error` | 1.4962735e-08 |  |
@@ -310,9 +320,6 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 
 | Method group | Criterion | Threshold | Basis |
 | --- | --- | --- | --- |
-| `co_occurrence` | `interval.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `co_occurrence` | `occurrence.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `ligrec` | `means.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_harmony` | `harmony.minimum_component_abs_correlation` | > 0.95 | Manuscript Methods, Batch correction with Harmony: the implementation maintains a Pearson correlation of >95% for all corrected principal components. |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.seurat.means.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.seurat.dispersions.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
@@ -327,19 +334,11 @@ These quantify behaviour rather than test CPU/GPU equivalence, so they are repor
 | `scanpy_core_hvg_pca` | `highly_variable_genes.pearson_residuals.variances.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_hvg_pca` | `highly_variable_genes.pearson_residuals.residual_variances.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_hvg_pca` | `pca.explained_variance_ratio.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `scanpy_core_preprocessing` | `calculate_qc_metrics.n_genes_by_counts.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `scanpy_core_preprocessing` | `calculate_qc_metrics.pct_counts_mt.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `scanpy_core_preprocessing` | `calculate_qc_metrics.total_counts_mt.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_preprocessing` | `normalize_total.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_preprocessing` | `log1p.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_preprocessing` | `normalize_pearson_residuals.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_preprocessing` | `scale.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `scanpy_core_preprocessing` | `regress_out.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `scanpy_core_preprocessing` | `score_genes.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `scanpy_core_preprocessing` | `sqrt.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `spatial_autocorr` | `moran.I.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
-| `spatial_autocorr` | `geary.C.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 | `sqrt` | `X.allclose_excess` | <= 1.0 | Manuscript Methods: deterministic operations are validated with numpy.allclose at default parameters (rtol=1e-5, atol=1e-8). |
 
 ## Incomplete or failing scripts
