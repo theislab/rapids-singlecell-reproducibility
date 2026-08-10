@@ -3,11 +3,10 @@
 Versioned GPU equivalence runs, kept as reviewer-facing evidence. A snapshot directory is
 never rewritten, so a cited number stays citable.
 
-| Snapshot                                                                   | Suite                                  | Node                 | Outcome                       | Status          |
-| -------------------------------------------------------------------------- | -------------------------------------- | -------------------- | ----------------------------- | --------------- |
-| [`2026-08-09-derived`](2026-08-09-derived)                                 | Comparisons derived from stored arrays | A100-PCIE-40GB (MIG) | 13/20 groups, 165/181 metrics | Current         |
-| [`2026-07-31-expanded`](2026-07-31-expanded)                               | Expanded, 20 groups                    | A100-PCIE-40GB       | 16/20 groups, 200/210 metrics | Superseded      |
-| [`../temp-results/2026-07-31-initial`](../temp-results/2026-07-31-initial) | Initial, 15 groups                     | A100-PCIE-40GB (MIG) | 14/15 groups, 143/149 metrics | Provenance only |
+| Snapshot                                     | Suite                                  | Node                 | Outcome                       | Status     |
+| -------------------------------------------- | -------------------------------------- | -------------------- | ----------------------------- | ---------- |
+| [`2026-08-09-derived`](2026-08-09-derived)   | Comparisons derived from stored arrays | A100-PCIE-40GB (MIG) | 13/20 groups, 165/181 metrics | Current    |
+| [`2026-07-31-expanded`](2026-07-31-expanded) | Expanded, 20 groups                    | A100-PCIE-40GB       | 16/20 groups, 200/210 metrics | Superseded |
 
 Only a complete run — every script producing a result record — is promoted here. A partial
 rerun marks `execution.json` with `"partial": true` and must not be promoted; use it to iterate

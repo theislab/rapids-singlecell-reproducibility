@@ -1,0 +1,89 @@
+Downloading data from 'https://github.com/slowkow/harmonypy/raw/refs/heads/master/data/pbmc_3500_pcs.tsv.gz' to file '/out/.cache/pooch/f3680279bceba2755ebdab91aaa3001b-pbmc_3500_pcs.tsv.gz'.
+Downloading data from 'https://github.com/slowkow/harmonypy/raw/refs/heads/master/data/pbmc_3500_meta.tsv.gz' to file '/out/.cache/pooch/27ed89e9157e6e27fa380e73a921d9b2-pbmc_3500_meta.tsv.gz'.
+/usr/local/lib/python3.12/functools.py:912: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+2026-08-09 22:56:13,967 - harmonypy - INFO - Running Harmony (PyTorch on cpu)
+2026-08-09 22:56:13 | [INFO] Running Harmony (PyTorch on cpu)
+2026-08-09 22:56:13,967 - harmonypy - INFO -   Parameters:
+2026-08-09 22:56:13 | [INFO]   Parameters:
+2026-08-09 22:56:13,967 - harmonypy - INFO -     max_iter_harmony: 20
+2026-08-09 22:56:13 | [INFO]     max_iter_harmony: 20
+2026-08-09 22:56:13,967 - harmonypy - INFO -     max_iter_kmeans: 20
+2026-08-09 22:56:13 | [INFO]     max_iter_kmeans: 20
+2026-08-09 22:56:13,967 - harmonypy - INFO -     epsilon_cluster: 1e-05
+2026-08-09 22:56:13 | [INFO]     epsilon_cluster: 1e-05
+2026-08-09 22:56:13,968 - harmonypy - INFO -     epsilon_harmony: 0.0001
+2026-08-09 22:56:13 | [INFO]     epsilon_harmony: 0.0001
+2026-08-09 22:56:13,968 - harmonypy - INFO -     nclust: 100
+2026-08-09 22:56:13 | [INFO]     nclust: 100
+2026-08-09 22:56:13,968 - harmonypy - INFO -     block_size: 0.05
+2026-08-09 22:56:13 | [INFO]     block_size: 0.05
+2026-08-09 22:56:13,968 - harmonypy - INFO -     lamb: [1. 1. 1.]
+2026-08-09 22:56:13 | [INFO]     lamb: [1. 1. 1.]
+2026-08-09 22:56:13,968 - harmonypy - INFO -     theta: [2. 2. 2.]
+2026-08-09 22:56:13 | [INFO]     theta: [2. 2. 2.]
+2026-08-09 22:56:13,969 - harmonypy - INFO -     sigma: [0.1 0.1 0.1 0.1 0.1]...
+2026-08-09 22:56:13 | [INFO]     sigma: [0.1 0.1 0.1 0.1 0.1]...
+2026-08-09 22:56:13,969 - harmonypy - INFO -     verbose: True
+2026-08-09 22:56:13 | [INFO]     verbose: True
+2026-08-09 22:56:13,969 - harmonypy - INFO -     random_state: 0
+2026-08-09 22:56:13 | [INFO]     random_state: 0
+2026-08-09 22:56:13,969 - harmonypy - INFO -   Data: 30 PCs × 3500 cells
+2026-08-09 22:56:13 | [INFO]   Data: 30 PCs × 3500 cells
+2026-08-09 22:56:13,969 - harmonypy - INFO -   Batch variables: ['donor']
+2026-08-09 22:56:13 | [INFO]   Batch variables: ['donor']
+2026-08-09 22:56:14,082 - harmonypy - INFO - Computing initial centroids with sklearn.KMeans...
+2026-08-09 22:56:14 | [INFO] Computing initial centroids with sklearn.KMeans...
+2026-08-09 22:56:14,230 - harmonypy - INFO - KMeans initialization complete.
+2026-08-09 22:56:14 | [INFO] KMeans initialization complete.
+2026-08-09 22:56:14,317 - harmonypy - INFO - Iteration 1 of 20
+2026-08-09 22:56:14 | [INFO] Iteration 1 of 20
+2026-08-09 22:56:14,644 - harmonypy - INFO - Iteration 2 of 20
+2026-08-09 22:56:14 | [INFO] Iteration 2 of 20
+2026-08-09 22:56:14,923 - harmonypy - INFO - Iteration 3 of 20
+2026-08-09 22:56:14 | [INFO] Iteration 3 of 20
+2026-08-09 22:56:15,202 - harmonypy - INFO - Iteration 4 of 20
+2026-08-09 22:56:15 | [INFO] Iteration 4 of 20
+2026-08-09 22:56:15,481 - harmonypy - INFO - Iteration 5 of 20
+2026-08-09 22:56:15 | [INFO] Iteration 5 of 20
+2026-08-09 22:56:15,633 - harmonypy - INFO - Iteration 6 of 20
+2026-08-09 22:56:15 | [INFO] Iteration 6 of 20
+2026-08-09 22:56:15,758 - harmonypy - INFO - Iteration 7 of 20
+2026-08-09 22:56:15 | [INFO] Iteration 7 of 20
+2026-08-09 22:56:15,885 - harmonypy - INFO - Iteration 8 of 20
+2026-08-09 22:56:15 | [INFO] Iteration 8 of 20
+2026-08-09 22:56:16,009 - harmonypy - INFO - Iteration 9 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 9 of 20
+2026-08-09 22:56:16,113 - harmonypy - INFO - Iteration 10 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 10 of 20
+2026-08-09 22:56:16,210 - harmonypy - INFO - Iteration 11 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 11 of 20
+2026-08-09 22:56:16,305 - harmonypy - INFO - Iteration 12 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 12 of 20
+2026-08-09 22:56:16,395 - harmonypy - INFO - Iteration 13 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 13 of 20
+2026-08-09 22:56:16,494 - harmonypy - INFO - Iteration 14 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 14 of 20
+2026-08-09 22:56:16,615 - harmonypy - INFO - Iteration 15 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 15 of 20
+2026-08-09 22:56:16,709 - harmonypy - INFO - Iteration 16 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 16 of 20
+2026-08-09 22:56:16,784 - harmonypy - INFO - Iteration 17 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 17 of 20
+2026-08-09 22:56:16,860 - harmonypy - INFO - Iteration 18 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 18 of 20
+2026-08-09 22:56:16,936 - harmonypy - INFO - Iteration 19 of 20
+2026-08-09 22:56:16 | [INFO] Iteration 19 of 20
+2026-08-09 22:56:17,011 - harmonypy - INFO - Converged after 19 iterations
+2026-08-09 22:56:17 | [INFO] Converged after 19 iterations
+{
+  "method": "scanpy_core_harmony",
+  "reference_package": "harmonypy",
+  "dataset": "Harmonypy PBMC 3,500-cell donor benchmark",
+  "tier": "iterative",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "harmonypy": "0.2.0"
+  },
+  "metrics": []
+}

@@ -1,0 +1,26 @@
+/repro/benchmarks/comparison/squidpy/_shared.py:14: FutureWarning: Calling `spatial_neighbors` is deprecated and will be removed in squidpy v1.9.0. Use `spatial_neighbors_knn`, `spatial_neighbors_radius`, `spatial_neighbors_delaunay`, `spatial_neighbors_grid`, or `spatial_neighbors_from_builder` instead.
+  sq.gr.spatial_neighbors(adata, coord_type="generic", delaunay=True)
+[34mINFO    [0m Creating graph using `[3;35mNone[0m` transform and `[1;36m1[0m` libraries.               
+/repro/.venv/lib/python3.12/site-packages/scipy/sparse/_index.py:216: SparseEfficiencyWarning: Changing the sparsity structure of a csr_matrix is expensive. lil and dok are more efficient.
+  self._set_arrayXarray(i, j, x)
+/repro/.venv/lib/python3.12/site-packages/squidpy/gr/_niche.py:488: FutureWarning: The `igraph` implementation of leiden clustering is *orders of magnitude faster*. Set the flavor argument to (and install if needed) 'igraph' to use it.
+In the future, the default backend for leiden will be igraph instead of leidenalg. To achieve the future defaults please pass: `flavor='igraph'` and `n_iterations=2`. `directed` must also be `False` to work with igraph’s implementation.
+  sc.tl.leiden(
+[33mWARNING [0m Parameters distance are not used for flavor [32m'utag'[0m.                    
+/repro/.venv/lib/python3.12/site-packages/squidpy/gr/_niche.py:534: FutureWarning: The `igraph` implementation of leiden clustering is *orders of magnitude faster*. Set the flavor argument to (and install if needed) 'igraph' to use it.
+In the future, the default backend for leiden will be igraph instead of leidenalg. To achieve the future defaults please pass: `flavor='igraph'` and `n_iterations=2`. `directed` must also be `False` to work with igraph’s implementation.
+  sc.tl.leiden(adata_utag, resolution=res, key_added=f"utag_niche_res={res}")
+[33mWARNING [0m CellCharter recommends to use a dimensionality reduced embedding of the
+         data, e.g. a scVI embedding. Since [32m'use_rep'[0m is not provided, PCA will 
+         be used as proxy - performance may be suboptimal.                      
+{
+  "method": "calculate_niche",
+  "reference_package": "squidpy",
+  "dataset": "squidpy.datasets.imc",
+  "tier": "stochastic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "squidpy": "1.8.3"
+  },
+  "metrics": []
+}

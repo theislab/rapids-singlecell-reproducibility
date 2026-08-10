@@ -1,0 +1,11 @@
+{
+  "method": "sqrt",
+  "reference_package": "scanpy",
+  "dataset": "scanpy.datasets.pbmc3k",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "metrics": []
+}

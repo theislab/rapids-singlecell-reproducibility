@@ -1,0 +1,25 @@
+  0%|          | 0.00/23.5M [00:00<?, ?B/s] 26%|██▌       | 6.04M/23.5M [00:00<00:00, 63.3MB/s] 91%|█████████▏| 21.5M/23.5M [00:00<00:00, 121MB/s] 100%|██████████| 23.5M/23.5M [00:00<00:00, 117MB/s]
+/usr/local/lib/python3.12/functools.py:912: UserWarning: zero-centering a sparse array/matrix densifies it.
+  return dispatch(args[0].__class__)(*args, **kw)
+/repro/.venv/lib/python3.12/site-packages/rapids_singlecell/tools/_rank_genes_groups/__init__.py:301: RuntimeWarning: Group Megakaryocytes has size 15 (rest 2623); normal approximation of the Wilcoxon statistic may be inaccurate.
+  test_obj.compute_statistics(
+{
+  "method": "biological_pipeline_pbmc3k",
+  "reference_package": "scanpy",
+  "dataset": "pbmc3k_processed raw log-expression with published cell-type labels",
+  "tier": "biological",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "metrics": [
+    {
+      "metric": "umap.cpu_reseeded_knn_overlap",
+      "observed": 0.4032853171594643
+    },
+    {
+      "metric": "umap.cross_embedding_overlap_vs_cpu_baseline",
+      "observed": -0.0013899418751580073
+    }
+  ]
+}

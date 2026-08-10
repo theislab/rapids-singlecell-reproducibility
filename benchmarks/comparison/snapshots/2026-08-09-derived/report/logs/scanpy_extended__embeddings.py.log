@@ -1,0 +1,11 @@
+{
+  "method": "embeddings_extended",
+  "reference_package": "scanpy",
+  "dataset": "scanpy.datasets.pbmc68k_reduced",
+  "tier": "stochastic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "metrics": []
+}

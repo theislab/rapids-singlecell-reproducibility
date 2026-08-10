@@ -1,0 +1,17 @@
+/repro/.venv/lib/python3.12/site-packages/pynndescent/pynndescent_.py:1241: UserWarning: Failed to correctly find n_neighbors for some samples. Results may be less than ideal. Try re-running with different parameters.
+  warn(
+... storing 'gene_target' as categorical
+... storing 'gene_target' as categorical
+... storing 'mixscape_class' as categorical
+... storing 'mixscape_class_global' as categorical
+{
+  "method": "mixscape",
+  "reference_package": "pertpy",
+  "dataset": "seeded synthetic perturbation screen",
+  "tier": "near-deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "pertpy": "1.1.1"
+  },
+  "metrics": []
+}

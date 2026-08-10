@@ -1,0 +1,12 @@
+... storing 'gene_target' as categorical
+{
+  "method": "mixscale",
+  "reference_package": "pertpy",
+  "dataset": "seeded synthetic perturbation screen",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "pertpy": "1.1.1"
+  },
+  "metrics": []
+}

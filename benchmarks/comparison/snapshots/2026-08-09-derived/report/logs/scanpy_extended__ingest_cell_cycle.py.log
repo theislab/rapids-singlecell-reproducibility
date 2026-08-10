@@ -1,0 +1,11 @@
+{
+  "method": "ingest_cell_cycle",
+  "reference_package": "scanpy",
+  "dataset": "scanpy.datasets.pbmc68k_reduced",
+  "tier": "near-deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "metrics": []
+}

@@ -1,0 +1,11 @@
+{
+  "method": "decoupler_methods",
+  "reference_package": "decoupler",
+  "dataset": "decoupler.ds.toy",
+  "tier": "deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "decoupler": "2.2.0"
+  },
+  "metrics": []
+}

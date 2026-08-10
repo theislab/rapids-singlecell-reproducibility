@@ -1,0 +1,19 @@
+/repro/.venv/lib/python3.12/site-packages/rapids_singlecell/tools/_rank_genes_groups/__init__.py:301: RuntimeWarning: Group CD4+/CD45RA+/CD25- Naive T has size 8 (rest 692); normal approximation of the Wilcoxon statistic may be inaccurate.
+  test_obj.compute_statistics(
+/repro/.venv/lib/python3.12/site-packages/rapids_singlecell/tools/_rank_genes_groups/__init__.py:301: RuntimeWarning: Group CD4+/CD45RO+ Memory has size 19 (rest 681); normal approximation of the Wilcoxon statistic may be inaccurate.
+  test_obj.compute_statistics(
+/repro/.venv/lib/python3.12/site-packages/rapids_singlecell/tools/_rank_genes_groups/__init__.py:301: RuntimeWarning: Group CD34+ has size 13 (rest 687); normal approximation of the Wilcoxon statistic may be inaccurate.
+  test_obj.compute_statistics(
+/repro/benchmarks/comparison/scanpy_extended/rank_genes_groups.py:17: FutureWarning: rank_genes_groups_logreg is deprecated. Use rank_genes_groups(method='logreg') instead.
+  rsc.tl.rank_genes_groups_logreg(candidate, groupby=groupby, n_genes=100, key_added="de")
+{
+  "method": "rank_genes_groups",
+  "reference_package": "scanpy",
+  "dataset": "scanpy.datasets.pbmc68k_reduced",
+  "tier": "near-deterministic",
+  "versions": {
+    "rapids-singlecell": "0.16.1",
+    "scanpy": "1.12.3"
+  },
+  "metrics": []
+}
