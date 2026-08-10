@@ -154,6 +154,9 @@ evaluation = subprocess.run(
         str(REPORT_DIR),
         "--arrays",
         str(ARRAYS),
+        # Inline what was derived from the arrays, so this run's records are already in the
+        # form a snapshot is promoted in: re-scorable without the Zarr stores.
+        "--write-enriched",
     ],
     env=env,
     check=False,
