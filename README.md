@@ -11,14 +11,10 @@ This repository contains all scripts to reproduce the associated publication.
 
 ## Reproducibility
 
-Method-level CPU/GPU comparisons live in [`benchmarks/comparison`](benchmarks/comparison).
-The original Scanpy comparisons are complemented by structured comparisons for the
-previously uncovered Scanpy, Squidpy, Decoupler, and Pertpy APIs:
-
-- [`scanpy_extended`](benchmarks/comparison/scanpy_extended/README.md)
-- [`squidpy`](benchmarks/comparison/squidpy/README.md)
-- [`decoupler`](benchmarks/comparison/decoupler/README.md)
-- [`pertpy`](benchmarks/comparison/pertpy/README.md)
+Method-level CPU/GPU comparisons live in [`benchmarks/comparison`](benchmarks/comparison),
+grouped by the package they compare against: `scanpy_core`, `scanpy_extended`, `squidpy`,
+`decoupler`, `pertpy`, and an end-to-end `biological_pipeline`. Which methods each group covers,
+on which dataset, is in [`EVIDENCE.md`](EVIDENCE.md) rather than restated here.
 
 The suite is two programs. The comparison scripts **run both implementations and store their
 outputs** as Zarr, one store per method group. Then
@@ -62,29 +58,21 @@ output as partial:
 python benchmarks/comparison/run_structured.py scanpy_core/preprocessing.py
 ```
 
-The complete suite includes deterministic numerical comparisons, stochastic graph and
-embedding comparisons, the accelerated Squidpy/Decoupler/Pertpy APIs, and an end-to-end
-PBMC3k biological workflow. It always preserves per-script logs and produces:
-
-- `benchmarks/comparison/equivalence.json` with all observed metrics and thresholds;
-- `benchmarks/comparison/execution.json` with script status and duration;
-- `benchmarks/comparison/report/summary.md` for the reviewer response;
-- `benchmarks/comparison/report/metrics.csv` for a supplementary table; and
-- figures and biological marker-overlap tables under `benchmarks/comparison/report/artifacts`.
+A run writes its records, per-script logs, report, metric CSV and figures under
+`benchmarks/comparison/` (or `/out` in the container). None of that is committed — see Evidence
+below for the one file that is.
 
 A missed criterion makes the final command fail but does not stop later comparisons from
 running, so incomplete equivalence still yields a complete diagnostic report. A comparison
 script exiting non-zero now means it failed to produce a record at all — an infrastructure
 problem, kept distinct from a criterion being missed.
 
-See the complete [CPU/GPU coverage inventory](benchmarks/comparison/COVERAGE.md) for
-the mapping from public methods to evidence scripts, and [`OPEN.md`](OPEN.md) for what this
-evidence does **not** establish — scale limits, unreviewed thresholds, upstream issues found,
-GPU portability, and what automated validation would require.
-
-[`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md) assesses the deterministic criteria against
-the `numpy.allclose` standard the publication declares, and records the four operations that do
-not meet it.
+Two documents carry the interpretation, and only the interpretation — no per-run numbers, so
+neither needs syncing when a run changes. [`OPEN.md`](OPEN.md): what this evidence does **not**
+establish — scale limits, unreviewed thresholds, upstream issues found, GPU portability, the
+uncompared API surface, and what automated validation would require.
+[`NUMERICAL_VALIDATION.md`](NUMERICAL_VALIDATION.md): the deterministic criteria against the
+`numpy.allclose` standard the publication declares, and the operations that do not meet it.
 
 ## Evidence
 

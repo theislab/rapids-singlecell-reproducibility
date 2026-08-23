@@ -243,10 +243,29 @@ All nine are compared against pertpy here and agree. The sentence understates th
 The same paragraph describes `bootstrap`, `onesided_distances` and multi-GPU aggregation.
 `onesided_distances` is now covered; `bootstrap` and the multi-GPU path are not, and
 `create_contrasts`/`validate_contrasts`/`contrast_distances` are not mentioned in the Methods at
-all. See [`COVERAGE.md`](benchmarks/comparison/COVERAGE.md).
+all. Section 10 below lists the gaps.
 
 ## 9. Data provenance is not pinned
 
 Datasets are downloaded at run time by `scanpy.datasets` and `squidpy.datasets` with no version
 pin or checksum, and the generated report does not record dataset provenance. A silent upstream
 change to any of them would move the numbers without any signal.
+
+## 10. API surface that is not compared at all
+
+`EVIDENCE.md` names every method group that *is* compared, so this lists only the gaps. They were
+tracked in a separate coverage inventory, which is gone — one generated file plus this document is
+the whole of the written record now, and a hand-maintained table of what the suite covers went stale
+against it immediately.
+
+- **`ptg.Distance.bootstrap`** — output is stochastic and the manuscript states no agreement
+  criterion for it, so there is nothing to gate against.
+- **`ptg.Distance` contrast API** — `create_contrasts`, `validate_contrasts`, `contrast_distances`.
+- **Multi-GPU execution.** Every comparison here runs `multi_gpu=False`, so the device-splitting and
+  cross-device aggregation paths described in the Methods are **untested**. This is the largest
+  single gap: the code path a multi-GPU user takes has no evidence behind it.
+- **Squidpy's `spatialleiden` flavor**, which rapids-singlecell does not implement.
+
+`kmeans` *is* compared, and is worth noting because it is exported by `rapids_singlecell.tl` without
+appearing in `docs/api/scanpy_gpu.md`.
+
