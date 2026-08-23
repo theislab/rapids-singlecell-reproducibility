@@ -269,3 +269,22 @@ against it immediately.
 `kmeans` *is* compared, and is worth noting because it is exported by `rapids_singlecell.tl` without
 appearing in `docs/api/scanpy_gpu.md`.
 
+## 11. The original one-method scripts were removed
+
+The repository previously carried 18 one-method scripts (`hvg/`, `normalize/`, `pca/`, `umap/`,
+`leiden/`, and so on), each running one method on CPU and GPU and asserting a single
+`numpy.assert_allclose`. They are gone, and this records why rather than leaving it to the diff.
+
+Every method they covered has a gating criterion in `EVIDENCE.md`, so no coverage was lost. The
+reason for removing rather than keeping them is that their tolerances were hand-picked and
+**looser than the standard the Methods declare**: `scale` and `normalize_pearson_residuals`
+asserted at `atol=1e-6`, `regress_out` at `atol=1e-5`, against declared `numpy.allclose` defaults
+of `rtol=1e-5, atol=1e-8`. The suite's failures for those same operations are decided by the
+absolute term — `scale` exceeds by 1.787, `normalize_pearson_residuals` by 30.63, `regress_out`
+by 67.44, each at `atol` — so those scripts passed only because their absolute floor was 100x to
+1000x wider than the one the manuscript states. Keeping them would have left two verdicts on the
+same operations in the same repository, the greener one measured against a bar that appears
+nowhere in the paper.
+
+Their history is intact in git; they were contributed in the two merged benchmark pull requests.
+
