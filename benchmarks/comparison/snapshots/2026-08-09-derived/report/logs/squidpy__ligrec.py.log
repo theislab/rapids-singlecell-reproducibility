@@ -1,15 +1,0 @@
-  0%|          | 0.00/9.82M [00:00<?, ?B/s] 51%|█████▏    | 5.05M/9.82M [00:00<00:00, 52.9MB/s]100%|██████████| 9.82M/9.82M [00:00<00:00, 86.9MB/s]
-... storing 'paul15_clusters' as categorical
-WARNING: Removed `1` duplicate gene(s)
-WARNING: Removed `1` duplicate gene(s)
-{
-  "method": "ligrec",
-  "reference_package": "squidpy",
-  "dataset": "scanpy.datasets.paul15",
-  "tier": "stochastic",
-  "versions": {
-    "rapids-singlecell": "0.16.1",
-    "squidpy": "1.8.3"
-  },
-  "metrics": []
-}

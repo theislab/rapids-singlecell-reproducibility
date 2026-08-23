@@ -31,10 +31,11 @@ Nothing is compared on the GPU node, so a new question about a finished run — 
 `numpy.allclose` bound a failure, how the error is distributed, whether a different metric
 says something else — is answered from the stored arrays instead of costing another run.
 
-Measuring needs a GPU and about ten minutes; evaluating needs neither:
+Measuring needs a GPU and about ten minutes; evaluating needs neither, so a stored run
+re-scores anywhere:
 
 ```bash
-python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-08-09-derived/results
+python benchmarks/comparison/evaluate.py --results <run>/results
 ```
 
 Criteria are keyed by `(method group, metric)`, because a metric name is only unique within a
@@ -85,6 +86,32 @@ GPU portability, and what automated validation would require.
 the `numpy.allclose` standard the publication declares, and records the four operations that do
 not meet it.
 
+## Evidence
+
+A run writes about a megabyte of records, per-script logs, figures and a pinned environment,
+plus roughly 160 MB of raw Zarr. **None of it is committed.** Exactly one file is:
+[`EVIDENCE.md`](EVIDENCE.md), the generated report, promoted to the repository root and
+**overwritten by every full run**.
+
+It is written to stand alone. It names its own GPU, CUDA versions, package versions and
+measurement date, and it lists **every gating criterion and every recorded measurement with the
+value observed for it** — not just the failures, and not just pass/fail counts. Because the path
+never changes, `git log -p EVIDENCE.md` is the history of the evidence and `git diff` between two
+runs is the change in the verdicts.
+
+What that deliberately costs: the raw Zarr outputs, the per-script logs and the figures are not
+kept, so a *new* comparison — one nobody thought to compute while the run was happening — needs
+another run rather than a re-score. The numbers already reported stay checkable because they are
+all in the file. This is the trade the repository makes on purpose: one file that does not grow,
+instead of an ever-accumulating tree of run directories.
+
+Only a full run is promoted. A subset run marks itself partial at the top of its report.
+Promoting is one copy:
+
+```bash
+cp out/report/summary.md EVIDENCE.md
+```
+
 ## Container
 
 The suite ships as a container, so reproducing it does not mean rebuilding the environment
@@ -133,4 +160,4 @@ separate from the CPU/GPU equivalence thresholds above: speed measures performan
 the comparison suite measures numerical and biological agreement.
 
 The comparison suite is not run automatically. Reproducing it means running the container on a
-GPU host as above; the committed snapshots are point-in-time evidence, not a regression guard.
+GPU host as above; [`EVIDENCE.md`](EVIDENCE.md) is point-in-time evidence, not a regression guard.

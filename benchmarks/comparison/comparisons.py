@@ -280,7 +280,7 @@ class Comparison(NamedTuple):
 # Metric suffix -> the arrays it needs and how to combine them. A criterion named
 # `<point>.<suffix>` is computed from the store whenever `<point>` carries those arrays;
 # anything absent falls back to a scalar the measurement script recorded, so a committed
-# snapshot with no stored arrays still evaluates.
+# archived run with no stored arrays still evaluates.
 def _pair(fn):
     return Comparison(("candidate", "reference"), fn)
 

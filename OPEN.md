@@ -4,13 +4,14 @@ What the CPU/GPU equivalence work does **not** yet establish, stated plainly so 
 have to infer it.
 
 **Where the numbers live.** Counts and per-metric values belong to a run, so this document does not
-restate them. The current evidence is
-[`snapshots/2026-08-09-derived`](benchmarks/comparison/snapshots/2026-08-09-derived), which lists
-every criterion, its observed value, and the measured diagnosis behind each failure. It re-scores to
-its own recorded verdicts without a GPU:
+restate them. The current evidence is [`EVIDENCE.md`](EVIDENCE.md), which lists every gating
+criterion and every recorded measurement with its observed value, plus the measured diagnosis
+behind each failure, and dates its own measurements. It is the only committed record of a run —
+the run directory itself is not kept, so the numbers there are checked by reading them, and
+reproduced by rerunning the container rather than by re-scoring a stored copy:
 
 ```bash
-python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-08-09-derived/results
+docker run --rm --gpus all -v "$PWD/out:/out" rsc-equivalence
 ```
 
 What follows is the interpretation: what the suite covers, what it cannot show, and why each red
@@ -209,7 +210,7 @@ failure modes in seconds — it records GPU, compute capability, driver and CUDA
 one real kernel, always writes `gpu-smoke.json`, and exits 90 rather than spending a whole run. It
 distinguishes infrastructure failures from scientific ones; it does not fix either.
 
-Consequently every number in the committed snapshots comes from **A100 or H100 only**.
+Consequently every number in the reported evidence comes from **A100 or H100 only**.
 
 ## 7. No automated validation
 
@@ -228,7 +229,7 @@ Making it automatic needs, in order:
    reviewed and baselined; and
 4. scheduled or release-triggered runs, once the resource cost is understood.
 
-Evaluation is cheaper than measurement and needs no GPU, so re-scoring a committed snapshot against
+Evaluation is cheaper than measurement and needs no GPU, so re-scoring a run's stored records against
 changed criteria is the one part of this that could be automated today.
 
 ## 8. One Methods statement is out of date

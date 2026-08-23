@@ -179,16 +179,12 @@ cache
 .vscode
 out/
 
-# Live comparison output. A run writes here; only a promoted copy under
-# benchmarks/comparison/snapshots/ is committed.
+# Live comparison output. A run writes all of this; none of it is committed. Exactly one file is:
+# EVIDENCE.md at the repository root, promoted from report/summary.md and overwritten per run, so
+# `git log -p EVIDENCE.md` is the history of the evidence and the tree does not grow per run.
 benchmarks/comparison/arrays/
 benchmarks/comparison/results/
 benchmarks/comparison/report/
 benchmarks/comparison/*/results/
 benchmarks/comparison/equivalence.json
 benchmarks/comparison/execution.json
-
-# ... but a snapshot is evidence, including the per-script logs that *.log above would eat.
-# Listed per snapshot rather than globbed, so promoting a run stays a deliberate act: logs from
-# outside the container carry local absolute paths and must not be committed.
-!benchmarks/comparison/snapshots/2026-08-09-derived/report/logs/*.log

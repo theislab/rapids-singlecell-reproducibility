@@ -7,10 +7,10 @@ that already exist.
 
 Criteria come from `criteria.py`, never from the record. Whatever a script wrote about
 thresholds is a measurement-time artefact and is overwritten here, so an old result
-directory — including a committed snapshot — can be re-scored under today's criteria.
+directory — including one kept from an earlier run — can be re-scored under today's criteria.
 
     python benchmarks/comparison/evaluate.py
-    python benchmarks/comparison/evaluate.py --results snapshots/<name>/results
+    python benchmarks/comparison/evaluate.py --results <previous-run>/results
     python benchmarks/comparison/evaluate.py --criteria what-if.toml
 
 The optional TOML file overrides thresholds without touching `criteria.py`. Keys are
@@ -67,10 +67,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--execution", type=Path, help="Execution record; enables report rendering.")
     parser.add_argument("--report-dir", type=Path, help="Render the reviewer report here.")
     parser.add_argument(
+        "--gpu-smoke",
+        type=Path,
+        help="gpu_smoke_check.py output, for the hardware block in the report. "
+        "Defaults to gpu-smoke.json beside the report directory, where a run writes it.",
+    )
+    parser.add_argument(
         "--write-enriched",
         action="store_true",
         help="Rewrite each result record with the comparisons derived from the arrays inlined. "
-        "This is the form a snapshot is promoted in, so it re-scores without the Zarr stores.",
+        "Records in this form re-score without the Zarr stores, which are not kept.",
     )
     return parser.parse_args()
 
@@ -107,9 +113,9 @@ def decide(metric: dict) -> bool:
 
 
 def enriched(record: dict) -> dict:
-    """The record in the form a snapshot keeps it: derived comparisons inlined as scalars.
+    """The record with derived comparisons inlined as scalars.
 
-    A snapshot has to re-score without the Zarr stores, which stay with the run — so what
+    A kept run has to re-score without the Zarr stores, which are dropped — so what
     was computed from the arrays is written back beside what the script measured. Only
     measurements and the record's own verdict: the criterion each was judged against is
     deliberately left out, because `criteria.py` is the authority and a stored copy of a
@@ -328,6 +334,9 @@ def main() -> int:
             print(f"###   {name}")
 
     if args.report_dir and args.execution:
+        # A run writes gpu-smoke.json beside the report directory. The report is promoted as a
+        # single file and travels without the run, so it has to name its own GPU.
+        gpu_smoke = args.gpu_smoke or args.report_dir.parent / "gpu-smoke.json"
         subprocess.run(
             [
                 sys.executable,
@@ -338,6 +347,7 @@ def main() -> int:
                 str(args.execution),
                 "--output-dir",
                 str(args.report_dir),
+                *(["--gpu-smoke", str(gpu_smoke)] if gpu_smoke.exists() else []),
             ],
             check=False,
         )

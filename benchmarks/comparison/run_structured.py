@@ -44,7 +44,7 @@ def select_scripts(argv: list[str]) -> tuple[list[str], bool]:
     """Resolve which comparisons to run, from arguments or EQUIVALENCE_SCRIPTS.
 
     A subset run is for iterating on one method; it is reported as partial so its
-    aggregate output is never mistaken for a full-suite snapshot.
+    aggregate output is never mistaken for a full-suite run.
     """
     requested = list(argv) or [
         item for item in os.environ.get("EQUIVALENCE_SCRIPTS", "").replace(",", " ").split() if item
@@ -155,7 +155,7 @@ evaluation = subprocess.run(
         "--arrays",
         str(ARRAYS),
         # Inline what was derived from the arrays, so this run's records are already in the
-        # form a snapshot is promoted in: re-scorable without the Zarr stores.
+        # form an archive keeps them in: re-scorable without the Zarr stores.
         "--write-enriched",
     ],
     env=env,

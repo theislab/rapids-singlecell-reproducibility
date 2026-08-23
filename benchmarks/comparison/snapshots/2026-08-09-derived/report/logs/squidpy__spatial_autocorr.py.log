@@ -1,18 +1,0 @@
-[34mINFO    [0m Downloading imc.h5ad from                                              
-         [4;94mhttps://exampledata.scverse.org/squidpy/imc.h5ad[0m                       
-Downloading data from 'https://exampledata.scverse.org/squidpy/imc.h5ad' to file '/out/data/anndata/imc.h5ad'.
-  0%|                                              | 0.00/1.57M [00:00<?, ?B/s]  0%|                                              | 0.00/1.57M [00:00<?, ?B/s]100%|█████████████████████████████████████| 1.57M/1.57M [00:00<00:00, 8.97GB/s]
-/repro/benchmarks/comparison/squidpy/_shared.py:14: FutureWarning: Calling `spatial_neighbors` is deprecated and will be removed in squidpy v1.9.0. Use `spatial_neighbors_knn`, `spatial_neighbors_radius`, `spatial_neighbors_delaunay`, `spatial_neighbors_grid`, or `spatial_neighbors_from_builder` instead.
-  sq.gr.spatial_neighbors(adata, coord_type="generic", delaunay=True)
-[34mINFO    [0m Creating graph using `[3;35mNone[0m` transform and `[1;36m1[0m` libraries.               
-{
-  "method": "spatial_autocorr",
-  "reference_package": "squidpy",
-  "dataset": "squidpy.datasets.imc",
-  "tier": "deterministic",
-  "versions": {
-    "rapids-singlecell": "0.16.1",
-    "squidpy": "1.8.3"
-  },
-  "metrics": []
-}

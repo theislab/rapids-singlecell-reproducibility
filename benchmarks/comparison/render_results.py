@@ -14,6 +14,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--summary", type=Path, required=True)
     parser.add_argument("--execution", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--gpu-smoke", type=Path, default=None)
     return parser.parse_args()
 
 
@@ -23,6 +24,41 @@ def status(value: bool) -> str:
 
 def is_gating(metric: dict) -> bool:
     return bool(metric.get("gating", True))
+
+
+def cuda_version(packed: int | None) -> str:
+    """12090 -> "12.9". cupy reports CUDA versions packed, and the raw int reads as a build id."""
+    if not packed:
+        return "unknown"
+    return f"{packed // 1000}.{packed % 1000 // 10}"
+
+
+def gpu_provenance(gpu_smoke: Path | None) -> list[str]:
+    """Hardware identification for the promoted report, which travels without the run.
+
+    Reads only the device block. `hostname` is deliberately not rendered: the report is
+    public and a node name identifies a site, not a GPU.
+    """
+    if gpu_smoke is None or not gpu_smoke.exists():
+        return []
+    smoke = json.loads(gpu_smoke.read_text())
+    device = smoke.get("device") or {}
+    if not device.get("device_name"):
+        return []
+    memory = device.get("total_memory_bytes")
+    return [
+        "## Hardware",
+        "",
+        "| | |",
+        "| --- | --- |",
+        f"| GPU | {device['device_name']} |",
+        f"| Compute capability | {device.get('compute_capability', 'unknown')} |",
+        f"| CUDA driver / runtime | {cuda_version(device.get('driver_version'))} / "
+        f"{cuda_version(device.get('cuda_runtime_version'))} |",
+        *([f"| Device memory | {memory / 1024**3:.1f} GiB |"] if memory else []),
+        *([f"| Measured | {smoke['checked_at']} |"] if smoke.get("checked_at") else []),
+        "",
+    ]
 
 
 def gating_metrics(record: dict) -> list[dict]:
@@ -91,7 +127,7 @@ def render_plot(summary: dict, output: Path) -> None:
     plt.close(figure)
 
 
-def render_markdown(summary: dict, execution: dict, output: Path) -> None:
+def render_markdown(summary: dict, execution: dict, output: Path, gpu_smoke: Path | None = None) -> None:
     methods = summary["n_methods"]
     passed_methods = summary.get("n_passed_methods", sum(record["passed"] for record in summary["records"]))
     metrics = summary["n_metrics"]
@@ -110,7 +146,9 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
     lines = [
         "# CPU/GPU equivalence report",
         "",
-        f"Generated {datetime.now(UTC).isoformat()} from isolated comparison processes.",
+        f"Scored {datetime.now(UTC).isoformat()} from measurements taken by isolated comparison"
+        " processes. Criteria come from `criteria.py` at scoring time, so a stored run can be"
+        " re-scored without being re-measured; the Hardware table below dates the measurements.",
         "",
         "## Outcome",
         "",
@@ -138,8 +176,7 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
             for package, package_versions in sorted(versions.items())
         ],
         "",
-        "![Pass rate by comparison group](method-pass-rate.png)",
-        "",
+        *gpu_provenance(gpu_smoke),
         "## Method groups",
         "",
         "| Method group | Reference | Dataset | Tier | Result | Metrics |",
@@ -177,6 +214,32 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
             )
     else:
         lines.append("None.")
+
+    # Every passing gating criterion, with its observed value. The report is the only committed
+    # record of a run — nothing else is published — so a criterion that merely counted as "17/19"
+    # above would have its measurement lost the moment the run directory is gone.
+    passed_gating = [
+        (record["method"], metric)
+        for record in summary["records"]
+        for metric in gating_metrics(record)
+        if metric["passed"]
+    ]
+    if passed_gating:
+        lines.extend(
+            [
+                "",
+                "## Passing gating criteria",
+                "",
+                f"All {len(passed_gating)} gating criteria that were met, with the value each was met at.",
+                "",
+                "| Method group | Metric | Observed | Criterion |",
+                "| --- | --- | ---: | --- |",
+                *[
+                    f"| `{method}` | `{metric['metric']}` | {metric['observed']:.8g} | {metric['criterion']} |"
+                    for method, metric in passed_gating
+                ],
+            ]
+        )
 
     recorded = [
         (record["method"], metric)
@@ -250,8 +313,12 @@ def render_markdown(summary: dict, execution: dict, output: Path) -> None:
             "| Cell-type interpretation | Held-out annotation accuracy and CPU/GPU prediction agreement |",
             "| Additional scverse APIs | Direct Squidpy, Decoupler, and Pertpy reference comparisons |",
             "",
-            "Raw metric records are available in [`metrics.csv`](metrics.csv) and [`equivalence.json`](../equivalence.json).",
-            "This report is produced by a person running the suite; it is not published automatically.",
+            "This report is the committed record of a run, and the only one: it carries every gating"
+            " criterion and every recorded measurement with the value observed for it. The run directory"
+            " it was generated from also holds the per-script logs, the figures, the pinned environment"
+            " and the raw Zarr outputs, none of which are committed — so reproducing a number here means"
+            " rerunning the container, not fetching a file. It is produced by a person running the suite;"
+            " it is not published automatically.",
         ]
     )
     output.write_text("\n".join(lines) + "\n")
@@ -264,7 +331,7 @@ def main() -> None:
     execution = json.loads(args.execution.read_text())
     render_csv(summary, args.output_dir / "metrics.csv")
     render_plot(summary, args.output_dir / "method-pass-rate.png")
-    render_markdown(summary, execution, args.output_dir / "summary.md")
+    render_markdown(summary, execution, args.output_dir / "summary.md", args.gpu_smoke)
     print(f"Wrote reviewer report to {args.output_dir}")
 
 

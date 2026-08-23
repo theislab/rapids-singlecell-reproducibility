@@ -35,13 +35,10 @@ time rather than fixed while the run was happening. That is what makes the last 
 table possible: the reference magnitude at the deciding element, which says which of the criterion's
 two terms bound it, and the fraction of elements actually outside the envelope.
 
-**Every figure below is committed and checkable.** The run is
-[`snapshots/2026-08-09-derived`](benchmarks/comparison/snapshots/2026-08-09-derived), whose records
-re-score to the same verdicts with no GPU:
-
-```bash
-python benchmarks/comparison/evaluate.py --results benchmarks/comparison/snapshots/2026-08-09-derived/results
-```
+**Every figure below is in the committed report.** The run is the one reported in
+[`EVIDENCE.md`](EVIDENCE.md), which carries each of these quantities with its observed value. The
+run directory it came from is not committed, so these numbers are verified by reading that file,
+and reproduced by rerunning the suite — not by re-scoring a stored copy.
 
 **These figures are one dated measurement, not a live claim.** Complete 20-group run on an NVIDIA
 A100-PCIE-40GB (MIG 3g.20gb, driver 12.9), rapids-singlecell 0.16.1, scanpy 1.12.3, squidpy 1.8.3,
@@ -174,7 +171,7 @@ The same check has not yet been run for the other eight.
 docker run --rm --gpus all -v "$PWD/out:/out" rsc-equivalence
 ```
 
-Every value above comes from that run's own output and is committed in the snapshot, so a reader can
+Every value above comes from that run's own output and is preserved in `EVIDENCE.md`, so a reader can
 re-derive the table without a GPU. Asking a _different_ question of the same run — a different
 metric, the shape of the error distribution — needs the raw Zarr stores, which stay with the run
 rather than in the repository.
