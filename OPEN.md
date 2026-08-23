@@ -110,42 +110,36 @@ CPU/GPU agreement; they are recorded as evidence instead. That was a deliberate 
 a relaxation to reach green — and it does leave a gap, noted at the end of this section.
 
 **`umap.cross_embedding_knn_overlap` has no reference point.** UMAP is stochastic, so a CPU-vs-GPU
-overlap is only interpretable next to how far the CPU reference is from itself. Rerunning the CPU
-embedding with only the seed changed:
+overlap is only interpretable next to how far the CPU reference is from itself. The suite therefore
+reruns the CPU embedding with only the seed changed and records that baseline beside the criterion,
+as `umap.cpu_reseeded_knn_overlap` and `umap.cross_embedding_overlap_vs_cpu_baseline` in
+[`EVIDENCE.md`](EVIDENCE.md).
 
-| Comparison               |      pbmc3k | `pbmc68k_reduced` |
-| ------------------------ | ----------: | ----------------: |
-| CPU seed 0 vs CPU seed 1 |     0.42800 |           0.55752 |
-| CPU seed 0 vs CPU seed 2 |     0.41878 |           0.55581 |
-| **CPU seed 0 vs GPU**    | **0.40190** |       **0.58848** |
-
-On `pbmc68k_reduced` the GPU embedding is **closer** to the CPU embedding than a reseeded CPU run is,
-and the criterion still fails. The baseline is measured in-run rather than hard-coded because it is
-platform-dependent: it moved from 0.5558 to 0.5859 between machines.
+On `pbmc68k_reduced` the GPU embedding has been **closer** to the CPU embedding than a reseeded CPU
+run is, while the criterion still fails. The baseline is measured in-run rather than hard-coded
+precisely because it is platform-dependent and moves between machines — which is also why no value
+for it is quoted here.
 
 **`calculate_niche` measures Leiden backend choice, not correctness.** The UTAG features and their PCA
-agree numerically — components 0–20 match at |r| >= 0.9998 and carry 99.997% of the variance, and
-subspace alignment is >= 0.999998 for the first 15 components. What diverges is the clustering:
+agree numerically — the leading components match at near-unit correlation, carry essentially all of
+the variance, and their subspace alignment is near-exact. What diverges is the clustering.
 
-| On one identical graph, only the Leiden backend changed |    ARI |    NMI | Clusters |
-| ------------------------------------------------------- | -----: | -----: | -------: |
-| UTAG: CPU leidenalg vs CPU igraph                       | 0.5041 | 0.7120 | 12 vs 12 |
-| UTAG: CPU leidenalg vs GPU cuGraph                      | 0.5941 | 0.7554 | 12 vs 14 |
-| Neighborhood: CPU leidenalg vs CPU igraph               | 0.9793 |      — | 41 vs 40 |
-| Neighborhood: CPU leidenalg vs GPU cuGraph              | 0.9454 |      — | 41 vs 34 |
+Hold the graph identical and change only the Leiden backend, and **Scanpy's own two backends
+(leidenalg and igraph) agree no better with each other than the GPU agrees with Scanpy** — on the
+UTAG feature space they agree well below the threshold this criterion asserts. So the criterion is
+measuring backend choice and tie-breaking, not correctness.
 
-Scanpy's own two backends agree no better with each other than the GPU agrees with Scanpy. For the
-`neighborhood` flavor part of the divergence also happens _before_ Leiden, and there rapids-singlecell
-is the accurate side — the profile holds only 755 distinct rows across 4668 cells, so 89.67% of cells
-have an exact distance tie at the k-th neighbour:
+For the `neighborhood` flavor part of the divergence happens _before_ Leiden, and there
+**rapids-singlecell is the accurate side**: checked against exact float64 ground truth, the GPU
+neighbour graph is exact while `sc.pp.neighbors` returns strictly worse neighbours on a substantial
+minority of rows, whether or not exact search is forced. The cause is that the neighborhood profile
+holds far fewer distinct rows than cells, so the large majority of cells have an exact distance tie
+at the k-th neighbour and the partition is not well determined.
 
-| Checked against exact float64 ground truth, first 13 non-self neighbours | Distances materially worse |  Rows | Max excess |
-| ------------------------------------------------------------------------ | -------------------------: | ----: | ---------: |
-| `sc.pp.neighbors` default                                                |                       2055 |   743 |     +3.014 |
-| `sc.pp.neighbors` forced exact (`transformer="sklearn"`)                 |                       2055 |   743 |     +3.014 |
-| `rsc.pp.neighbors` brute                                                 |                      **0** | **0** |   +4.9e-06 |
-
-Recall against ground truth tells the same story: rsc 0.899 versus scanpy 0.858 at k=14.
+Both findings are reproduced by
+[`niche_divergence_diagnostic.py`](benchmarks/comparison/squidpy/niche_divergence_diagnostic.py),
+which separates features, kNN graph and Leiden backend; the figures are its output rather than the
+suite's, and are deliberately not copied here.
 
 ### The gap left by demoting the quality scores
 
@@ -158,14 +152,14 @@ difference is itself recorded rather than gating, so that one has no backstop at
 
 ### Every failure was probed for a GPU-side defect; none was found
 
-| Suspected defect                            | Verdict                                                                                 |
-| ------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `rsc.pp.neighbors` returns wrong neighbours | No. Exact to 4.9e-06 against float64 ground truth; the CPU reference is the inexact one |
-| `n_neighbors` off-by-one in the graph       | No. Both yield 14 real neighbours for `n_neighbors=15` on clean data; Jaccard 1.000000  |
-| Approximate search degrading the GPU graph  | No. GPU approximate versus GPU brute is 1.000000                                        |
-| `rsc.tl.leiden` finds a worse partition     | No. Modularity 0.916633 versus leidenalg 0.917280 — 0.07% on a very flat objective      |
-| `rsc.pp.pca` wrong on the UTAG features     | No. Subspace alignment >= 0.999998 over the components carrying 99.997% of the variance |
-| `rsc.pp.normalize_total` numerically wrong  | No. Agrees with scanpy to exactly one float32 ULP                                       |
+| Suspected defect                            | Verdict                                                                     |
+| ------------------------------------------- | --------------------------------------------------------------------------- |
+| `rsc.pp.neighbors` returns wrong neighbours | No. Exact against float64 ground truth; the CPU reference is the inexact one |
+| `n_neighbors` off-by-one in the graph       | No. Both yield the same real neighbours on clean data; Jaccard is exact      |
+| Approximate search degrading the GPU graph  | No. GPU approximate versus GPU brute agree exactly                          |
+| `rsc.tl.leiden` finds a worse partition     | No. Modularity differs by a fraction of a percent on a very flat objective   |
+| `rsc.pp.pca` wrong on the UTAG features     | No. Near-exact subspace alignment over the components carrying the variance  |
+| `rsc.pp.normalize_total` numerically wrong  | No. Agrees with scanpy to one float32 ULP                                    |
 
 ## 5. Upstream issues found, not yet filed
 
@@ -280,11 +274,10 @@ reason for removing rather than keeping them is that their tolerances were hand-
 **looser than the standard the Methods declare**: `scale` and `normalize_pearson_residuals`
 asserted at `atol=1e-6`, `regress_out` at `atol=1e-5`, against declared `numpy.allclose` defaults
 of `rtol=1e-5, atol=1e-8`. The suite's failures for those same operations are decided by the
-absolute term — `scale` exceeds by 1.787, `normalize_pearson_residuals` by 30.63, `regress_out`
-by 67.44, each at `atol` — so those scripts passed only because their absolute floor was 100x to
-1000x wider than the one the manuscript states. Keeping them would have left two verdicts on the
-same operations in the same repository, the greener one measured against a bar that appears
-nowhere in the paper.
+absolute term, so those scripts passed only because their absolute floor was 100x to 1000x wider
+than the one the manuscript states. Keeping them would have left two verdicts on the same
+operations in the same repository, the greener one measured against a bar that appears nowhere in
+the paper. The measured excesses are in [`EVIDENCE.md`](EVIDENCE.md) and are not restated here.
 
 Their history is intact in git; they were contributed in the two merged benchmark pull requests.
 
