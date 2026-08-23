@@ -213,6 +213,14 @@ repository was produced by a person running the container on a GPU host, so all 
 **point-in-time result rather than a regression guard**. Nothing prevents a future change from
 silently breaking equivalence.
 
+What that costs is not hypothetical. The original one-method scripts are not run by anything, and
+`umap/umap.py` accumulated two independent defects that survived undetected until 2026-08-23: the
+filename shadowed the installed `umap` package, so `import umap.umap_` inside umap-learn failed
+before any comparison ran, and behind that a typo (`rust_sc` assigned, `trust_sc` asserted) raised
+`NameError`. The script had therefore never executed successfully at all. Both are fixed, and the
+file is now `umap/umap_embedding.py`; the point is that nothing but a manual run would have found
+either.
+
 Making it automatic needs, in order:
 
 1. a GPU runner the project actually controls, since the suite cannot run on hosted CI;
@@ -286,4 +294,45 @@ operations in the same repository, the greener one measured against a bar that a
 the paper. The measured excesses are in [`EVIDENCE.md`](EVIDENCE.md) and are not restated here.
 
 Their history is intact in git; they were contributed in the two merged benchmark pull requests.
+
+## 12. Harmony has two algorithm flavors, and the default is not the harmonypy one
+
+`rsc.pp.harmony_integrate` takes `flavor: Literal["harmony2", "harmony1"] = "harmony2"`. Harmonypy
+implements the harmony1 algorithm, so **the rapids-singlecell default is not the CPU reference's
+algorithm** — comparing them without pinning `flavor` compares two different methods.
+
+Measured on the harmonypy 3,500-cell donor benchmark, worst relative L2 per component:
+
+| Comparison | Worst relative L2 |
+| --- | --- |
+| harmonypy 0.2.0 run now, against the repository's stored harmonized file | 0.053 |
+| rapids-singlecell `flavor="harmony1"`, against harmonypy run now | 0.053 |
+| rapids-singlecell at its **default** `flavor="harmony2"`, against the stored file | **0.523** |
+
+The first row matters: the stored reference is sound, reproduced by harmonypy today to the same
+tolerance the GPU achieves. So the tenfold divergence in the last row is the flavor, not drift in
+the reference and not a GPU defect. The suite pins `flavor="harmony1"` and agrees; the original
+one-method script did not pin it and disagreed.
+
+Two consequences worth stating. Any Harmony comparison must pin `flavor`, or it silently measures
+algorithm choice — the same failure mode as `sc.tl.leiden` without `flavor` in section 13 and in
+`calculate_niche`. And the published criterion is a per-component Pearson correlation, which is
+invariant to a per-component scale factor; relative L2 is not, so it is gated alongside at the
+threshold the original script used, to keep a magnitude difference from passing unseen.
+
+## 13. The one-method scripts disagree with the suite about Leiden
+
+`leiden/leiden.py` and the suite gate the same metric at the same threshold — Leiden ARI >= 0.9 —
+and reach opposite verdicts. The suite passes on `pbmc68k_reduced`; the standalone script fails on
+pbmc3k at ARI 0.874, with NMI 0.906 passing and both sides finding 7 clusters.
+
+The cause is the same one already documented for `calculate_niche` in section 4: `sc.tl.leiden`
+is called without `flavor`, so the CPU side runs leidenalg while the GPU side runs cuGraph. The
+comparison is between two different community-detection implementations, not between CPU and GPU
+executions of one. ARI 0.874 with an identical cluster count is what backend disagreement looks
+like, not what a numerical defect looks like.
+
+The threshold has been left at 0.9. It is the dataset and the unset `flavor` that make the two
+disagree, and choosing which of them is the reference is a specification decision, not a
+tolerance to adjust.
 

@@ -30,6 +30,13 @@ ALLCLOSE_BASIS = (
     "default parameters (rtol=1e-5, atol=1e-8)."
 )
 
+L2_BASIS = (
+    "Threshold carried over from the original one-method Harmony script. Not a published "
+    "claim, but kept because relative L2 is invariant to nothing: a component can correlate "
+    "almost perfectly with the reference and still differ in magnitude, which the stated "
+    "correlation criterion cannot see."
+)
+
 HARMONY_BASIS = (
     "Manuscript Methods, Batch correction with Harmony: the implementation maintains a "
     "Pearson correlation of >95% for all corrected principal components."
@@ -133,6 +140,7 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("harmony.minimum_component_abs_correlation", ">", 0.95, HARMONY_BASIS),
         ("harmony.mean_component_abs_correlation", ">=", 0.98, ""),
         ("harmony.standard_deviation_max_abs_error", "<=", 0.1, ""),
+        ("harmony.relative_l2_max", "<=", 0.1, L2_BASIS),
     ],
     "scanpy_core_hvg_pca": [
         ("highly_variable_genes.seurat.selection.set_jaccard", ">=", 0.99, ""),
@@ -154,6 +162,11 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
         ("pca.scores.minimum_component_abs_correlation", ">=", 0.95, ""),
         ("pca.loadings.minimum_component_abs_correlation", ">=", 0.95, ""),
         ("pca.explained_variance_ratio.allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
+        # Magnitudes, because a principal component's sign is arbitrary. Correlation above
+        # scores whole components; these gate the arrays elementwise, which is what the
+        # Methods sentence actually claims for PCA.
+        ("pca.scores.abs_allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
+        ("pca.loadings.abs_allclose_excess", "<=", 1.0, ALLCLOSE_BASIS),
     ],
     "scanpy_core_preprocessing": [
         ("filter_cells.index_agreement", ">=", 1.0, ""),
@@ -197,6 +210,10 @@ EVIDENCE: dict[str, list[str]] = {
     "ligrec": ["means.allclose_excess"],
     "mixscale": ["mixscale.score.allclose_excess"],
     "mixscape": ["perturbation_signature.allclose_excess"],
+    "scanpy_core_graphs_embeddings": [
+        "neighbors.distance.graph_exact_agreement",
+        "neighbors.connectivity.graph_exact_agreement",
+    ],
     "scanpy_core_preprocessing": [
         "calculate_qc_metrics.*.allclose_excess",
         "regress_out.allclose_excess",

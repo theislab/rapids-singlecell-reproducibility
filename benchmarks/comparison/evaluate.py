@@ -187,8 +187,14 @@ def derive_from_arrays(method: str) -> dict[str, float]:
                 if head in (point, "*") or fnmatch.fnmatchcase(point, head):
                     wanted[f"{point}.{candidate_suffix}"] = candidate_suffix
                     if candidate_suffix.endswith("allclose_excess"):
+                        # Mirror the criterion's own prefix: evidence for an `abs_` criterion
+                        # has to be measured on magnitudes too, or a sign flip reads as a
+                        # catastrophic error beside a criterion that passed.
+                        prefix = candidate_suffix[: -len("allclose_excess")]
                         for evidence in ALLCLOSE_EVIDENCE:
-                            wanted[f"{point}.{evidence}"] = evidence
+                            variant = f"{prefix}{evidence}"
+                            name = variant if variant in COMPARISONS else evidence
+                            wanted[f"{point}.{name}"] = name
             break
 
     derived: dict[str, float] = {}

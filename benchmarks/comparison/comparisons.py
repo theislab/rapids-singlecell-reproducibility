@@ -142,6 +142,22 @@ def standard_deviation_max_abs_error(candidate, reference) -> float:
     return float(np.nanmax(np.abs(a.std(axis=0) - b.std(axis=0))))
 
 
+def relative_l2_max(candidate, reference) -> float:
+    """Worst per-component relative L2 error, ||a - b|| / ||b|| over columns.
+
+    A whole-component measure rather than an elementwise one: correlation can be near
+    perfect while a component is scaled or offset, and this catches that.
+    """
+    a, b = _floats(candidate, reference)
+    denominator = np.linalg.norm(b, axis=0)
+    numerator = np.linalg.norm(a - b, axis=0)
+    # A zero-norm reference component is degenerate: any difference is infinitely relative,
+    # and calling that agreement would hide it.
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ratio = np.where(denominator > 0, numerator / denominator, np.where(numerator > 0, np.inf, 0.0))
+    return float(np.nanmax(ratio))
+
+
 def relative_error_of_mean(candidate, reference) -> float:
     a, b = _floats(candidate, reference)
     return float(abs(a.mean() - b.mean()) / abs(b.mean()))
@@ -159,6 +175,39 @@ def _component_correlations(candidate, reference) -> np.ndarray:
     a, b = _floats(candidate, reference)
     n = min(a.shape[1], b.shape[1])
     return np.asarray([abs(pearson_correlation(a[:, i], b[:, i])) for i in range(n)])
+
+
+def _abs_pair(candidate, reference):
+    """Magnitudes only. Eigenvectors and the scores they produce have no fixed sign, so an
+    elementwise envelope has to be applied to |a| and |b| or every sign flip reads as a
+    total disagreement."""
+    a, b = _floats(candidate, reference)
+    return np.abs(a), np.abs(b)
+
+
+def abs_allclose_excess(candidate, reference) -> float:
+    a, b = _abs_pair(candidate, reference)
+    return allclose_excess(a, b)
+
+
+def abs_allclose_worst_magnitude(candidate, reference) -> float:
+    a, b = _abs_pair(candidate, reference)
+    return allclose_worst_magnitude(a, b)
+
+
+def abs_allclose_violating_fraction(candidate, reference) -> float:
+    a, b = _abs_pair(candidate, reference)
+    return allclose_violating_fraction(a, b)
+
+
+def abs_max_abs_error(candidate, reference) -> float:
+    a, b = _abs_pair(candidate, reference)
+    return max_abs_error(a, b)
+
+
+def abs_max_rel_error(candidate, reference) -> float:
+    a, b = _abs_pair(candidate, reference)
+    return max_rel_error(a, b)
 
 
 def minimum_component_abs_correlation(candidate, reference) -> float:
@@ -242,6 +291,23 @@ def set_jaccard(candidate, reference) -> float:
     return len(a & b) / max(1, len(a | b))
 
 
+def graph_exact_agreement(candidate, reference) -> float:
+    """Fraction of rows whose neighbour sets match exactly, self-loops removed.
+
+    `graph_jaccard` reports mean overlap and so scores partial agreement; this reports the
+    share of rows that agree completely, which is what an exact-equality assertion tested.
+    Self is removed explicitly, not by position: the two implementations disagree on whether
+    the diagonal is stored at all.
+    """
+    a, b = candidate.tocsr(), reference.tocsr()
+    exact = 0
+    for row in range(a.shape[0]):
+        left = set(a.indices[a.indptr[row] : a.indptr[row + 1]]) - {row}
+        right = set(b.indices[b.indptr[row] : b.indptr[row + 1]]) - {row}
+        exact += left == right
+    return float(exact / max(1, a.shape[0]))
+
+
 def index_agreement(candidate, reference) -> float:
     """Whether two name vectors are identical in the same order."""
     a, b = _labels(candidate), _labels(reference)
@@ -306,6 +372,12 @@ COMPARISONS: dict[str, Comparison] = {
     "lda_abs_correlation": _pair(lambda c, r: abs(pearson_correlation(c, r))),
     "nan_mask_agreement": _pair(nan_mask_agreement),
     "standard_deviation_max_abs_error": _pair(standard_deviation_max_abs_error),
+    "relative_l2_max": _pair(relative_l2_max),
+    "abs_allclose_excess": _pair(abs_allclose_excess),
+    "abs_allclose_worst_magnitude": _pair(abs_allclose_worst_magnitude),
+    "abs_allclose_violating_fraction": _pair(abs_allclose_violating_fraction),
+    "abs_max_abs_error": _pair(abs_max_abs_error),
+    "abs_max_rel_error": _pair(abs_max_rel_error),
     "relative_error_of_mean": _pair(relative_error_of_mean),
     "relative_error_of_std": _pair(relative_error_of_std),
     # components and embeddings
@@ -314,6 +386,7 @@ COMPARISONS: dict[str, Comparison] = {
     "cross_embedding_knn_overlap": _pair(cross_embedding_knn_overlap),
     "umap_knn_overlap": _pair(cross_embedding_knn_overlap),
     "graph_jaccard": _pair(graph_jaccard),
+    "graph_exact_agreement": _pair(graph_exact_agreement),
     "connectivity_jaccard": _pair(graph_jaccard),
     "cpu.trustworthiness": Comparison(("reference", "reference_basis"), reference_trustworthiness),
     "gpu.trustworthiness": Comparison(("candidate", "candidate_basis"), candidate_trustworthiness),

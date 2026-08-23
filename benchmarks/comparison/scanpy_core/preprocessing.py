@@ -26,11 +26,18 @@ capture(METHOD, "filter_genes", reference=cpu.var_names.to_numpy(), candidate=gp
 
 cpu = counts.copy()
 gpu = gpu_copy(counts)
+# Three gene sets rather than one: mitochondrial, ribosomal and haemoglobin are the
+# standard QC trio, and each exercises a different selector (prefix, multi-prefix, regex)
+# and a different sparsity, so covering only `mt` left the other two paths unmeasured.
+QC_VARS = ["mt", "ribo", "hb"]
 for adata in (cpu, gpu):
     adata.var["mt"] = adata.var_names.str.startswith("MT-")
-sc.pp.calculate_qc_metrics(cpu, qc_vars=["mt"], log1p=True, percent_top=False, inplace=True)
-rsc.pp.calculate_qc_metrics(gpu, qc_vars=["mt"], log1p=True)
-qc_columns = ["n_genes_by_counts", "total_counts", "total_counts_mt", "pct_counts_mt"]
+    adata.var["ribo"] = adata.var_names.str.startswith(("RPS", "RPL"))
+    adata.var["hb"] = adata.var_names.str.contains("^HB[^(P)]")
+sc.pp.calculate_qc_metrics(cpu, qc_vars=QC_VARS, log1p=True, percent_top=False, inplace=True)
+rsc.pp.calculate_qc_metrics(gpu, qc_vars=QC_VARS, log1p=True)
+qc_columns = ["n_genes_by_counts", "total_counts"]
+qc_columns += [f"{stat}_{var}" for var in QC_VARS for stat in ("total_counts", "pct_counts")]
 for key in qc_columns:
     capture(METHOD, f"calculate_qc_metrics.{key}", reference=cpu.obs[key], candidate=gpu.obs[key])
 

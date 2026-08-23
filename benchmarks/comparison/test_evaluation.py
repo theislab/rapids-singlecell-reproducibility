@@ -17,7 +17,15 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from comparisons import pearson_correlation
+import scipy.sparse as sp
+from comparisons import (
+    abs_allclose_excess,
+    allclose_excess,
+    graph_exact_agreement,
+    graph_jaccard,
+    pearson_correlation,
+    relative_l2_max,
+)
 from evaluate import decide, enriched
 
 
@@ -64,6 +72,49 @@ def test_enriched_record_keeps_measurements_and_drops_criteria() -> None:
         "metrics": [{"metric": "a.allclose_excess", "observed": 0.5}],
         "passed": True,
     }
+
+
+def test_abs_allclose_ignores_component_sign_but_not_real_error() -> None:
+    """A principal component's sign is arbitrary; a difference in its magnitude is not."""
+    reference = np.random.default_rng(0).normal(size=(200, 10))
+    flipped = reference * np.where(np.arange(10) % 2 == 0, -1.0, 1.0)
+    # The signed envelope reads a sign flip as total disagreement, which is why the gate on
+    # PCA scores and loadings uses magnitudes.
+    assert allclose_excess(flipped, reference) > 1.0
+    assert abs_allclose_excess(flipped, reference) == 0.0
+    perturbed = reference.copy()
+    perturbed[0, 0] += 1.0
+    assert abs_allclose_excess(perturbed, reference) > 1.0
+
+
+def test_relative_l2_flags_a_scaled_component_and_a_degenerate_reference() -> None:
+    reference = np.random.default_rng(1).normal(size=(200, 5))
+    assert relative_l2_max(reference, reference) == 0.0
+    scaled = reference.copy()
+    scaled[:, 3] *= 1.5
+    assert abs(relative_l2_max(scaled, reference) - 0.5) < 1e-9
+    # A zero-norm reference component must not read as agreement: any difference against it
+    # is infinitely relative, and returning 0 there would hide the whole component.
+    degenerate = reference.copy()
+    degenerate[:, 0] = 0.0
+    assert math.isinf(relative_l2_max(reference, degenerate))
+    assert relative_l2_max(degenerate, degenerate) == 0.0
+
+
+def test_graph_exact_agreement_is_all_or_nothing_per_row() -> None:
+    """`graph_jaccard` gives partial credit; this counts only rows that match completely."""
+    dense = 1.0 - np.eye(4)
+    same = sp.csr_matrix(dense)
+    assert graph_exact_agreement(same, same) == 1.0
+    changed = dense.copy()
+    changed[0, 1] = 0.0
+    differing = sp.csr_matrix(changed)
+    assert graph_exact_agreement(same, differing) == 0.75
+    assert graph_jaccard(same, differing) > graph_exact_agreement(same, differing)
+    # Self-loops must not decide it: the two implementations disagree on storing the diagonal.
+    with_diagonal = same.tolil()
+    with_diagonal[0, 0] = 1.0
+    assert graph_exact_agreement(with_diagonal.tocsr(), same) == 1.0
 
 
 if __name__ == "__main__":
