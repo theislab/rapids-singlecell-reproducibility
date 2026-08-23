@@ -241,9 +241,13 @@ all. Section 10 below lists the gaps.
 
 ## 9. Data provenance is not pinned
 
-Datasets are downloaded at run time by `scanpy.datasets` and `squidpy.datasets` with no version
-pin or checksum, and the generated report does not record dataset provenance. A silent upstream
-change to any of them would move the numbers without any signal.
+The six `scanpy.datasets` and `squidpy.datasets` loaders fetch whatever upstream serves at run
+time, with no version pin or checksum, and the generated report does not record dataset
+provenance. A silent upstream change to any of them would move the numbers without any signal.
+
+One exception, so this is not read more broadly than it holds: the Harmony comparison retrieves its
+two inputs through `pooch` with `known_hash` md5 pins, so that comparison would fail loudly rather
+than silently if its data changed.
 
 ## 10. API surface that is not compared at all
 
@@ -255,9 +259,11 @@ against it immediately.
 - **`ptg.Distance.bootstrap`** — output is stochastic and the manuscript states no agreement
   criterion for it, so there is nothing to gate against.
 - **`ptg.Distance` contrast API** — `create_contrasts`, `validate_contrasts`, `contrast_distances`.
-- **Multi-GPU execution.** Every comparison here runs `multi_gpu=False`, so the device-splitting and
-  cross-device aggregation paths described in the Methods are **untested**. This is the largest
-  single gap: the code path a multi-GPU user takes has no evidence behind it.
+- **Multi-GPU execution.** `multi_gpu` appears exactly twice in the suite, both in
+  `pertpy/distance.py` and both passed `False`; no other comparison exercises the parameter at all.
+  The device-splitting and cross-device aggregation paths described in the Methods are therefore
+  **untested**. This is the largest single gap here: the code path a multi-GPU user takes has no
+  evidence behind it.
 - **Squidpy's `spatialleiden` flavor**, which rapids-singlecell does not implement.
 
 `kmeans` *is* compared, and is worth noting because it is exported by `rapids_singlecell.tl` without
