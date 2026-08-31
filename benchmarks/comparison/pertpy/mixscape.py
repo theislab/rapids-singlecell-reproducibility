@@ -33,4 +33,4 @@ rsc.ptg.Mixscape().lda(gpu, pert_key="gene_target", control="NT", test_method="t
 # The LDA axis has no fixed sign, so the criterion is on the absolute correlation.
 capture(METHOD, "mixscape.lda", reference=cpu.uns["mixscape_lda"], candidate=gpu.uns["mixscape_lda"])
 
-write_report(METHOD, "seeded synthetic perturbation screen", "near-deterministic", [])
+write_report(METHOD, "seeded synthetic perturbation screen", "near-deterministic", [], shape=cpu.shape)

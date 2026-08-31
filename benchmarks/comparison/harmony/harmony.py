@@ -31,7 +31,9 @@ adata = ad.AnnData(X=None, obs=meta, obsm={"X_pca": X_pca.values})
 rsc.pp.harmony_integrate(adata, key="donor", flavor="harmony1", max_iter_harmony=20, random_state=0)
 
 # Compare against harmonypy reference embedding per PC
-corr = np.array([pearsonr(adata.obsm["X_pca_harmony"][:, i], X_pca_harmony_ref[:, i])[0] for i in range(X_pca_harmony_ref.shape[1])])
+corr = np.array(
+    [pearsonr(adata.obsm["X_pca_harmony"][:, i], X_pca_harmony_ref[:, i])[0] for i in range(X_pca_harmony_ref.shape[1])]
+)
 l2 = np.linalg.norm(adata.obsm["X_pca_harmony"] - X_pca_harmony_ref, axis=0) / np.linalg.norm(X_pca_harmony_ref, axis=0)
 assert corr.min() > 0.95
 assert l2.max() < 0.1

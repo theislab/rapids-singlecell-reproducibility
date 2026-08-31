@@ -4,6 +4,7 @@ import os
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parents[1]))
 sys.path.insert(0, str(Path(__file__).parents[1] / "scanpy_core"))
 
 import matplotlib.pyplot as plt
@@ -11,8 +12,8 @@ import numpy as np
 import pandas as pd
 import rapids_singlecell as rsc
 import scanpy as sc
-from _report import capture, measure, write_report
 from _shared import embedding_knn_overlap, ranked_names, reseeded_umap_overlap
+from report import capture, measure, write_report
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -182,4 +183,5 @@ write_report(
     "pbmc3k_processed raw log-expression with published cell-type labels",
     "biological",
     metrics,
+    shape=source.shape,
 )

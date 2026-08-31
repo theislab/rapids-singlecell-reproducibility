@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--summary", type=Path, required=True)
     parser.add_argument("--execution", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--gpu-smoke", type=Path, default=None)
+    parser.add_argument("--hardware", type=Path, default=None)
     return parser.parse_args()
 
 
@@ -33,15 +33,15 @@ def cuda_version(packed: int | None) -> str:
     return f"{packed // 1000}.{packed % 1000 // 10}"
 
 
-def gpu_provenance(gpu_smoke: Path | None) -> list[str]:
+def gpu_provenance(hardware: Path | None) -> list[str]:
     """Hardware identification for the promoted report, which travels without the run.
 
     Reads only the device block. `hostname` is deliberately not rendered: the report is
     public and a node name identifies a site, not a GPU.
     """
-    if gpu_smoke is None or not gpu_smoke.exists():
+    if hardware is None or not hardware.exists():
         return []
-    smoke = json.loads(gpu_smoke.read_text())
+    smoke = json.loads(hardware.read_text())
     device = smoke.get("device") or {}
     if not device.get("device_name"):
         return []
@@ -56,9 +56,15 @@ def gpu_provenance(gpu_smoke: Path | None) -> list[str]:
         f"| CUDA driver / runtime | {cuda_version(device.get('driver_version'))} / "
         f"{cuda_version(device.get('cuda_runtime_version'))} |",
         *([f"| Device memory | {memory / 1024**3:.1f} GiB |"] if memory else []),
-        *([f"| Measured | {smoke['checked_at']} |"] if smoke.get("checked_at") else []),
+        *([f"| Measured | {smoke['measured_at']} |"] if smoke.get("measured_at") else []),
         "",
     ]
+
+
+def scale(record: dict) -> str:
+    """The compared input as `cells x features`, from the record the run wrote."""
+    shape = record.get("shape")
+    return " x ".join(f"{dimension:,}" for dimension in shape) if shape else ""
 
 
 def gating_metrics(record: dict) -> list[dict]:
@@ -71,6 +77,7 @@ def render_csv(summary: dict, output: Path) -> None:
         "reference_package",
         "dataset",
         "tier",
+        "shape",
         "metric",
         "observed",
         "comparison",
@@ -92,6 +99,7 @@ def render_csv(summary: dict, output: Path) -> None:
                         "reference_package": record["reference_package"],
                         "dataset": record["dataset"],
                         "tier": record["tier"],
+                        "shape": scale(record),
                         "metric": metric["metric"],
                         "observed": metric["observed"],
                         "comparison": metric["comparison"],
@@ -127,7 +135,7 @@ def render_plot(summary: dict, output: Path) -> None:
     plt.close(figure)
 
 
-def render_markdown(summary: dict, execution: dict, output: Path, gpu_smoke: Path | None = None) -> None:
+def render_markdown(summary: dict, execution: dict, output: Path, hardware: Path | None = None) -> None:
     methods = summary["n_methods"]
     passed_methods = summary.get("n_passed_methods", sum(record["passed"] for record in summary["records"]))
     metrics = summary["n_metrics"]
@@ -176,18 +184,18 @@ def render_markdown(summary: dict, execution: dict, output: Path, gpu_smoke: Pat
             for package, package_versions in sorted(versions.items())
         ],
         "",
-        *gpu_provenance(gpu_smoke),
+        *gpu_provenance(hardware),
         "## Method groups",
         "",
-        "| Method group | Reference | Dataset | Tier | Result | Metrics |",
-        "| --- | --- | --- | --- | --- | ---: |",
+        "| Method group | Reference | Dataset | Scale | Tier | Result | Metrics |",
+        "| --- | --- | --- | --- | --- | --- | ---: |",
     ]
     for record in summary["records"]:
         gated = gating_metrics(record)
         record_passed = sum(metric["passed"] for metric in gated)
         lines.append(
-            f"| `{record['method']}` | {record['reference_package']} | {record['dataset']} | {record['tier']} | "
-            f"{status(record['passed'])} | {record_passed}/{len(gated)} |"
+            f"| `{record['method']}` | {record['reference_package']} | {record['dataset']} | "
+            f"{scale(record)} | {record['tier']} | {status(record['passed'])} | {record_passed}/{len(gated)} |"
         )
 
     failed_metrics = [
@@ -215,9 +223,6 @@ def render_markdown(summary: dict, execution: dict, output: Path, gpu_smoke: Pat
     else:
         lines.append("None.")
 
-    # Every passing gating criterion, with its observed value. The report is the only committed
-    # record of a run — nothing else is published — so a criterion that merely counted as "17/19"
-    # above would have its measurement lost the moment the run directory is gone.
     passed_gating = [
         (record["method"], metric)
         for record in summary["records"]
@@ -331,7 +336,7 @@ def main() -> None:
     execution = json.loads(args.execution.read_text())
     render_csv(summary, args.output_dir / "metrics.csv")
     render_plot(summary, args.output_dir / "method-pass-rate.png")
-    render_markdown(summary, execution, args.output_dir / "summary.md", args.gpu_smoke)
+    render_markdown(summary, execution, args.output_dir / "summary.md", args.hardware)
     print(f"Wrote reviewer report to {args.output_dir}")
 
 

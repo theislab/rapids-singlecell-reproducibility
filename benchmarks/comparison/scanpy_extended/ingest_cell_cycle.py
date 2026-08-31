@@ -32,4 +32,4 @@ capture(
 )
 capture(METHOD, "score_genes_cell_cycle.phase", reference=cpu_cycle.obs["phase"], candidate=gpu_cycle.obs["phase"])
 
-write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "near-deterministic", [])
+write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "near-deterministic", [], shape=adata.shape)

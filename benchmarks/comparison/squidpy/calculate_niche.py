@@ -109,4 +109,5 @@ write_report(
     dataset="squidpy.datasets.imc",
     tier="stochastic",
     metrics=[],
+    shape=adata.shape,
 )

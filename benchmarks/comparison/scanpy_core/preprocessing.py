@@ -107,4 +107,4 @@ rsc.pp.sqrt(gpu)
 rsc.get.anndata_to_CPU(gpu)
 capture(METHOD, "sqrt", reference=cpu.X, candidate=gpu.X)
 
-write_report(METHOD, "pbmc3k", "deterministic", [])
+write_report(METHOD, "pbmc3k", "deterministic", [], shape=counts.shape)

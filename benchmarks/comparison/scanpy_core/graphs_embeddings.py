@@ -56,4 +56,4 @@ sc.tl.leiden(reference, resolution=0.7, random_state=0, key_added="cpu_leiden", 
 rsc.tl.leiden(candidate, resolution=0.7, random_state=0, key_added="gpu_leiden")
 capture(METHOD, "leiden", reference=reference.obs["cpu_leiden"], candidate=candidate.obs["gpu_leiden"])
 
-write_report(METHOD, "pbmc68k_reduced", "stochastic", metrics)
+write_report(METHOD, "pbmc68k_reduced", "stochastic", metrics, shape=reference.shape)

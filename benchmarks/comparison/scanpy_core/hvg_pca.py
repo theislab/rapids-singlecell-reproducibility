@@ -69,4 +69,4 @@ capture(
     candidate=gpu.uns["pca"]["variance_ratio"],
 )
 
-write_report(METHOD, "pbmc3k", "deterministic", [])
+write_report(METHOD, "pbmc3k", "deterministic", [], shape=counts.shape)

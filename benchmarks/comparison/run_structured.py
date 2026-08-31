@@ -9,14 +9,17 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 HERE = Path(__file__).parent
-RESULTS = Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", HERE / "results"))
-SUMMARY = Path(os.environ.get("EQUIVALENCE_SUMMARY", HERE / "equivalence.json"))
-EXECUTION = Path(os.environ.get("EQUIVALENCE_EXECUTION", HERE / "execution.json"))
-REPORT_DIR = Path(os.environ.get("EQUIVALENCE_REPORT_DIR", HERE / "report"))
-ARRAYS = Path(os.environ.get("EQUIVALENCE_ARRAY_DIR", HERE / "arrays"))
+sys.path.insert(0, str(HERE))
+from arrays import OUT
+
+RESULTS = Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", OUT / "results"))
+SUMMARY = Path(os.environ.get("EQUIVALENCE_SUMMARY", OUT / "equivalence.json"))
+EXECUTION = Path(os.environ.get("EQUIVALENCE_EXECUTION", OUT / "execution.json"))
+REPORT_DIR = Path(os.environ.get("EQUIVALENCE_REPORT_DIR", OUT / "report"))
+ARRAYS = Path(os.environ.get("EQUIVALENCE_ARRAY_DIR", OUT / "arrays"))
+HARDWARE = REPORT_DIR.parent / "hardware.json"
 SCRIPTS = [
-    # Prioritize the Squidpy comparisons requested by the reviewers. The more
-    # expensive niche comparison intentionally runs last.
+    # The expensive niche comparison runs last.
     "squidpy/spatial_autocorr.py",
     "squidpy/co_occurrence.py",
     "squidpy/ligrec.py",
@@ -38,6 +41,30 @@ SCRIPTS = [
     "biological_pipeline/pbmc3k.py",
     "squidpy/calculate_niche.py",
 ]
+
+
+def record_hardware(output: Path) -> None:
+    """Name the GPU and CUDA versions this run measured on. The report travels without the
+    run, so a number in it is only interpretable next to the hardware that produced it."""
+    try:
+        import cupy as cp
+
+        runtime = cp.cuda.runtime
+        device = cp.cuda.Device()
+        major, minor = device.compute_capability[0], device.compute_capability[1:]
+        name = runtime.getDeviceProperties(device.id)["name"]
+        facts = {
+            "device_name": name.decode() if isinstance(name, bytes) else str(name),
+            "compute_capability": f"{major}.{minor}",
+            "total_memory_bytes": int(device.mem_info[1]),
+            "driver_version": runtime.driverGetVersion(),
+            "cuda_runtime_version": runtime.runtimeGetVersion(),
+        }
+    except Exception as error:  # noqa: BLE001 - provenance must never cost the run
+        print(f"### hardware not recorded: {type(error).__name__}: {error}", flush=True)
+        return
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps({"measured_at": datetime.now(UTC).isoformat(), "device": facts}, indent=2) + "\n")
 
 
 def select_scripts(argv: list[str]) -> tuple[list[str], bool]:
@@ -76,6 +103,8 @@ else:
         previous_result.unlink()
     for previous_log in log_dir.glob("*.log"):
         previous_log.unlink()
+
+record_hardware(HARDWARE)
 
 env = os.environ.copy()
 env["EQUIVALENCE_OUTPUT_DIR"] = str(RESULTS)
@@ -137,9 +166,8 @@ EXECUTION.write_text(
     + "\n"
 )
 
-# Measuring is done; evaluating is a separate program, so the same records can be
-# re-scored later without a GPU. `failures` above are scripts that did not produce a
-# record at all — an infrastructure problem, distinct from a criterion that was missed.
+# `failures` above are scripts that produced no record at all: an infrastructure problem,
+# distinct from a criterion being missed, which evaluate.py decides.
 evaluation = subprocess.run(
     [
         sys.executable,
@@ -154,8 +182,6 @@ evaluation = subprocess.run(
         str(REPORT_DIR),
         "--arrays",
         str(ARRAYS),
-        # Inline what was derived from the arrays, so this run's records are already in the
-        # form an archive keeps them in: re-scorable without the Zarr stores.
         "--write-enriched",
     ],
     env=env,

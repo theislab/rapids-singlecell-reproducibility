@@ -56,4 +56,4 @@ for name in metric_names:
     reference_one, candidate_one = aligned(reference_one, candidate_one)
     capture(METHOD, f"{name}.onesided", reference=reference_one, candidate=candidate_one)
 
-write_report(METHOD, "seeded grouped Gaussian data", "deterministic", [])
+write_report(METHOD, "seeded grouped Gaussian data", "deterministic", [], shape=adata.shape)

@@ -1,13 +1,7 @@
-"""Evaluate stored measurements against their criteria. No GPU, no rerun.
+"""Evaluate stored measurements against their criteria. No GPU, no rerun. See README.md.
 
-The comparison scripts measure; this decides. They are separate programs on purpose:
-measuring costs a GPU and ten minutes, whereas deciding costs milliseconds, so any
-question of the form "what would the verdict be if..." is answered here against records
-that already exist.
-
-Criteria come from `criteria.py`, never from the record. Whatever a script wrote about
-thresholds is a measurement-time artefact and is overwritten here, so an old result
-directory — including one kept from an earlier run — can be re-scored under today's criteria.
+Criteria come from `criteria.py`, never from the record, so an old result directory can be
+re-scored under today's criteria.
 
     python benchmarks/comparison/evaluate.py
     python benchmarks/comparison/evaluate.py --results <previous-run>/results
@@ -36,9 +30,9 @@ import tomllib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from arrays import captured_points, load_arrays
+from arrays import OUT, captured_points, load_arrays
 from comparisons import AGGREGATIONS, ALLCLOSE_EVIDENCE, COMPARISONS
-from criteria import CRITERIA, EVIDENCE, criterion_for, diagnosis_for
+from criteria import CRITERIA, EVIDENCE, EVIDENCE_BASIS, criterion_for, diagnosis_for
 
 HERE = Path(__file__).parent
 
@@ -48,13 +42,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--results",
         type=Path,
-        default=Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", HERE / "results")),
+        default=Path(os.environ.get("EQUIVALENCE_OUTPUT_DIR", OUT / "results")),
         help="Directory of per-method measurement records.",
     )
     parser.add_argument(
         "--summary",
         type=Path,
-        default=Path(os.environ.get("EQUIVALENCE_SUMMARY", HERE / "equivalence.json")),
+        default=Path(os.environ.get("EQUIVALENCE_SUMMARY", OUT / "equivalence.json")),
         help="Where to write the aggregated evaluation.",
     )
     parser.add_argument("--criteria", type=Path, help='TOML file overriding thresholds, keyed "<method>.<metric>".')
@@ -67,10 +61,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--execution", type=Path, help="Execution record; enables report rendering.")
     parser.add_argument("--report-dir", type=Path, help="Render the reviewer report here.")
     parser.add_argument(
-        "--gpu-smoke",
+        "--hardware",
         type=Path,
-        help="gpu_smoke_check.py output, for the hardware block in the report. "
-        "Defaults to gpu-smoke.json beside the report directory, where a run writes it.",
+        help="Hardware record, for the provenance block in the report. "
+        "Defaults to hardware.json beside the report directory, where a run writes it.",
     )
     parser.add_argument(
         "--write-enriched",
@@ -95,15 +89,8 @@ COMPARATORS = {"<=": operator.le, "<": operator.lt, ">=": operator.ge, ">": oper
 
 
 def decide(metric: dict) -> bool:
-    """Apply the metric's criterion. The single place a verdict is formed.
-
-    A non-finite measurement fails. NaN is not close to anything, and an unrepresentable
-    result is not evidence of agreement — treating it as a bad record instead would throw
-    away the whole method group over one metric.
-
-    An unknown comparison is an error rather than a default, because a criterion written
-    as `>` and silently evaluated as `>=` would be a threshold nobody chose.
-    """
+    """Apply the metric's criterion. A non-finite measurement fails; an unknown
+    comparator is a hard error rather than a silently substituted default."""
     if not math.isfinite(float(metric["observed"])):
         return False
     compare = COMPARATORS.get(metric["comparison"])
@@ -113,14 +100,8 @@ def decide(metric: dict) -> bool:
 
 
 def enriched(record: dict) -> dict:
-    """The record with derived comparisons inlined as scalars.
-
-    A kept run has to re-score without the Zarr stores, which are dropped — so what
-    was computed from the arrays is written back beside what the script measured. Only
-    measurements and the record's own verdict: the criterion each was judged against is
-    deliberately left out, because `criteria.py` is the authority and a stored copy of a
-    threshold would rot the moment one is revised.
-    """
+    """The record with derived comparisons inlined, so it re-scores without the Zarr
+    stores. Measurements and the verdict only -- never a copy of the criterion."""
     return {
         **{key: value for key, value in record.items() if key not in ("metrics", "derived_metrics", "passed")},
         "metrics": [{"metric": m["metric"], "observed": m["observed"]} for m in record["metrics"]],
@@ -275,6 +256,7 @@ def main() -> int:
                 ungated.append(name)
                 if any(fnmatch.fnmatchcase(metric["metric"], p) for p in EVIDENCE.get(record["method"], [])):
                     declared_evidence.add(name)
+                    metric["basis"] = EVIDENCE_BASIS
                 continue
             comparison, tolerance, basis = resolved
             metric.update(
@@ -335,14 +317,16 @@ def main() -> int:
         # the rest, so a metric that should gate cannot hide in the noise.
         expected = tuple(f".{name}" for name in ALLCLOSE_EVIDENCE)
         notable = [name for name in ungated if not name.endswith(expected) and name not in declared_evidence]
-        print(f"### {len(ungated)} measurement(s) recorded without a criterion, {len(notable)} of them not allclose evidence")
+        print(
+            f"### {len(ungated)} measurement(s) recorded without a criterion, {len(notable)} of them not allclose evidence"
+        )
         for name in notable:
             print(f"###   {name}")
 
     if args.report_dir and args.execution:
-        # A run writes gpu-smoke.json beside the report directory. The report is promoted as a
-        # single file and travels without the run, so it has to name its own GPU.
-        gpu_smoke = args.gpu_smoke or args.report_dir.parent / "gpu-smoke.json"
+        # The report is promoted as a single file and travels without the run, so it names the
+        # GPU it was measured on. run_structured.py writes this beside the report directory.
+        hardware = args.hardware or args.report_dir.parent / "hardware.json"
         subprocess.run(
             [
                 sys.executable,
@@ -353,7 +337,7 @@ def main() -> int:
                 str(args.execution),
                 "--output-dir",
                 str(args.report_dir),
-                *(["--gpu-smoke", str(gpu_smoke)] if gpu_smoke.exists() else []),
+                *(["--hardware", str(hardware)] if hardware.exists() else []),
             ],
             check=False,
         )

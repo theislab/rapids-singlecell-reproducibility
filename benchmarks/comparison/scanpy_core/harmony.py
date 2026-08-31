@@ -61,9 +61,10 @@ capture(
 
 write_report(
     METHOD,
-    "Harmonypy PBMC 3,500-cell donor benchmark",
+    'Harmonypy PBMC 3,500-cell donor benchmark, flavor="harmony1" (not the rsc default)',
     "iterative",
     [],
     reference_package="harmonypy",
     packages=("harmonypy",),
+    shape=pcs.shape,
 )

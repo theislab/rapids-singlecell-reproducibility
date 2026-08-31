@@ -75,4 +75,5 @@ write_report(
     dataset="scanpy.datasets.paul15",
     tier="stochastic",
     metrics=[],
+    shape=adata.shape,
 )

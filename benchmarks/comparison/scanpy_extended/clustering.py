@@ -3,12 +3,11 @@ from __future__ import annotations
 import rapids_singlecell as rsc
 import scanpy as sc
 from _report import capture, write_report
-from _shared import pbmc68k
 from sklearn.cluster import KMeans
 
 METHOD = "clustering_extended"
 
-adata = pbmc68k()
+adata = sc.datasets.pbmc68k_reduced()
 metrics = []
 
 reference, candidate = adata.copy(), adata.copy()
@@ -28,4 +27,4 @@ candidate = adata.copy()
 rsc.tl.kmeans(candidate, n_clusters=8, n_pcs=50, n_init=10, random_state=42, key_added="gpu_kmeans")
 capture(METHOD, "kmeans", reference=cpu_labels, candidate=candidate.obs["gpu_kmeans"])
 
-write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "stochastic", metrics)
+write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "stochastic", metrics, shape=adata.shape)

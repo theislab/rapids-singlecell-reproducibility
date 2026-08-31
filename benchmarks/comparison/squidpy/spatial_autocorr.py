@@ -43,4 +43,5 @@ write_report(
     dataset="squidpy.datasets.imc",
     tier="deterministic",
     metrics=[],
+    shape=adata.shape,
 )

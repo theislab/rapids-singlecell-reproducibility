@@ -4,10 +4,9 @@ import pandas as pd
 import rapids_singlecell as rsc
 import scanpy as sc
 from _report import capture, write_report
-from _shared import pbmc68k
 
 METHOD = "rank_genes_groups"
-adata = pbmc68k()
+adata = sc.datasets.pbmc68k_reduced()
 groupby = "bulk_labels"
 
 for method in ("t-test", "wilcoxon", "logreg"):
@@ -42,4 +41,4 @@ for method in ("t-test", "wilcoxon", "logreg"):
             candidate=merged.gpu_score.to_numpy(),
         )
 
-write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "near-deterministic", [])
+write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "near-deterministic", [], shape=adata.shape)

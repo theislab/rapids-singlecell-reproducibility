@@ -1,8 +1,5 @@
-"""How two outputs are compared. One copy, applied at evaluation time.
-
-These used to live in four near-identical `_shared.py` modules and run on the GPU node,
-which meant the definitions could drift apart and asking a new question of an old run cost
-another GPU allocation. They are pure functions of stored arrays, so they belong here.
+"""How two outputs are compared. Pure functions of the stored arrays, applied at
+evaluation time.
 
 Each entry in `COMPARISONS` declares the arrays it needs at a comparison point. A criterion
 named `<point>.<suffix>` is computed by looking `<suffix>` up here and loading those arrays

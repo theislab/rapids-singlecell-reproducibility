@@ -1,9 +1,4 @@
-"""Store the raw CPU and GPU outputs so comparisons can be made later, not just now.
-
-A comparison script used to compute a scalar and throw the arrays away, which meant every
-new question about a run — which term of `numpy.allclose` bound the failure, how the error
-is distributed, whether a different metric says something else — cost another GPU run. So
-the arrays are written to a Zarr store instead and the comparing happens in `evaluate.py`.
+"""Store the raw CPU and GPU outputs. Comparing them is `evaluate.py`'s job.
 
 One store per method group, one group per comparison point:
 
@@ -27,12 +22,15 @@ import zarr
 from numcodecs.zarr3 import Blosc
 from scipy import sparse
 
+# Everything a run writes, unless an EQUIVALENCE_* variable overrides it.
+OUT = Path(__file__).parents[2] / "out"
+
 CELL_CHUNK = 2048
 
 
 def store_path(method: str) -> Path:
     """Where this method group's arrays live. Sits beside the JSON records, not inside them."""
-    root = Path(os.environ.get("EQUIVALENCE_ARRAY_DIR", Path(__file__).parent / "arrays"))
+    root = Path(os.environ.get("EQUIVALENCE_ARRAY_DIR", OUT / "arrays"))
     return root / f"{method}.zarr"
 
 

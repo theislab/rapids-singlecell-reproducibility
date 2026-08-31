@@ -20,4 +20,4 @@ rsc.ptg.Mixscale().mixscale(gpu, pert_key="gene_target", control="NT", layer="X_
 cpu_score = cpu.obs["mixscale_score"].to_numpy(dtype=float)
 gpu_score = gpu.obs["mixscale_score"].to_numpy(dtype=float)
 capture(METHOD, "mixscale.score", reference=cpu_score, candidate=gpu_score)
-write_report(METHOD, "seeded synthetic perturbation screen", "deterministic", [])
+write_report(METHOD, "seeded synthetic perturbation screen", "deterministic", [], shape=cpu.shape)

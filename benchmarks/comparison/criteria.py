@@ -1,8 +1,7 @@
 """Every criterion the suite applies. The only place a threshold is written down.
 
-The comparison scripts measure and record; nothing in them decides. `evaluate.py` joins
-their measurements against this file, which means a threshold can be reviewed, argued
-about or changed without a GPU and without re-measuring anything.
+Why the thresholds are what they are, and which of them the publication actually asserts,
+is in README.md; this file is the machine-readable form of it.
 
 Rules are keyed by method group, because a metric name is only unique within one:
 `umap.cross_embedding_knn_overlap` is `>= 0.6` on the pbmc3k pipeline and `>= 0.65` on
@@ -13,9 +12,8 @@ fnmatch glob for families generated in a loop. Exact names win over globs. **A m
 with no matching rule is recorded as evidence and does not gate** — `evaluate.py` lists
 those, so a new metric cannot slip in ungated unnoticed.
 
-`EVIDENCE` at the bottom of this file names comparisons that should be computed from the
-stored arrays and reported without a verdict. Being derived and being gated are separate
-decisions: a measurement worth having is not always a claim the publication makes.
+`EVIDENCE` at the bottom names comparisons to compute from the stored arrays and report
+without a verdict.
 
 Thresholds are never widened to make a run green. A criterion that fails stays as it is
 and carries its diagnosis.
@@ -200,9 +198,12 @@ CRITERIA: dict[str, list[tuple[str, str, float, str]]] = {
 # inference, regression or QC metrics would be the suite inventing a standard for an operation
 # the paper makes no claim about, and a red row that traces to no claim is not evidence.
 #
-# Every one of these is still derived from the stored arrays and still reported, so the
-# measurement is available to NUMERICAL_VALIDATION.md and to any later question. What is
-# removed is the verdict, not the number.
+# Each is still derived and still reported: what is removed is the verdict, not the number.
+EVIDENCE_BASIS = (
+    "Measured against the same numpy.allclose envelope, but not gated: the publication states "
+    "no tolerance for this operation, so a verdict here would be the suite's invention."
+)
+
 EVIDENCE: dict[str, list[str]] = {
     "co_occurrence": ["interval.allclose_excess", "occurrence.allclose_excess"],
     "decoupler_methods": ["*.allclose_excess"],
@@ -235,9 +236,7 @@ def criterion_for(method: str, metric: str) -> tuple[str, float, str] | None:
     return None
 
 
-# Why a criterion fails, where that has been investigated. Kept here rather than in the
-# comparison scripts because it is a statement about the criterion, not a measurement, and
-# because `evaluate.py` shows it only for metrics that actually fail.
+# Why a criterion fails, where that has been investigated. Rendered only for metrics that fail.
 DIAGNOSES: dict[tuple[str, str], str] = {
     ("biological_pipeline_pbmc3k", "umap.cross_embedding_knn_overlap"): (
         "UMAP is stochastic, and this threshold asks for more agreement than the CPU reference shows "
@@ -267,8 +266,8 @@ DIAGNOSES: dict[tuple[str, str], str] = {
     ("*", "*.allclose_excess"): (
         "numpy.allclose has two terms, atol + rtol * |b|, and which one binds depends on the magnitude "
         "of the element that fails. Where a quantity passes through zero the absolute floor binds, and "
-        "at float32 precision no implementation can satisfy it there. See NUMERICAL_VALIDATION.md for "
-        "the per-comparison split between that case and a genuine relative disagreement."
+        "at float32 precision no implementation can satisfy it there. See the Numerical validation "
+        "section of README.md for the split between that case and a genuine relative disagreement."
     ),
 }
 DIAGNOSES[("calculate_niche", "neighborhood.normalized_mutual_information")] = DIAGNOSES[

@@ -30,4 +30,4 @@ pt.pp.GuideAssignment().assign_mixture_model(cpu)
 rsc.ptg.GuideAssignment().assign_mixture_model(gpu)
 capture(METHOD, "assign_mixture_model", reference=cpu.obs["assigned_guide"], candidate=gpu.obs["assigned_guide"])
 
-write_report(METHOD, "seeded Poisson guide-count mixture", "near-deterministic", metrics)
+write_report(METHOD, "seeded Poisson guide-count mixture", "near-deterministic", metrics, shape=cpu.shape)

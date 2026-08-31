@@ -4,8 +4,5 @@
 data
 out
 **/__pycache__
-benchmarks/comparison/arrays
-benchmarks/comparison/report
-benchmarks/comparison/results
 benchmarks/speed/notebooks
 use_cases

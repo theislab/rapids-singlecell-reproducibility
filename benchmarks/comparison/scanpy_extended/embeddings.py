@@ -3,10 +3,9 @@ from __future__ import annotations
 import rapids_singlecell as rsc
 import scanpy as sc
 from _report import capture, write_report
-from _shared import pbmc68k
 
 METHOD = "embeddings_extended"
-adata = pbmc68k()
+adata = sc.datasets.pbmc68k_reduced()
 
 reference, candidate = adata.copy(), adata.copy()
 sc.tl.tsne(reference, use_rep="X_pca", learning_rate=200, random_state=0)
@@ -54,4 +53,4 @@ capture(
     candidate=candidate.obs["umap_density"],
 )
 
-write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "stochastic", [])
+write_report(METHOD, "scanpy.datasets.pbmc68k_reduced", "stochastic", [], shape=adata.shape)

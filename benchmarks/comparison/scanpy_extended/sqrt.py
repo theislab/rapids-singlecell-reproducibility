@@ -19,4 +19,4 @@ else:
     reference_x = np.asarray(reference.X)
     candidate_x = np.asarray(candidate_x)
 capture(METHOD, "X", reference=reference_x, candidate=candidate_x)
-write_report(METHOD, "scanpy.datasets.pbmc3k", "deterministic", [])
+write_report(METHOD, "scanpy.datasets.pbmc3k", "deterministic", [], shape=reference.shape)

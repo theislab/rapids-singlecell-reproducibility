@@ -178,13 +178,3 @@ cache
 *.prof
 .vscode
 out/
-
-# Live comparison output. A run writes all of this; none of it is committed. Exactly one file is:
-# EVIDENCE.md at the repository root, promoted from report/summary.md and overwritten per run, so
-# `git log -p EVIDENCE.md` is the history of the evidence and the tree does not grow per run.
-benchmarks/comparison/arrays/
-benchmarks/comparison/results/
-benchmarks/comparison/report/
-benchmarks/comparison/*/results/
-benchmarks/comparison/equivalence.json
-benchmarks/comparison/execution.json
