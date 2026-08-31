@@ -449,19 +449,57 @@ produced nonsense. The paired difference criteria still gate for accuracy and ce
 trustworthiness, the paired difference is itself recorded rather than gating, so that one has no
 backstop at all.
 
-### 5. Upstream issues found, not yet filed
+### 5. Upstream issues, and exactly where each one is
 
-None of these are patched in this repository.
+None of these are patched in this repository. Line numbers are scanpy 1.12.3 and squidpy 1.8.3,
+the versions pinned here.
 
-**scanpy — a real bug.** `sc.pp.neighbors` removes the cell itself from the k-NN result _by
-position_, assuming it sorts first. With exact duplicates it does not, so a genuine nearest
-neighbour is dropped and self keeps a slot: the row silently ends up with `n_neighbors - 2` real
-neighbours and distances shifted one place outward. Containment is exact on
-`squidpy.datasets.imc` — 1261 rows retain self, 743 are inexact against float64 ground truth, all
-743 lie inside the 1261, and all 3407 rows that do not retain self are exact. Max excess distance
-+3.01. CPU-only reproducer:
+**scanpy — a real bug, in one word.** `scanpy/neighbors/_common.py`:
+
+```python
+def _has_self_column(indices, distances) -> bool:
+    # some algorithms have some messed up reordering.
+    return (indices[:, 0] == np.arange(indices.shape[0])).any()      # line 22
+
+def _remove_self_column(indices, distances):
+    if not _has_self_column(indices, distances):
+        raise AssertionError("The first neighbor should be the cell itself.")
+    return indices[:, 1:], distances[:, 1:]                          # line 32
+```
+
+`_has_self_column` reduces with **`.any()`**, so one row with self in column 0 satisfies it for the
+whole matrix — then `_remove_self_column` slices column 0 off **every** row unconditionally. On a
+row where self is _not_ first, that column is a genuine nearest neighbour, and dropping it leaves
+self occupying a slot further right. The row silently ends up with `n_neighbors - 2` real
+neighbours and distances shifted one place outward. The docstring of
+`_get_sparse_matrix_from_indices_distances` (line 43) states the invariant that does not hold:
+"it verifies that the first column is the cell itself".
+
+Self is not first exactly when the data holds exact duplicate rows and the tie-break at distance 0
+orders a duplicate ahead of the cell. The `.any()` looks deliberate — the comment above it
+tolerates "messed up reordering" from other backends — which is why the guard is too weak rather
+than simply absent. `.all()`, or per-row removal, is the fix.
+
+Measured on `squidpy.datasets.imc`: 1261 rows retain self, 743 are inexact against float64 ground
+truth, all 743 lie inside the 1261, and all 3407 rows that do not retain self are exact. Max
+excess distance +3.01. CPU-only reproducer:
 [`scanpy_neighbors_duplicate_bug.py`](benchmarks/comparison/squidpy/scanpy_neighbors_duplicate_bug.py)
 — 240 cells, 168 of them left with 13 real neighbours instead of 14.
+
+**scanpy — a second defect, already filed.**
+[scverse/scanpy#4280](https://github.com/scverse/scanpy/issues/4280) (open, filed 2026-08-05):
+`pp.regress_out`'s vectorized path solves the normal equations by explicit inversion,
+`np.linalg.inv(regressor.T @ regressor)`, which squares the condition number of the design. On a
+near-constant covariate the residual error reaches 133% of the residuals' own standard deviation,
+and the `det != 0` guard does not catch it. `np.linalg.pinv` fixes it.
+
+**This does not explain the `regress_out` disagreement measured here**, and the distinction
+matters: the suite regresses `keys=["total_counts"]` on pbmc3k, a healthily varying covariate,
+which is the regime where #4280 measures error at the 1e-14 level. The `allclose_excess` that
+[`EVIDENCE.md`](EVIDENCE.md) records for `regress_out` is the `atol` artefact described under
+[Numerical validation](#numerical-validation), not that bug. Both are true of the same function;
+only one is visible in this suite. What would settle it is rerunning the comparison with a
+near-constant covariate, which the suite does not currently do.
 
 **rapids-singlecell — a question, not a defect.** `rsc.pp.neighbors` materializes the self-loop as
 an explicit stored zero in `obsp["distances"]`, so it holds `n_neighbors` entries per row where
@@ -469,11 +507,17 @@ Scanpy holds `n_neighbors - 1`. Neighbour sets are identical once the diagonal i
 `obsp["connectivities"]` is unaffected. Worth noting when reporting: this convention is precisely
 what makes rapids-singlecell immune to the Scanpy bug above.
 
-**squidpy — a method-design question.** `calculate_niche(flavor="neighborhood")` clusters a
-feature space holding 755 distinct rows across 4,668 cells, so 89.67% of cells have an exact
-distance tie at the k-th neighbour. It also calls `sc.tl.leiden` without passing `flavor`, so the
-result depends on which Leiden backend is installed — and those backends disagree substantially
-here (ARI 0.5041 between leidenalg and igraph on the UTAG space).
+**squidpy — a method-design question, at two lines.** `squidpy/gr/_niche.py` calls `sc.tl.leiden`
+without passing `flavor` in both niche paths — line 488 in `_get_nhood_profile_niches` and line 534
+in `_get_utag_niches` — so the result depends on which Leiden backend happens to be installed, and
+those backends disagree substantially here (ARI 0.5041 between leidenalg and igraph on the UTAG
+space). Passing `flavor` explicitly, or recording which backend ran, would make the output
+determinate.
+
+The same file reaches the scanpy bug above: `sc.pp.neighbors` at lines 473 and 528 is what
+receives the duplicate-heavy feature space. `calculate_niche(flavor="neighborhood")` clusters a
+space holding 755 distinct rows across 4,668 cells, so 89.67% of cells have an exact distance tie
+at the k-th neighbour — the precondition the `.any()` guard mishandles.
 
 ### 6. GPU hardware and portability
 
