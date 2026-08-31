@@ -17,4 +17,6 @@ rsc.pp.regress_out(adata_rsc, keys=["total_counts"])
 rsc.get.anndata_to_CPU(adata_rsc)
 # Due to use of parallel matrix multiplication, the results are not exactly the same as scanpy
 # 64 bit would be required to get closer results
-np.testing.assert_allclose(adata_sc.X, adata_rsc.X, rtol=1e-5, atol=1e-5)
+# numpy.allclose defaults, the standard the manuscript's Methods declare. Passed
+# explicitly because np.testing.assert_allclose defaults to rtol=1e-7, atol=0 instead.
+np.testing.assert_allclose(adata_sc.X, adata_rsc.X, rtol=1e-5, atol=1e-8)

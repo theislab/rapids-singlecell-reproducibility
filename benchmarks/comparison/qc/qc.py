@@ -13,4 +13,6 @@ sc.pp.calculate_qc_metrics(adata_sc, qc_vars=["mt", "ribo", "hb"], log1p=True, p
 rsc.pp.calculate_qc_metrics(adata_rsc, qc_vars=["mt", "ribo", "hb"], log1p=True)
 
 for key in adata_sc.obs.columns:
-    np.testing.assert_allclose(adata_sc.obs[key], adata_rsc.obs[key], rtol=1e-6, atol=1e-6)
+    # numpy.allclose defaults, the standard the manuscript's Methods declare. Passed
+    # explicitly because np.testing.assert_allclose defaults to rtol=1e-7, atol=0 instead.
+    np.testing.assert_allclose(adata_sc.obs[key], adata_rsc.obs[key], rtol=1e-5, atol=1e-8)

@@ -50,7 +50,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
-.claude
+.claude/
 
 # Translations
 *.mo
@@ -169,7 +169,6 @@ lightning_logs
 *.pickle
 .idea/
 .snakemake
-.snakemake
 benchmark/cache
 cache
 .Rdata
@@ -178,3 +177,4 @@ cache
 *.benchmark.tsv
 *.prof
 .vscode
+out/

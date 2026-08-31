@@ -15,4 +15,6 @@ sc.tl.score_genes(adata_sc, gene_list=gene_list, score_name="score")
 rsc.tl.score_genes(adata_rsc, gene_list=gene_list, score_name="score")
 
 rsc.get.anndata_to_CPU(adata_rsc)
-np.testing.assert_allclose(adata_sc.obs["score"].values, adata_rsc.obs["score"].values, rtol=1e-5, atol=1e-7)
+# numpy.allclose defaults, the standard the manuscript's Methods declare. Passed
+# explicitly because np.testing.assert_allclose defaults to rtol=1e-7, atol=0 instead.
+np.testing.assert_allclose(adata_sc.obs["score"].values, adata_rsc.obs["score"].values, rtol=1e-5, atol=1e-8)

@@ -14,6 +14,8 @@ rsc.get.anndata_to_GPU(adata_rsc)
 sc.pp.pca(adata_sc)
 rsc.pp.pca(adata_rsc)
 # PCA Loadings
-np.testing.assert_allclose(np.abs(adata_sc.varm["PCs"]), np.abs(adata_rsc.varm["PCs"]), rtol=1e-6, atol=1e-6)
+# numpy.allclose defaults, the standard the manuscript's Methods declare. Passed
+# explicitly because np.testing.assert_allclose defaults to rtol=1e-7, atol=0 instead.
+np.testing.assert_allclose(np.abs(adata_sc.varm["PCs"]), np.abs(adata_rsc.varm["PCs"]), rtol=1e-5, atol=1e-8)
 # PCA Transform
-np.testing.assert_allclose(np.abs(adata_sc.obsm["X_pca"]), np.abs(adata_rsc.obsm["X_pca"]), rtol=1e-6, atol=1e-6)
+np.testing.assert_allclose(np.abs(adata_sc.obsm["X_pca"]), np.abs(adata_rsc.obsm["X_pca"]), rtol=1e-5, atol=1e-8)

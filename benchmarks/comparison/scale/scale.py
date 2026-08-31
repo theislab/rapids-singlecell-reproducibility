@@ -12,4 +12,6 @@ rsc.get.anndata_to_GPU(adata_rsc)
 sc.pp.scale(adata_sc, max_value=10, zero_center=True)
 rsc.pp.scale(adata_rsc, max_value=10, zero_center=True)
 rsc.get.anndata_to_CPU(adata_rsc)
-np.testing.assert_allclose(adata_sc.X, adata_rsc.X, rtol=1e-6, atol=1e-6)
+# numpy.allclose defaults, the standard the manuscript's Methods declare. Passed
+# explicitly because np.testing.assert_allclose defaults to rtol=1e-7, atol=0 instead.
+np.testing.assert_allclose(adata_sc.X, adata_rsc.X, rtol=1e-5, atol=1e-8)

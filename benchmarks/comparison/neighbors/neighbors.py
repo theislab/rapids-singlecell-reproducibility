@@ -23,11 +23,14 @@ rsc.get.anndata_to_CPU(adata_rsc)
 def knn_indices(distances):
     """Extract sorted neighbor indices per cell, excluding self-connections (distance=0)."""
     lil = distances.tolil()
-    return [sorted(j for j, d in zip(row_j, row_d) if d > 0) for row_j, row_d in zip(lil.rows, lil.data)]
+    return [
+        sorted(j for j, d in zip(row_j, row_d, strict=False) if d > 0)
+        for row_j, row_d in zip(lil.rows, lil.data, strict=False)
+    ]
 
 
 # rsc may include self-connections (distance=0) not present in scanpy output
 sc_nbrs = knn_indices(adata_sc.obsp["distances"])
 rsc_nbrs = knn_indices(adata_rsc.obsp["distances"])
-for sc_row, rsc_row in zip(sc_nbrs, rsc_nbrs):
+for sc_row, rsc_row in zip(sc_nbrs, rsc_nbrs, strict=False):
     np.testing.assert_array_equal(sc_row, rsc_row)
