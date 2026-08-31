@@ -13,7 +13,8 @@ The claim this evidence supports is qualified in six ways, and they are the firs
 1. Every comparison runs on thousands of cells. The million-cell and 100M-cell workflows the
    package exists for have **no equivalence coverage at all** (section 1).
 2. Only the `numpy.allclose` and Harmony criteria come from the publication. Every other
-   threshold was chosen by this repository's authors and reviewed by nobody (section 2).
+   threshold was chosen by this repository's authors and reviewed by nobody, and at least one
+   of them **flips verdict between runs** (section 2).
 3. The declared `numpy.allclose` standard is **not met** by scaling, regression, Pearson
    residuals or normalized dispersions ([Numerical validation](#numerical-validation)).
 4. The Harmony comparison passes on `flavor="harmony1"`, which is **not** the
@@ -312,18 +313,15 @@ For context, what the suite **does** establish: no failure has been traced to a
 rapids-singlecell defect. The diagnosed ones come from three causes: `allclose` criteria that
 float32 cannot satisfy at all, a genuine relative difference too small to move any downstream
 result (both in section 3), and stochastic criteria that ask for more agreement than the CPU
-reference shows against itself (section 4). One is **not yet diagnosed** —
-`clustering_extended.louvain.adjusted_rand_index` sits just under its floor, and
-[`EVIDENCE.md`](EVIDENCE.md) says so rather than assigning it a cause it has not been shown to
-have.
+reference shows against itself (section 4).
 
 ### 1. Validated at small scale, assumed at large scale
 
 Every equivalence comparison runs on small data — thousands of cells at most. Each run records
 the exact `(cells, features)` it compared and renders it as the `Scale` column of the
-method-group table, so the number is measured rather than typed here. **The committed
-[`EVIDENCE.md`](EVIDENCE.md) predates that column and does not carry it yet**; it appears on the
-next full run.
+method-group table in [`EVIDENCE.md`](EVIDENCE.md), so the number is measured rather than typed
+here. One row is blank: `bbknn_scrublet` compares across two datasets, which one shape cannot
+describe, and its `Dataset` column names both.
 
 The workflows this repository exists to showcase — the million-cell mouse brain benchmarks in
 [`benchmarks/speed`](benchmarks/speed) and the Dask-based Tahoe-100M pipeline in
@@ -355,6 +353,20 @@ empty `basis` for exactly that reason. For stochastic methods the manuscript nam
 neighborhood structure" but states **no threshold at all**, so those numbers have no external
 source. "N of M passing" therefore reads stronger than it is: a green metric with an arbitrary
 threshold is weak evidence in the same way a red one is.
+
+**One threshold is not reproducible, and that is measured rather than argued.** Two full runs on
+the same A100 MIG architecture, 2026-08-23 and 2026-08-31, agree to the digit on **435 of 480**
+recorded quantities — including every one of the eleven failing criteria, whose values are
+byte-identical. `clustering_extended.louvain.adjusted_rand_index` is not among them: it read
+0.79200397 in the first run and 0.83012383 in the second, against a floor of 0.8, so the same
+code and the same seed **failed and then passed**. A criterion that straddles its own threshold
+reports the sampling noise of one stochastic method, not agreement between two implementations,
+and it should be respecified or dropped rather than left to decide a verdict by coin flip. The
+other quantities that moved are near-threshold stochastic overlaps and float noise at 1e-10 or
+below.
+
+`git log -p EVIDENCE.md` is where that comparison lives, so it is checkable rather than asserted:
+two committed reports, diffed.
 
 The suite also gates only on _differences_. Absolute quality scores of a single implementation —
 UMAP trustworthiness, per-backend annotation accuracy, per-backend cell-type NMI — are recorded as
