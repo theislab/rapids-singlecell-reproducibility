@@ -1,3 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rapids-singlecell-reproducibility"
+version = "0.0.0"
+requires-python = "==3.13.*"
+dependencies = [
+    "anndata==0.13.3.post0",
+    "bbknn==1.6.0",
+    "cudf-cu13==26.8.1; sys_platform == 'linux'",
+    "cugraph-cu13==26.8.0; sys_platform == 'linux'",
+    "cuml-cu13==26.8.0; sys_platform == 'linux'",
+    "cupy-cuda13x==14.2.0; sys_platform == 'linux'",
+    "cuvs-cu13==26.8.1; sys_platform == 'linux'",
+    "decoupler==2.2.0",
+    "fa2-modified==0.4",
+    "harmonypy==2.0.2",
+    "igraph==1.0.0",
+    "leidenalg==0.11.0",
+    "matplotlib==3.11.2",
+    "numcodecs==0.16.5",
+    "numpy==2.4.6",
+    "pandas==3.0.3",
+    "pertpy[jax]==1.3.0",
+    "pooch==1.9.0",
+    "pynndescent==0.6.0",
+    "rapids-singlecell-cu13==0.17.0; sys_platform == 'linux'",
+    "rmm-cu13==26.8.0; sys_platform == 'linux'",
+    "scanpy==1.13.0a2",
+    "scikit-learn==1.8.0",
+    "scipy==1.18.1",
+    "squidpy==1.8.4",
+    "umap-learn==0.5.12",
+    "zarr==3.4.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["benchmarks"]
+
 [tool.ruff]
 extend-include = ["*.ipynb"]
 line-length = 120
